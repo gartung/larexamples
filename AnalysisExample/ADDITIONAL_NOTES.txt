@@ -64,7 +64,7 @@ it by now). Believe it or not, it's to teach you something useful.
      To use this service, get a handle to cheat::BackTracker in the
      same way you get a handle to art::TFileService in the .cc file,
      then use that handle to invoke any of the methods in
-     MCCheater/BackTracker.h.
+     ${LARSIM_DIR}/include/MCCheater/BackTracker.h.
 
      So why not use that service in AnalysisExample? Because for the
      work you'll be doing, you'll probably won't be just reading in
