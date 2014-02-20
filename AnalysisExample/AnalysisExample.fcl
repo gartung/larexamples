@@ -1,9 +1,9 @@
 #include "services.fcl"
 
-# A script to run an analysis module: AnalysisExample. You may want to compare
-# this script with ${SRT_PUBLIC_CONTEXT}/prodsingle_uboone.fcl; in particular,
-# in this script there are no output streams because the module doesn't write any
-# events, just histograms or n-tuples. 
+# A script to run an analysis module: AnalysisExample. You may want to
+# compare this script with ${LARSIM_DIR}/job/prodsingle.fcl; in
+# particular, in this script there are no output streams because the
+# module doesn't write any events, just histograms or n-tuples.
 
 # See <https://cdcvs.fnal.gov/redmine/projects/larsoftsvn/wiki/Running_Jobs> for 
 # more information on the structure of .fcl files. 
@@ -33,18 +33,18 @@ services:
 
   # This parameter controls the level of descriptive output from
   # various LArSoft modules. For a list of different message levels,
-  # see ${SRT_PUBLIC_CONTEXT}/messageservice.fcl. For most jobs
-  # this is set to standard_warning; here it is set to standard_info
-  # because I write some LogInfo messages in the analysis module for
+  # see ${LARDATA_DIR}/job/messageservice.fcl. For most jobs this is
+  # set to standard_warning; here it is set to standard_info because I
+  # write some LogInfo messages in the analysis module for
   # demonstration purposes.
 
   message:      @local::standard_info
 
   # This defines many default LArSoft resources for this job. It's
-  # more than we'll need, but it's easier to include all of them
-  # than to pick and choose. For a list of what's being defined, see
-  # ${SRT_PUBLIC_CONTEXT}/services.fcl (which will lead you to other
-  # files in the ${SRT_PUBLIC_CONTEXT}/job directory).
+  # more than we'll need, but it's easier to include all of them than
+  # to pick and choose. For a list of what's being defined, see
+  # ${LARDATA_DIR}/job/services.fcl (which will lead you to other
+  # files in the various products' job directories).
 
   user:         @local::microboone_simulation_services
 }
@@ -53,8 +53,7 @@ services:
 # Note that the name of the input file is not included here. You specify that on the
 # command line when you run this script; e.g.,
 #    lar -c AnalysisExample.fcl -s myinput.root
-# The file "myinput.root" is assumed to have been created by a previous LArSoft
-# job; e.g. ${SRT_PUBLIC_CONTEXT}/standard_reco.fcl
+# The file "myinput.root" is assumed to have been created by a previous LArSoft job.
 
 source:
 {
@@ -98,22 +97,20 @@ physics:
       # don't change the value of this parameter. This is the name of
       # the 'producer' that ran the simulation module in a previous
       # job. An example of a job file that runs the simulation is
-      # ${SRT_PUBLIC_CONTEXT}/prodsingle_uboone.fcl; look for
-      # "largeant:". It's unlikely that anyone would change the name
-      # of this producer.
+      # ${LARSIM_DIR}/job/prodsingle.fcl; look for "largeant:". It's
+      # unlikely that anyone would change the name of this producer.
 
       SimulationLabel: "largeant"
 
-      # Hits are created by a procedure called "ffthit" in
-      # ${SRT_PUBLIC_CONTEXT}/standard_reco.fcl. It's unlikely
-      # this name will change either, but the LArSoft reconstruction
-      # processs is still evolving; it doesn't hurt to check.
+      # Hits can be created by more than one module in
+      # ${LARRECO_DIR}/source/HitFinder. For this example, I picked
+      # the one that's usually run first.
 
-      HitLabel:        "ffthit"
+      HitLabel:        "gaushit"
 
       # The same for clusters:
 
-      ClusterLabel:    "dbcluster"
+      ClusterLabel:    "fuzzycluster"
 
       # In this example, which primary particle(s) we'll focus on in an event.
       # PDG code 13 = mu-.

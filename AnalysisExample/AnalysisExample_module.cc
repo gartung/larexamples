@@ -741,10 +741,10 @@ namespace AnalysisExample {
 
     // We have to include fClusterProducerLabel, since that's the step
     // that created the art::Assns<recob::Hit,recob::Cluster> object;
-    // look in ${LARRECO_DIR}/source/ClusterFinder/DBcluster_module.cc
-    // and search for the 'produces' lines. (I did not know this
-    // before I wrote these lines. I had to be a code detective and
-    // use UNIX tools like 'grep' and 'find' to locate that routine.)
+    // look at the modules in ${LARRECO_DIR}/source/ClusterFinder/ and
+    // search for the 'produces' lines. (I did not know this before I
+    // wrote these lines. I had to be a code detective and use UNIX
+    // tools like 'grep' and 'find' to locate those routines.)
     art::FindManyP<recob::Hit> findManyHits(clusterHandle, event, fClusterProducerLabel);
 
     if ( findManyHits.isValid() )
