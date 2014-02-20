@@ -34,12 +34,12 @@ it by now). Believe it or not, it's to teach you something useful.
      package, you'll put the headers in a .h file and the
      implementation in a .cxx file.
 
- (5) Don't confuse the name "AnalysisExample" with the contents of
-     directory $SRT_PUBLIC_CONTEXT/AnalysisBase. The AnalysisBase
-     package contains classes that define the final physics objects
-     produced by the reconstruction process (particle ID, shower
-     energy, etc.). The AnalysisExample package provides an example of
-     how to analyze "stuff" that's been put in LArSoft event records.
+ (5) Don't confuse the name "AnalysisExample" with the contents of the
+     package "AnalysisBase." The AnalysisBase package contains classes
+     that define the final physics objects produced by the
+     reconstruction process (particle ID, shower energy, etc.). The
+     AnalysisExample package provides an example of how to analyze
+     "stuff" that's been put in LArSoft event records.
 
  (6) Once you have a ROOT file of histograms and n-tuples, what can
      you do with it? There's a ROOT tutorial at
@@ -64,7 +64,7 @@ it by now). Believe it or not, it's to teach you something useful.
      To use this service, get a handle to cheat::BackTracker in the
      same way you get a handle to art::TFileService in the .cc file,
      then use that handle to invoke any of the methods in
-     $SRT_PUBLIC_CONTEXT/MCCheater/BackTracker.h.
+     ${LARSIM_DIR}/include/MCCheater/BackTracker.h.
 
      So why not use that service in AnalysisExample? Because for the
      work you'll be doing, you'll probably won't be just reading in
