@@ -772,7 +772,8 @@ namespace AnalysisExample {
     else
       {
 	mf::LogError("AnalysisExample")  
-	  << "findManyHits recob::Hit for recob::Cluster failed!";
+	  << "findManyHits recob::Hit for recob::Cluster failed;"
+	  << " cluster label='" << fClusterProducerLabel << "'";
       }
 
     return;
