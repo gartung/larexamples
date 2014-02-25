@@ -233,7 +233,7 @@ namespace AnalysisExample {
   {
     // How to convert from number of electrons to GeV.  The ultimate
     // source of this conversion factor is
-    // ${SRT_PUBLIC_CONTEXT}/SimpleTypesAndConstants/PhysicalConstants.h.
+    // ${LARSIM_DIR}/include/SimpleTypesAndConstants/PhysicalConstants.h.
     art::ServiceHandle<sim::LArG4Parameters> larParameters;
     fElectronsToGeV = 1./larParameters->GeVToElectrons();
   }
@@ -314,7 +314,7 @@ namespace AnalysisExample {
     for ( auto const& particle : (*particleHandle) )
       {
 	// For the methods you can call to get particle information,
-	// see $NUTOOLS_INC/SimulationBase/MCParticle.h.
+	// see ${NUTOOLS_DIR}/include/SimulationBase/MCParticle.h.
 	fTrackID = particle.TrackId();
 
 	// Add the address of the MCParticle to the map, with the track ID as the key.
@@ -378,7 +378,7 @@ namespace AnalysisExample {
 		// accumulates charge in the TPC. We only want to
 		// include the energy from the collection plane.
 		// (geo::kCollection is defined in
-		// $SRT_PUBLIC_CONTEXT/SimpleTypesAndConstants/geo_types.h)
+		// ${LARSIM_DIR}/include/SimpleTypesAndConstants/geo_types.h)
 		if ( fGeometry->SignalType( channelNumber ) == geo::kCollection )
 		  {
 		    // Each channel has a map inside it that connects
@@ -400,7 +400,7 @@ namespace AnalysisExample {
 			
 			// Loop over the energy deposits. The type of
 			// 'energyDeposit' will be sim::IDE, which is
-			// defined in SimChannel.h.
+			// defined in ${LARSIM_DIR}/include/Simulation/SimChannel.h.
 			for ( auto const& energyDeposit : energyDeposits )
 			  {
 			    // Check if the track that deposited the
@@ -447,8 +447,8 @@ namespace AnalysisExample {
 
     // All of the above is based on objects entirely produced by the
     // simulation. Let's try to do something based on reconstructed
-    // objects. A Hit (see $SRT_PUBLIC_CONTEXT/RecoBase/Hit.h) is a 2D
-    // object in a plane.
+    // objects. A Hit (see ${LARDATA_DIR}/include/RecoBase/Hit.h) is a
+    // 2D object in a plane.
 
     // This code duplicates much of the code in the previous big
     // simulation loop, and will produce the similar results. (It won't
@@ -546,7 +546,7 @@ namespace AnalysisExample {
 				// Did we find this track ID in the particle map? It's possible
 				// for the answer to be "no"; some particles are too low in kinetic
 				// energy to be written by the simulation (see 
-				// $SRT_PUBLIC_CONTEXT/job/simulationservices.fcl, 
+				// ${LARSIM_DIR}/job/simulationservices.fcl, 
 				// parameter ParticleKineticEnergyCut).
 				if ( search != particleMap.end() )
 				  {
@@ -651,7 +651,7 @@ namespace AnalysisExample {
     // - To know what associations exist, you have to be a 'code
     // detective'. The important clue is to look for a 'produces' line
     // in the code that writes objects to an art::Event. For example,
-    // in $SRT_PUBLIC_CONTEXT/LArG4/LArG4_module.cc, you'll see this
+    // in ${LARSIM_DIR}/source/LArG4/LArG4_module.cc, you'll see this
     // line:
 
     // produces< art::Assns<simb::MCTruth, simb::MCParticle> >();
@@ -679,7 +679,7 @@ namespace AnalysisExample {
 	// I'm going to be lazy, and just look at the simb::MCTruth
 	// object associated with the first simb::MCParticle we read
 	// in. (The main reason I'm being lazy is that if I used the
-	// single-particle generator in prodsinglesim.fcl, every
+	// single-particle generator in prodsingle.fcl, every
 	// particle in the event is going to be associated with just
 	// the one primary particle from the event generator.)
 
@@ -703,8 +703,8 @@ namespace AnalysisExample {
 	    // to write the event, run, or subrun numbers; the message
 	    // facility takes care of that automatically.  I'm "going
 	    // at warp speed" with the vectors, pointers, and methods;
-	    // see $NUTOOLS_INC/SimulationBase/MCTruth.h and
-	    // $NUTOOLS_INC/SimulationBase/MCParticle.h for the
+	    // see ${NUTOOLS_DIR}/include/SimulationBase/MCTruth.h and
+	    // ${NUTOOLS_DIR}/include/SimulationBase/MCParticle.h for the
 	    // nested calls I'm using.
 	    mf::LogInfo("AnalysisExample")  
 	      << "Particle ID=" << particleHandle->at( particle_index ).TrackId()
@@ -741,10 +741,10 @@ namespace AnalysisExample {
 
     // We have to include fClusterProducerLabel, since that's the step
     // that created the art::Assns<recob::Hit,recob::Cluster> object;
-    // look in $SRT_PUBLIC_CONTEXT/ClusterFinder/DBcluster_module.cc
-    // and search for the 'produces' lines. (I did not know this
-    // before I wrote these lines. I had to be a code detective and
-    // use UNIX tools like 'grep' and 'find' to locate that routine.)
+    // look at the modules in ${LARRECO_DIR}/source/ClusterFinder/ and
+    // search for the 'produces' lines. (I did not know this before I
+    // wrote these lines. I had to be a code detective and use UNIX
+    // tools like 'grep' and 'find' to locate those routines.)
     art::FindManyP<recob::Hit> findManyHits(clusterHandle, event, fClusterProducerLabel);
 
     if ( findManyHits.isValid() )
@@ -772,7 +772,8 @@ namespace AnalysisExample {
     else
       {
 	mf::LogError("AnalysisExample")  
-	  << "findManyHits recob::Hit for recob::Cluster failed!";
+	  << "findManyHits recob::Hit for recob::Cluster failed;"
+	  << " cluster label='" << fClusterProducerLabel << "'";
       }
 
     return;
