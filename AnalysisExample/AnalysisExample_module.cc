@@ -37,6 +37,7 @@
 #include "art/Framework/Core/FindManyP.h"
 #include "messagefacility/MessageLogger/MessageLogger.h"
 #include "fhiclcpp/ParameterSet.h"
+#include "cetlib/exception.h"
 
 // ROOT includes. Note: To look up the properties of the ROOT classes,
 // use the ROOT web site; e.g.,
@@ -130,6 +131,13 @@ namespace AnalysisExample {
     art::ServiceHandle<geo::Geometry> fGeometry;       // pointer to Geometry service
     double                            fElectronsToGeV; // conversion factor
 
+    // The maximum size of fdEdxBins; in other words, it's the
+    // capacity of the vector. If we ever perform an operation that
+    // causes it to exceed this limit, it would mean fdEdxBins would
+    // shift in memory, the n-tuple branch would point to the wrong
+    // location in memory, and everything would go wonky.
+    unsigned int fMaxCapacity;
+
   }; // class AnalysisExample
 
 
@@ -175,10 +183,11 @@ namespace AnalysisExample {
 
     // Set up the vector that will be used to accumulate the dE/dx
     // values into bins. We want the capacity of this vector to be big
-    // enough to hold the bins of the longest possible track in the
-    // detector. The following code will work if the detector has just
-    // one TPC; if there's a possibility that a single track could go
-    // through multiple TPCs then you'll have to think some more.
+    // enough to hold the bins of the longest possible track.  The
+    // following code will work if the detector has just one TPC and
+    // all tracks are contained within it; if there's a possibility
+    // that a single track could go through or outside multiple TPCs
+    // then you'll have to think some more.
 
     // The reason we're doing this is that it's important that the
     // memory location of fdEdxBins.data() not change throughout the
@@ -189,8 +198,8 @@ namespace AnalysisExample {
     double maxLength = std::sqrt( detectorLength*detectorLength 
 				  + detWidth*detWidth 
 				  + detHeight*detHeight );
-    int maxBins = int( maxLength / fBinSize ) + 1;
-    fdEdxBins.reserve(maxBins);
+    fMaxCapacity = (unsigned int)( maxLength / fBinSize ) + 1;
+    fdEdxBins.reserve(fMaxCapacity);
 
     // Define our n-tuples, which are limited forms of ROOT
     // TTrees. Start with the TTree itself.
@@ -214,7 +223,8 @@ namespace AnalysisExample {
     // For a variable-length array: include the number of bins.
     fSimulationNtuple->Branch("NdEdx",       &fNdEdxBins,      "NdEdx/I");
     // We're using a memory trick here: the data() method returns the
-    // address of the array inside the vector.
+    // address of the array inside the vector. Note after we call this
+    // method, the address of fdEdxBins must not change.
     fSimulationNtuple->Branch("dEdx",        fdEdxBins.data(), "dEdx[NdEdx]/D");
 
     // A similar definition for the reconstruction n-tuple. Note that we
@@ -419,9 +429,16 @@ namespace AnalysisExample {
 				unsigned int bin = (unsigned int)( distance / fBinSize );
 				
 				// Is the dE/dx array big enough to include this bin?
+				// And do we have the capacity for it?
 				if ( fdEdxBins.size() < bin+1 )
 				  {
-				    // No, so increase its size, padding it with zeros. 
+				    if ( bin+1 > fMaxCapacity )
+				      {
+					throw cet::exception("AnalysisExample") 
+					  << " Exceeded capacity of dEdx vector; "
+					  << " you need to revise maximum track length calculation";
+				      }
+				    //  Increase the array size, padding it with zeros. 
 				    fdEdxBins.resize( bin+1 , 0 );
 				  }
 
@@ -574,7 +591,13 @@ namespace AnalysisExample {
 					// if the vector for this track ID is big enough.
 					if ( dEdxMap[trackID].size() < bin+1 )
 					  {
-					    // It's not big enough, so increase its size, padding it 
+					    if ( bin+1 > fMaxCapacity )
+					      {
+						throw cet::exception("AnalysisExample") 
+						  << " Exceeded capacity of dEdx vector; "
+						  << " you need to revise maximum track length calculation";
+					      }
+					    // Increase the array size, padding it 
 					    // with zeroes.
 					    dEdxMap[trackID].resize( bin+1, 0 ); 
 					  }
