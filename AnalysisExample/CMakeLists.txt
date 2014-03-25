@@ -20,5 +20,5 @@ simple_plugin(AnalysisExample "module"
 
 install_headers()
 install_fhicl()
-install_source()
+install_source( EXTRAS ADDITIONAL_NOTES.txt README.txt )
 install_scripts()
