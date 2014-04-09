@@ -436,7 +436,7 @@ namespace AnalysisExample {
 				      {
 					throw cet::exception("AnalysisExample") 
 					  << " Exceeded capacity of dEdx vector; "
-					  << " you need to revise maximum track length calculation";
+					  << " you need to revise maximum track length calculation\n";
 				      }
 				    //  Increase the array size, padding it with zeros. 
 				    fdEdxBins.resize( bin+1 , 0 );
@@ -595,7 +595,7 @@ namespace AnalysisExample {
 					      {
 						throw cet::exception("AnalysisExample") 
 						  << " Exceeded capacity of dEdx vector; "
-						  << " you need to revise maximum track length calculation";
+						  << " you need to revise maximum track length calculation\n";
 					      }
 					    // Increase the array size, padding it 
 					    // with zeroes.
