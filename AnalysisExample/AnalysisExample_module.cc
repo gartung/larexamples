@@ -537,7 +537,7 @@ namespace AnalysisExample {
 			// energy deposits corresponds to the time
 			// of the hit.
 			int time = timeSlice.first; 
-			if ( time >= hit.StartTime() && time <= hit.EndTime() )
+			if ( time >= hit.StartTick() && time <= hit.EndTick() )
 			  {
 			    // Loop over the energy deposits.
 			    auto const& energyDeposits = timeSlice.second;
