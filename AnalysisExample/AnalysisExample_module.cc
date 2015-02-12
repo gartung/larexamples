@@ -537,7 +537,7 @@ namespace AnalysisExample {
 			// energy deposits corresponds to the time
 			// of the hit.
 			int time = timeSlice.first; 
-			if ( time >= hit.StartTime() && time <= hit.EndTime() )
+			if ( std::abs(hit.TimeDistanceAsRMS(time)) < 1.0 )
 			  {
 			    // Loop over the energy deposits.
 			    auto const& energyDeposits = timeSlice.second;
