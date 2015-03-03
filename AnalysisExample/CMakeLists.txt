@@ -1,3 +1,6 @@
+IF(ALT_CMAKE)
+INCLUDE(altCMakeLists.cmake)
+ELSE()
 
 simple_plugin(AnalysisExample "module"
 			Geometry_service
@@ -22,3 +25,4 @@ install_headers()
 install_fhicl()
 install_source( EXTRAS ADDITIONAL_NOTES.txt README.txt )
 install_scripts()
+ENDIF()
