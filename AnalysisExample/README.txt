@@ -18,8 +18,8 @@ The example program in package AnalysisExample does the following:
 
 - has a couple of brief examples of how to use associations. 
 
-There are comments (perhaps too many!) in every file, even "utility"
-files like CMakeLists.txt, that explain what everything does.
+There are comments (perhaps too many!) in every file to explain what
+everything does.
 
 If you want to understand what you're supposed to learn from all this,
 read ADDITIONAL_NOTES.txt in this directory.

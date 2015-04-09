@@ -684,10 +684,11 @@ namespace AnalysisExample {
     // generator) and the simb::MCParticle objects (the secondary
     // particles produced in the detector simulation).
 
-    // Let's try it. The following command will find the sim::MCTruth
-    // objects associated with the simb::MCParticle objects in the event:
+    // Let's try it. The following statement will find the
+    // sim::MCTruth objects associated with the simb::MCParticle
+    // objects in the event (referenced by particleHandle):
 
-    art::FindManyP<simb::MCTruth> findManyTruth(particleHandle, event, fSimulationProducerLabel);
+    const art::FindManyP<simb::MCTruth> findManyTruth(particleHandle, event, fSimulationProducerLabel);
 
     // Note that we still have to supply the module label of the step
     // that created the association. Also note that we did not have to
@@ -766,9 +767,9 @@ namespace AnalysisExample {
     // that created the art::Assns<recob::Hit,recob::Cluster> object;
     // look at the modules in ${LARRECO_DIR}/source/ClusterFinder/ and
     // search for the 'produces' lines. (I did not know this before I
-    // wrote these lines. I had to be a code detective and use UNIX
+    // wrote these comments. I had to be a code detective and use UNIX
     // tools like 'grep' and 'find' to locate those routines.)
-    art::FindManyP<recob::Hit> findManyHits(clusterHandle, event, fClusterProducerLabel);
+    const art::FindManyP<recob::Hit> findManyHits(clusterHandle, event, fClusterProducerLabel);
 
     if ( findManyHits.isValid() )
       {
