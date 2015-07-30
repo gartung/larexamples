@@ -23,11 +23,13 @@
 #include "RecoBase/Hit.h"
 #include "RecoBase/Cluster.h"
 #include "Geometry/Geometry.h"
+#include "Geometry/GeometryCore.h"
 #include "SimulationBase/MCParticle.h"
 #include "SimulationBase/MCTruth.h"
 #include "SimpleTypesAndConstants/geo_types.h"
 
 // Framework includes
+#include "art/Utilities/Exception.h"
 #include "art/Framework/Core/EDAnalyzer.h"
 #include "art/Framework/Principal/Event.h"
 #include "art/Framework/Principal/Handle.h"
@@ -37,7 +39,6 @@
 #include "art/Framework/Core/FindManyP.h"
 #include "messagefacility/MessageLogger/MessageLogger.h"
 #include "fhiclcpp/ParameterSet.h"
-#include "cetlib/exception.h"
 
 // ROOT includes. Note: To look up the properties of the ROOT classes,
 // use the ROOT web site; e.g.,
@@ -51,8 +52,8 @@
 // C++ Includes
 #include <map>
 #include <vector>
-#include <algorithm>
-#include <iostream>
+#include <algorithm> // std::copy()
+#include <iterator> // std::back_inserter()
 #include <string>
 #include <cmath>
 
@@ -68,7 +69,6 @@ namespace AnalysisExample {
  
     // Standard constructor and destructor for an ART module.
     explicit AnalysisExample(fhicl::ParameterSet const& pset);
-    virtual ~AnalysisExample();
 
     // This method is called once, at the start of the job. In this
     // example, it will define the histograms and n-tuples we'll write.
@@ -128,8 +128,8 @@ namespace AnalysisExample {
     std::vector<double> fdEdxBins;
 
     // Other variables that will be shared between different methods.
-    art::ServiceHandle<geo::Geometry> fGeometry;       // pointer to Geometry service
-    double                            fElectronsToGeV; // conversion factor
+    geo::Geometry const* fGeometry;       // pointer to Geometry service
+    double               fElectronsToGeV; // conversion factor
 
     // The maximum size of fdEdxBins; in other words, it's the
     // capacity of the vector. If we ever perform an operation that
@@ -150,15 +150,13 @@ namespace AnalysisExample {
   AnalysisExample::AnalysisExample(fhicl::ParameterSet const& parameterSet)
     : EDAnalyzer(parameterSet)
   {
+    // get a pointer to the geometry service provider
+    fGeometry = &*(art::ServiceHandle<geo::Geometry>());
+    
     // Read in the parameters from the .fcl file.
-    this->reconfigure(parameterSet);
+    reconfigure(parameterSet);
   }
 
-  //-----------------------------------------------------------------------
-  // Destructor
-  AnalysisExample::~AnalysisExample() 
-  {}
-   
   //-----------------------------------------------------------------------
   void AnalysisExample::beginJob()
   {
@@ -434,7 +432,7 @@ namespace AnalysisExample {
 				  {
 				    if ( bin+1 > fMaxCapacity )
 				      {
-					throw cet::exception("AnalysisExample") 
+					throw art::Exception(art::errors::LogicError) 
 					  << " Exceeded capacity of dEdx vector; "
 					  << " you need to revise maximum track length calculation\n";
 				      }
