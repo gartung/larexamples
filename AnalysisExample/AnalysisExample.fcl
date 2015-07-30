@@ -12,9 +12,9 @@
 # configurations one by one, according to what is directly used in
 # AnalysisExample plus a bit of knowledge about what each service depends on
 #
-#include "geometry.fcl"
+#include "geometry_argoneut.fcl"
 #include "messageservice.fcl"
-#include "simulationservices.fcl"
+#include "simulationservices_argoneut.fcl"
 
 process_name: AnalysisExample
 
@@ -51,17 +51,17 @@ services:
   # - Geometry service:
   #   provides information about the geometry of the detector and the mapping
   #   of TPC channels to the wires.
-  #   Needed by AnalysisExample module; from larcore/Geometry/geometry.fcl .
-  Geometry:               @local::standard_geo
+  #   Needed by AnalysisExample module; from larcore/Geometry/geometry_argoneut.fcl .
+  Geometry:               @local::argoneut_geo
   #
   # - Geometry service helper:
   #   used internally by Geometry to set up the channel mappings.
-  #   Needed by Geometry service; from larcore/Geometry/geometry.fcl .
-  ExptGeoHelperInterface: @local::standard_geometry_helper
+  #   Needed by Geometry service; from larcore/Geometry/geometry_argoneut.fcl .
+  ExptGeoHelperInterface: @local::argoneut_geometry_helper
   #
   # - Geant4 simulation parameters for liquid argon
-  #   Needed by AnalysisExample module; from larsim/Simulation/simulationservices.fcl .
-  LArG4Parameters:        @local::standard_largeantparameters
+  #   Needed by AnalysisExample module; from larsim/Simulation/simulationservices_argoneut.fcl .
+  LArG4Parameters:        @local::argoneut_largeantparameters
 
 } # services
 
