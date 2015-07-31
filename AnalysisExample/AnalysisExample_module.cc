@@ -131,13 +131,6 @@ namespace AnalysisExample {
     geo::Geometry const* fGeometry;       // pointer to Geometry service
     double               fElectronsToGeV; // conversion factor
 
-    // The maximum size of fdEdxBins; in other words, it's the
-    // capacity of the vector. If we ever perform an operation that
-    // causes it to exceed this limit, it would mean fdEdxBins would
-    // shift in memory, the n-tuple branch would point to the wrong
-    // location in memory, and everything would go wonky.
-    unsigned int fMaxCapacity;
-
   }; // class AnalysisExample
 
 
@@ -179,26 +172,6 @@ namespace AnalysisExample {
     fMomentumHist    = tfs->make<TH1D>("mom",     ";particle Momentum (GeV);",    100, 0.,    10.);
     fTrackLengthHist = tfs->make<TH1D>("length",  ";particle track length (cm);", 200, 0, detectorLength);
 
-    // Set up the vector that will be used to accumulate the dE/dx
-    // values into bins. We want the capacity of this vector to be big
-    // enough to hold the bins of the longest possible track.  The
-    // following code will work if the detector has just one TPC and
-    // all tracks are contained within it; if there's a possibility
-    // that a single track could go through or outside multiple TPCs
-    // then you'll have to think some more.
-
-    // The reason we're doing this is that it's important that the
-    // memory location of fdEdxBins.data() not change throughout the
-    // execution of the program; see the TTree::Branch() calls below.
-
-    double detWidth  = fGeometry->DetHalfWidth()  * 2.;
-    double detHeight = fGeometry->DetHalfHeight() * 2.;
-    double maxLength = std::sqrt( detectorLength*detectorLength 
-				  + detWidth*detWidth 
-				  + detHeight*detHeight );
-    fMaxCapacity = (unsigned int)( maxLength / fBinSize ) + 1;
-    fdEdxBins.reserve(fMaxCapacity);
-
     // Define our n-tuples, which are limited forms of ROOT
     // TTrees. Start with the TTree itself.
     fSimulationNtuple     = tfs->make<TTree>("AnalysisExampleSimulation",    "AnalysisExampleSimulation");
@@ -220,10 +193,8 @@ namespace AnalysisExample {
     fSimulationNtuple->Branch("EndPE",       fEndPE,           "EndPE[4]/D");
     // For a variable-length array: include the number of bins.
     fSimulationNtuple->Branch("NdEdx",       &fNdEdxBins,      "NdEdx/I");
-    // We're using a memory trick here: the data() method returns the
-    // address of the array inside the vector. Note after we call this
-    // method, the address of fdEdxBins must not change.
-    fSimulationNtuple->Branch("dEdx",        fdEdxBins.data(), "dEdx[NdEdx]/D");
+    // ROOT can understand fairly well vectors of numbers (and little more)
+    fSimulationNtuple->Branch("dEdx",        &fdEdxBins);
 
     // A similar definition for the reconstruction n-tuple. Note that we
     // use some of the same variables in both n-tuples.
@@ -233,7 +204,7 @@ namespace AnalysisExample {
     fReconstructionNtuple->Branch("TrackID", &fTrackID,        "TrackID/I");
     fReconstructionNtuple->Branch("PDG",     &fPDG,            "PDG/I");
     fReconstructionNtuple->Branch("NdEdx",   &fNdEdxBins,      "NdEdx/I");
-    fReconstructionNtuple->Branch("dEdx",    fdEdxBins.data(), "dEdx[NdEdx]/D");
+    fReconstructionNtuple->Branch("dEdx",    &fdEdxBins);
   }
    
   //-----------------------------------------------------------------------
@@ -241,7 +212,8 @@ namespace AnalysisExample {
   {
     // How to convert from number of electrons to GeV.  The ultimate
     // source of this conversion factor is
-    // ${LARSIM_DIR}/include/SimpleTypesAndConstants/PhysicalConstants.h.
+    // ${LARCORE_INC}/SimpleTypesAndConstants/PhysicalConstants.h.
+    // But sim::LArG4Parameters might in principle ask a database for it.
     art::ServiceHandle<sim::LArG4Parameters> larParameters;
     fElectronsToGeV = 1./larParameters->GeVToElectrons();
   }
@@ -430,12 +402,6 @@ namespace AnalysisExample {
 				// And do we have the capacity for it?
 				if ( fdEdxBins.size() < bin+1 )
 				  {
-				    if ( bin+1 > fMaxCapacity )
-				      {
-					throw art::Exception(art::errors::LogicError) 
-					  << " Exceeded capacity of dEdx vector; "
-					  << " you need to revise maximum track length calculation\n";
-				      }
 				    //  Increase the array size, padding it with zeros. 
 				    fdEdxBins.resize( bin+1 , 0 );
 				  }
@@ -556,7 +522,7 @@ namespace AnalysisExample {
 				// C++ containers, you'll have to learn
 				// about iterators eventually; do a web
 				// search on "STL iterator" to get started.
-				auto const& search = particleMap.find( energyDeposit.trackID );
+				auto search = particleMap.find( energyDeposit.trackID );
 		    
 				// Did we find this track ID in the particle map? It's possible
 				// for the answer to be "no"; some particles are too low in kinetic
@@ -589,12 +555,6 @@ namespace AnalysisExample {
 					// if the vector for this track ID is big enough.
 					if ( dEdxMap[trackID].size() < bin+1 )
 					  {
-					    if ( bin+1 > fMaxCapacity )
-					      {
-						throw cet::exception("AnalysisExample") 
-						  << " Exceeded capacity of dEdx vector; "
-						  << " you need to revise maximum track length calculation\n";
-					      }
 					    // Increase the array size, padding it 
 					    // with zeroes.
 					    dEdxMap[trackID].resize( bin+1, 0 ); 
@@ -628,11 +588,8 @@ namespace AnalysisExample {
 	const std::vector<double>& dEdx = dEdxEntry.second;
 	fNdEdxBins = dEdx.size();
 
-	// Copy this track's dE/dx information. "back_inserter" means
-	// "instead of overwriting elements in the fdEdxBins vector,
-	// add the new elements to the end."
-	fdEdxBins.clear();
-	std::copy( dEdx.begin(), dEdx.end(), std::back_inserter(fdEdxBins) );
+	// Copy this track's dE/dx information.
+	fdEdxBins = dEdx;
 
 	// At this point, we've filled in all the reconstruction
 	// n-tuple's variables. Write it.
