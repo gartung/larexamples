@@ -63,6 +63,24 @@
 #include <string>
 #include <cmath>
 
+
+namespace {
+  
+  // This is a anonymous namespace (the one below, instead, has a name:
+  // "AnalysisExample").
+  // The stuff you declare in an anonymous namespace will not be visible
+  // beyond this file (more technically, this "translation unit", that is
+  // everything that gets included in the .cc file from now on).
+  // In this way, you don't pollute the environment of other modules.
+  
+  // We will define this function at the end, but we at least declare it here
+  // so that the module can freely use it.
+  /// Utility function to get the diagonal of the detector
+  float DetectorDiagonal(geo::GeometryCore const& geom);
+  
+} // local namespace
+
+
 namespace AnalysisExample {
 
   //-----------------------------------------------------------------------
@@ -220,9 +238,9 @@ namespace AnalysisExample {
     /// @}
 
     // Other variables that will be shared between different methods.
-    geo::Geometry const* fGeometry;       ///< pointer to Geometry service
-    double               fElectronsToGeV; ///< conversion factor
-
+    geo::GeometryCore const* fGeometry;       ///< pointer to Geometry provider
+    double                   fElectronsToGeV; ///< conversion factor
+    
   }; // class AnalysisExample
 
 
@@ -233,7 +251,7 @@ namespace AnalysisExample {
   //-----------------------------------------------------------------------
   // Constructor
   AnalysisExample::AnalysisExample(fhicl::ParameterSet const& parameterSet)
-    : EDAnalyzer(parameterSet) // FIXME consistent parameter naming
+    : EDAnalyzer(parameterSet)
   {
     // get a pointer to the geometry service provider
     fGeometry = &*(art::ServiceHandle<geo::Geometry>());
@@ -242,12 +260,13 @@ namespace AnalysisExample {
     reconfigure(parameterSet);
   }
 
+  
   //-----------------------------------------------------------------------
   void AnalysisExample::beginJob()
   {
     // Get the detector length, to determine the maximum bin edge of one
     // of the histograms.
-    double detectorLength = fGeometry->DetLength(); 
+    const double detectorLength = DetectorDiagonal(*fGeometry);
 
     // Access ART's TFileService, which will handle creating and writing
     // histograms and n-tuples for us. 
@@ -343,7 +362,6 @@ namespace AnalysisExample {
     fRun    = event.run();
     fSubRun = event.subRun();
 
-    // FIXME use art::ValidHandle
     // This is the standard method of reading multiple objects
     // associated with the same event; see
     // <https://cdcvs.fnal.gov/redmine/projects/larsoftsvn/wiki/Using_the_Framework>
@@ -431,14 +449,11 @@ namespace AnalysisExample {
 	  {
 	    // A particle has a trajectory, consisting of a set of
 	    // 4-positions and 4-mommenta.
-	    size_t numberTrajectoryPoints = particle.NumberTrajectoryPoints();
+	    const size_t numberTrajectoryPoints = particle.NumberTrajectoryPoints();
 
-	    // FIXME add check on number of trajectory points
-	    // FIXME move the code to where it is used
-	    // FIXME mark const the stuff that is constant
 	    // For trajectories, as for vectors and arrays, the
 	    // first point is #0, not #1.
-	    int last = numberTrajectoryPoints - 1;
+	    const int last = numberTrajectoryPoints - 1;
 	    const TLorentzVector& positionStart = particle.Position(0);
 	    const TLorentzVector& positionEnd   = particle.Position(last);
 	    const TLorentzVector& momentumStart = particle.Momentum(0);
@@ -455,12 +470,12 @@ namespace AnalysisExample {
 	    momentumStart.GetXYZT( fStartPE );
 	    momentumEnd.GetXYZT( fEndPE );
 
-	    // FIXME mark it constant
-	    // BUG it seems not to work as expected... why?
 	    // Use a polar-coordinate view of the 4-vectors to
 	    // get the track length.
-	    double trackLength = ( positionEnd - positionStart ).Rho();
-
+	    const double trackLength = ( positionEnd - positionStart ).Rho();
+	    LOG_DEBUG("AnalysisExample")
+	      << "Track length: " << trackLength << " cm";
+	    
 	    // Fill a histogram of the track length.
 	    fTrackLengthHist->Fill( trackLength ); 
 
@@ -480,7 +495,6 @@ namespace AnalysisExample {
 	    // Initialize the vector of dE/dx bins to empty.
 	    fSimdEdxBins.clear();
 
-	    // FIXME add comment about a different way to get the information
 	    // To look at the energy deposited by this particle's track,
 	    // we loop over the SimChannel objects in the event.
 	    for ( auto const& channel : (*simChannelHandle) )
@@ -492,79 +506,74 @@ namespace AnalysisExample {
 		// It's raw::ChannelID_t, anyway.)
 		auto channelNumber = channel.Channel();
 
-		// FIXME change into a "continue" statement
 		// A little care: There is more than one plane that
 		// reacts to charge in the TPC. We only want to
 		// include the energy from the collection plane.
 		// (geo::kCollection is defined in
 		// ${LARCORE_INC}/SimpleTypesAndConstants/geo_types.h)
-		if ( fGeometry->SignalType( channelNumber ) == geo::kCollection )
+		if ( fGeometry->SignalType( channelNumber ) != geo::kCollection )
+		  continue;
+		
+	    // Each channel has a map inside it that connects
+	    // a time slice to energy deposits in the
+	    // detector. This is an implementation of the concept of
+	    // "sparse vector": very few of the time slices have charge
+	    // information, for most of the time no particle passes nearby
+	    // (this is MC, we don't have noise at this level).
+	    // So instead of using a long vector full of zeroes, we use a map
+	    // that for each time when there was actually charge, it stores
+	    // both time and charge information.
+	    // We'll use "auto", but it's worth
+	    // noting that the full type of this map is
+	    // std::map<unsigned short, std::vector<sim::IDE>>;
+	    auto const& timeSlices = channel.TDCIDEMap();
+	    
+	    // For every time slice in this channel:
+	    for ( auto const& timeSlice : timeSlices )
+	      {
+		// Each entry in a map is a pair<first,second>.
+		// For the timeSlices map, the 'first' is a time
+		// slice number, which we don't care about in this
+		// example. The 'second' is a vector of IDE
+		// objects.
+		auto const& energyDeposits = timeSlice.second;
+		
+		// Loop over the energy deposits.
+		// An energy deposit is something that knows how much charge/energy
+		// was deposited in a small volume, by which particle, and where.
+		// The type of 'energyDeposit' will be sim::IDE, which is
+		// defined in ${LARSIM_INC}/Simulation/SimChannel.h.
+		for ( auto const& energyDeposit : energyDeposits )
 		  {
-		    // Each channel has a map inside it that connects
-		    // a time slice to energy deposits in the
-		    // detector. This is an implementation of the concept of
-		    // "sparse vector": very few of the time slices have charge
-		    // information, for most of the time no particle passes nearby
-		    // (this is MC, we don't have noise at this level).
-		    // So instead of using a long vector full of zeroes, we use a map
-		    // that for each time when there was actually charge, it stores
-		    // both time and charge information.
-		    // We'll use "auto", but it's worth
-		    // noting that the full type of this map is
-		    // std::map<unsigned short, std::vector<sim::IDE>>;
-		    auto const& timeSlices = channel.TDCIDEMap();
-		    
-		    // For every time slice in this channel:
-		    for ( auto const& timeSlice : timeSlices )
-		      {
-			// Each entry in a map is a pair<first,second>.
-			// For the timeSlices map, the 'first' is a time
-			// slice number, which we don't care about in this
-			// example. The 'second' is a vector of IDE
-			// objects.
-			auto const& energyDeposits = timeSlice.second;
-			
-			// Loop over the energy deposits.
-			// An energy deposit is something that knows how much charge/energy
-			// was deposited in a small volume, by which particle, and where.
-			// The type of 'energyDeposit' will be sim::IDE, which is
-			// defined in ${LARSIM_INC}/Simulation/SimChannel.h.
-			for ( auto const& energyDeposit : energyDeposits )
-			  {
-			    // FIXME turn this in a "continue"
-			    // Check if the track that deposited the
-			    // energy matches the track of the particle.
-			    if ( energyDeposit.trackID == fSimTrackID )
-			      {
-				// Get the (x,y,z) of the energy deposit.
-				TVector3 location( energyDeposit.x,
-						   energyDeposit.y,
-						   energyDeposit.z );
-				
-				/// FIXME make this constant
-				// Distance from the start of the track.
-				double distance = ( location - positionStart.Vect() ).Mag();
-				
-				// Into which bin of the dE/dx array do we add the energy?
-				unsigned int bin = (unsigned int)( distance / fBinSize );
-				
-				// Is the dE/dx array big enough to include this bin?
-				if ( fSimdEdxBins.size() < bin+1 )
-				  {
-				    //  Increase the array size, padding it with zeros.
-				    //  Accommodate the new one too (that has index: #bin).
-				    fSimdEdxBins.resize( bin+1 , 0. );
-				  }
+		    // Check if the track that deposited the
+		    // energy matches the track of the particle.
+		    if ( energyDeposit.trackID != fSimTrackID ) continue;
+		// Get the (x,y,z) of the energy deposit.
+		TVector3 location( energyDeposit.x,
+				   energyDeposit.y,
+				   energyDeposit.z );
+		
+		// Distance from the start of the track.
+		const double distance = ( location - positionStart.Vect() ).Mag();
+		
+		// Into which bin of the dE/dx array do we add the energy?
+		const unsigned int bin = (unsigned int)( distance / fBinSize );
+		
+		// Is the dE/dx array big enough to include this bin?
+		if ( fSimdEdxBins.size() < bin+1 )
+		  {
+		    //  Increase the array size, padding it with zeros.
+		    //  Accommodate the new one too (that has index: #bin).
+		    fSimdEdxBins.resize( bin+1 , 0. );
+		  }
 
-				// Add the energy deposit to that bin. (If you look at the
-				// definition of sim::IDE, you'll see that there's another
-				// way to get the energy. Are the two methods equivalent?
-				// Compare the results and see!)
-				fSimdEdxBins[bin] += energyDeposit.numElectrons * fElectronsToGeV;
-			      }
-			  } // For each energy deposit
-		      } // For each time slice
-		  } // If channel is in a collection plane
+		// Add the energy deposit to that bin. (If you look at the
+		// definition of sim::IDE, you'll see that there's another
+		// way to get the energy. Are the two methods equivalent?
+		// Compare the results and see!)
+		fSimdEdxBins[bin] += energyDeposit.numElectrons * fElectronsToGeV;
+	  } // For each energy deposit
+	        } // For each time slice
 	      } // For each SimChannel
 
 	    // At this point we've filled in the values of all the
@@ -631,106 +640,107 @@ namespace AnalysisExample {
 	// The channel associated with this hit.
 	auto hitChannelNumber = hit.Channel();
 
-	// TODO Again, convert to "continue"
 	// Again, for this example let's just focus on the collection plane.
-	if ( fGeometry->SignalType( hitChannelNumber ) == geo::kCollection )
+	if ( fGeometry->SignalType( hitChannelNumber ) != geo::kCollection )
+	  continue;
+    // In the simulation section, we started with particles to find
+    // channels with a matching track ID. Now we search in reverse:
+    // search the SimChannels for matching channel number, then look
+    // at the tracks inside the channel.
+    
+    for ( auto const& channel : (*simChannelHandle) )
+      {
+	auto simChannelNumber = channel.Channel();
+	
+	if ( simChannelNumber != hitChannelNumber ) continue;
+    // For every time slice in this channel:
+    auto const& timeSlices = channel.TDCIDEMap();
+    for ( auto const& timeSlice : timeSlices )
+      {
+	// A channel will contain all the energy
+	// deposited on a wire, but there can be
+	// more than one hit associated with a
+	// wire. To prevent double-counting the
+	// energy, make sure the time of these
+	// energy deposits corresponds to the time
+	// of the hit.
+	int time = timeSlice.first; 
+	if ( std::abs(hit.TimeDistanceAsRMS(time)) < 1.0 )
 	  {
-	    // In the simulation section, we started with particles to find
-	    // channels with a matching track ID. Now we search in reverse:
-	    // search the SimChannels for matching channel number, then look
-	    // at the tracks inside the channel.
-	    
-	    for ( auto const& channel : (*simChannelHandle) )
+	    // Loop over the energy deposits.
+	    auto const& energyDeposits = timeSlice.second;
+	    for ( auto const& energyDeposit : energyDeposits )
 	      {
-		auto simChannelNumber = channel.Channel();
+		// Remember that map of MCParticles we created
+		// near the top of this method? Now we can
+		// use it. Search the map for the track ID
+		// associated with this energy deposit.
+		// Since a map is automatically sorted, we can
+		// use a fast binary search method, 'find()'.
 		
-		// TODO convert to "continue"
-		if ( simChannelNumber == hitChannelNumber )
+		// By the way, the type of "search" is an
+		// iterator (to be specific, it's an
+		// std::map<int,simb::MCParticle*>::const_iterator,
+		// which makes you thankful for the "auto"
+		// keyword). If you're going to work with
+		// C++ containers, you'll have to learn
+		// about iterators eventually; do a web
+		// search on "STL iterator" to get started.
+		auto search = particleMap.find( energyDeposit.trackID );
+    
+		// Did we find this track ID in the particle map? It's possible
+		// for the answer to be "no"; some particles are too low in kinetic
+		// energy to be written by the simulation (see 
+		// ${LARSIM_DIR}/job/simulationservices.fcl, 
+		// parameter ParticleKineticEnergyCut).
+		if ( search == particleMap.end() ) continue;
+	    // "search" points to a pair in the map: <track ID, MCParticle*>
+	    int trackID = (*search).first;
+	    const simb::MCParticle& particle = *((*search).second);
+	    
+	    // Is this a primary particle, with a PDG code that
+	    // matches the user input?
+	    if ( particle.Process() == "primary" 
+		 && particle.PdgCode() == fSelectedPDG )
+	      {
+		// Determine the dE/dx of this particle.
+		const TLorentzVector& positionStart = particle.Position(0);
+		TVector3 location( energyDeposit.x,
+				   energyDeposit.y,
+				   energyDeposit.z );
+		double distance = ( location - positionStart.Vect() ).Mag();
+		unsigned int bin = int( distance / fBinSize );
+		double energy = energyDeposit.numElectrons * fElectronsToGeV;
+		
+		// A feature of maps: if we refer to dEdxMap[trackID], and
+		// there's no such entry in the map yet, it will be
+		// automatically created with a zero-size vector. Test to see
+		// if the vector for this track ID is big enough.
+		// dEdxMap is a map; althought it's not the slowest container in the
+		// known universe, it's not fast either. If we are going to access the
+		// same element over and over, it is a good idea to find that element
+		// once, and then refer to that item directly.
+		// Since we don't really care of the specific type (a vector, by the way),
+		// we can use "auto" to save some time. This must be a reference,
+		// since we want to change the original value in the map, and
+		// can't be constant (also note that the operator[] of maps do change
+		// the map).
+		auto& track_dEdX = dEdxMap[trackID];
+		if ( track_dEdX.size() < bin+1 )
 		  {
-		    // For every time slice in this channel:
-		    auto const& timeSlices = channel.TDCIDEMap();
-		    for ( auto const& timeSlice : timeSlices )
-		      {
-			// A channel will contain all the energy
-			// deposited on a wire, but there can be
-			// more than one hit associated with a
-			// wire. To prevent double-counting the
-			// energy, make sure the time of these
-			// energy deposits corresponds to the time
-			// of the hit.
-			int time = timeSlice.first; 
-			if ( std::abs(hit.TimeDistanceAsRMS(time)) < 1.0 )
-			  {
-			    // Loop over the energy deposits.
-			    auto const& energyDeposits = timeSlice.second;
-			    for ( auto const& energyDeposit : energyDeposits )
-			      {
-				// Remember that map of MCParticles we created
-				// near the top of this method? Now we can
-				// use it. Search the map for the track ID
-				// associated with this energy deposit.
-				// Since a map is automatically sorted, we can
-				// use a fast binary search method, 'find()'.
-				
-				// By the way, the type of "search" is an
-				// iterator (to be specific, it's an
-				// std::map<int,simb::MCParticle*>::const_iterator,
-				// which makes you thankful for the "auto"
-				// keyword). If you're going to work with
-				// C++ containers, you'll have to learn
-				// about iterators eventually; do a web
-				// search on "STL iterator" to get started.
-				auto search = particleMap.find( energyDeposit.trackID );
-		    
-				// Did we find this track ID in the particle map? It's possible
-				// for the answer to be "no"; some particles are too low in kinetic
-				// energy to be written by the simulation (see 
-				// ${LARSIM_DIR}/job/simulationservices.fcl, 
-				// parameter ParticleKineticEnergyCut).
-				// TODO convert to "continue"
-				if ( search != particleMap.end() )
-				  {
-				    // "search" points to a pair in the map: <track ID, MCParticle*>
-				    int trackID = (*search).first;
-				    const simb::MCParticle& particle = *((*search).second);
-				    
-				    // Is this a primary particle, with a PDG code that
-				    // matches the user input?
-				    if ( particle.Process() == "primary" 
-					 && particle.PdgCode() == fSelectedPDG )
-				      {
-					// Determine the dE/dx of this particle.
-					const TLorentzVector& positionStart = particle.Position(0);
-					TVector3 location( energyDeposit.x,
-							   energyDeposit.y,
-							   energyDeposit.z );
-					double distance = ( location - positionStart.Vect() ).Mag();
-					unsigned int bin = int( distance / fBinSize );
-					double energy = energyDeposit.numElectrons * fElectronsToGeV;
-					
-					// TODO use temporary variable for map element
-					// A feature of maps: if we refer to dEdxMap[trackID], and
-					// there's no such entry in the map yet, it will be
-					// automatically created with a zero-size vector. Test to see
-					// if the vector for this track ID is big enough.
-					if ( dEdxMap[trackID].size() < bin+1 )
-					  {
-					    // Increase the array size, padding it 
-					    // with zeroes.
-					    dEdxMap[trackID].resize( bin+1, 0 ); 
-					  }
-					
-					// Add the energy to the dE/dx bins for this track.
-					dEdxMap[trackID][bin] += energy;
-					
-				      } // particle selected
-				  } // found track ID in map
-			      } // loop over energy deposits
-			  } // channel time matches hit time
-		      } // loop over time slices
-		  } // channels match 
-	      } // for each SimChannel
-	  } // if hit in collection plane
+		    // Increase the array size, padding it 
+		    // with zeroes.
+		    track_dEdX.resize( bin+1, 0 ); 
+		  }
+		
+		// Add the energy to the dE/dx bins for this track.
+		track_dEdX[bin] += energy;
+		
+	      } // particle selected
+	      } // loop over energy deposits
+	  } // channel time matches hit time
+      } // loop over time slices
+      } // for each SimChannel
       } // for each Hit
 
     // We have a map of dE/dx vectors. Write each one of them to the
@@ -930,11 +940,25 @@ namespace AnalysisExample {
       }
 
   } // AnalysisExample::analyze()
-
+  
+  
   // This macro has to be defined for this module to be invoked from a
   // .fcl file; see AnalysisExample.fcl for more information.
   DEFINE_ART_MODULE(AnalysisExample)
 
 } // namespace AnalysisExample
+
+
+namespace {
+  // time to define that function...
+  float DetectorDiagonal(geo::GeometryCore const& geom) {
+    const double length = geom.DetLength();
+    const double width = 2. * geom.DetHalfWidth();
+    const double height = 2. * geom.DetHalfHeight();
+    
+    return std::sqrt(length*length + width*width + height*height);
+  } // DetectorDiagonal()
+} // local namespace
+
 
 #endif // AnalysisExample_Module
