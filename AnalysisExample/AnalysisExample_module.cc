@@ -121,7 +121,7 @@ namespace AnalysisExample {
     // Standard constructor for an ART module; we don't need a special
     // destructor here.
     /// Default constructor
-    explicit AnalysisExample(fhicl::ParameterSet const& pset);
+    explicit AnalysisExample(fhicl::ParameterSet const& parameterSet);
 
     // the following methods have a standard meaning and a standard signature
     // inherited from the framework (art::EDAnalyzer class).
@@ -155,10 +155,10 @@ namespace AnalysisExample {
     // method is called 'reconfigure' because it might be called in the
     // middle of a job; e.g., if the user changes parameter values in an
     // interactive event display.
-    virtual void reconfigure(fhicl::ParameterSet const& pset) override;
+    virtual void reconfigure(fhicl::ParameterSet const& parameterSet) override;
 
     // The analysis routine, called once per event. 
-    virtual void analyze (const art::Event& evt) override;
+    virtual void analyze (const art::Event& event) override;
 
   private:
 
@@ -185,8 +185,11 @@ namespace AnalysisExample {
     int fEvent;     ///< number of the event being processed
     int fRun;       ///< number of the run being processed
     int fSubRun;    ///< number of the sub-run being processed
-    int fPDG;       ///< PDG ID of the particle begin processed
-    int fTrackID;   ///< GEANT ID of the particle begin processed
+    
+    /// @name Variables used in the simulation tree
+    /// @{
+    int fSimPDG;       ///< PDG ID of the particle begin processed
+    int fSimTrackID;   ///< GEANT ID of the particle begin processed
     
     // Arrays for 4-vectors: (x,y,z,t) and (Px,Py,Pz,E).
     // Note: old-style C++ arrays are considered obsolete. However,
@@ -197,10 +200,24 @@ namespace AnalysisExample {
     double fEndPE[4];     ///< (Px,Py,Pz,E) at the true end of the particle
     
     /// Number of dE/dx bins in a given track.
-    int fNdEdxBins;
+    int fSimNdEdxBins;
     
     /// The vector that will be used to accumulate dE/dx values as function of range.
-    std::vector<double> fdEdxBins;
+    std::vector<double> fSimdEdxBins;
+    /// @}
+    
+    /// @name Variables used in the simulation tree
+    /// @{
+    int fRecoPDG;       ///< PDG ID of the particle begin processed
+    int fRecoTrackID;   ///< GEANT ID of the particle begin processed
+    
+    /// Number of dE/dx bins in a given track.
+    int fRecoNdEdxBins;
+    
+    /// The vector that will be used to accumulate dE/dx values as function of range.
+    std::vector<double> fRecodEdxBins;
+    
+    /// @}
 
     // Other variables that will be shared between different methods.
     geo::Geometry const* fGeometry;       ///< pointer to Geometry service
@@ -258,8 +275,8 @@ namespace AnalysisExample {
     fSimulationNtuple->Branch("Event",       &fEvent,          "Event/I");
     fSimulationNtuple->Branch("SubRun",      &fSubRun,         "SubRun/I");
     fSimulationNtuple->Branch("Run",         &fRun,            "Run/I");
-    fSimulationNtuple->Branch("TrackID",     &fTrackID,        "TrackID/I");
-    fSimulationNtuple->Branch("PDG",         &fPDG,            "PDG/I");
+    fSimulationNtuple->Branch("TrackID",     &fSimTrackID,     "TrackID/I");
+    fSimulationNtuple->Branch("PDG",         &fSimPDG,         "PDG/I");
     // When we write arrays, we give the address of the array to
     // TTree::Branch; in C++ this is simply the array name.
     fSimulationNtuple->Branch("StartXYZT",   fStartXYZT,       "StartXYZT[4]/D");
@@ -267,24 +284,37 @@ namespace AnalysisExample {
     fSimulationNtuple->Branch("StartPE",     fStartPE,         "StartPE[4]/D");
     fSimulationNtuple->Branch("EndPE",       fEndPE,           "EndPE[4]/D");
     // For a variable-length array: include the number of bins.
-    fSimulationNtuple->Branch("NdEdx",       &fNdEdxBins,      "NdEdx/I");
+    fSimulationNtuple->Branch("NdEdx",       &fSimNdEdxBins,   "NdEdx/I");
     // ROOT can understand fairly well vectors of numbers (and little more)
-    fSimulationNtuple->Branch("dEdx",        &fdEdxBins);
+    fSimulationNtuple->Branch("dEdx",        &fSimdEdxBins);
 
     // A similar definition for the reconstruction n-tuple. Note that we
     // use some of the same variables in both n-tuples.
     fReconstructionNtuple->Branch("Event",   &fEvent,          "Event/I");
     fReconstructionNtuple->Branch("SubRun",  &fSubRun,         "SubRun/I");
     fReconstructionNtuple->Branch("Run",     &fRun,            "Run/I");
-    fReconstructionNtuple->Branch("TrackID", &fTrackID,        "TrackID/I");
-    fReconstructionNtuple->Branch("PDG",     &fPDG,            "PDG/I");     // FIXME use a different variable
-    fReconstructionNtuple->Branch("NdEdx",   &fNdEdxBins,      "NdEdx/I");   // FIXME use a different variable
-    fReconstructionNtuple->Branch("dEdx",    &fdEdxBins);                    // FIXME use a different variable
+    fReconstructionNtuple->Branch("TrackID", &fRecoTrackID,    "TrackID/I");
+    fReconstructionNtuple->Branch("PDG",     &fRecoPDG,        "PDG/I");
+    fReconstructionNtuple->Branch("NdEdx",   &fRecoNdEdxBins,  "NdEdx/I");
+    fReconstructionNtuple->Branch("dEdx",    &fRecodEdxBins);
   }
    
   //-----------------------------------------------------------------------
   void AnalysisExample::beginRun(const art::Run& /*run*/)
   {
+    // art expects this function to have a art::Run argument;
+    // C++ expects us to use all the arguments we are given,
+    // or it will warn that we could have forgotten to use it
+    // (otherwise, why would be ever passing it around?).
+    // 
+    // But we don't actually need nor use it.
+    // 
+    // The trick to convince C++ that we know what we are doing is to omit
+    // (in this case, commenting out) the name of the parameter,
+    // still leaving it around. The argument will be still passed around,
+    // but we don't have any mean to use it, and the compiler will be satisfied
+    // with that.
+    
     // How to convert from number of electrons to GeV.  The ultimate
     // source of this conversion factor is
     // ${LARCORE_INC}/SimpleTypesAndConstants/PhysicalConstants.h.
@@ -294,16 +324,15 @@ namespace AnalysisExample {
   }
 
   //-----------------------------------------------------------------------
-  void AnalysisExample::reconfigure(fhicl::ParameterSet const& p)
+  void AnalysisExample::reconfigure(fhicl::ParameterSet const& parameterSet)
   {
     // Read parameters from the .fcl file. The names in the arguments
     // to p.get<TYPE> must match names in the .fcl file.
-    fSimulationProducerLabel = p.get< std::string >("SimulationLabel");
-    fHitProducerLabel        = p.get< std::string >("HitLabel");
-    fClusterProducerLabel    = p.get< std::string >("ClusterLabel");
-    fSelectedPDG             = p.get< int         >("PDGcode");
-    fBinSize                 = p.get< double      >("BinSize");
-    return;
+    fSimulationProducerLabel = parameterSet.get< std::string >("SimulationLabel");
+    fHitProducerLabel        = parameterSet.get< std::string >("HitLabel");
+    fClusterProducerLabel    = parameterSet.get< std::string >("ClusterLabel");
+    fSelectedPDG             = parameterSet.get< int         >("PDGcode");
+    fBinSize                 = parameterSet.get< double      >("BinSize");
   }
 
   //-----------------------------------------------------------------------
@@ -320,10 +349,15 @@ namespace AnalysisExample {
     // <https://cdcvs.fnal.gov/redmine/projects/larsoftsvn/wiki/Using_the_Framework>
     // for more information. Define a "handle" to point to a vector of
     // the objects.
-    art::Handle< std::vector<simb::MCParticle> > particleHandle;
     // Then tell the event to fill the vector with all the objects of
     // that type produced by a particular producer.
-    event.getByLabel(fSimulationProducerLabel, particleHandle);
+    // Here we use a art::ValidHandle because there is no way we can get away
+    // with the MCParticles not being there for us: if they are not available
+    // in the input file, art will throw a ProductNotFound exception and we
+    // will immediately know there is a problem.
+    art::ValidHandle< std::vector<simb::MCParticle> > particleHandle
+      = event.getValidHandle<std::vector<simb::MCParticle>>
+      (fSimulationProducerLabel);
 
     // Get all the simulated channels for the event. These channels
     // include the energy deposited for each track.
@@ -332,8 +366,9 @@ namespace AnalysisExample {
     // A single SimChannel is similar, but being from simulation only, it also
     // keeps track of the separate charge contribution of each particle
     // (in Geant jargon, which "track").
-    art::Handle< std::vector<sim::SimChannel> > simChannelHandle;
-    event.getByLabel(fSimulationProducerLabel, simChannelHandle);
+    art::ValidHandle< std::vector<sim::SimChannel> > simChannelHandle
+      = event.getValidHandle<std::vector<sim::SimChannel>>
+      (fSimulationProducerLabel);
 
     //
     // Let's do simulation part first
@@ -380,19 +415,19 @@ namespace AnalysisExample {
       {
 	// For the methods you can call to get particle information,
 	// see ${NUTOOLS_INC}/SimulationBase/MCParticle.h.
-	fTrackID = particle.TrackId();
+	fSimTrackID = particle.TrackId();
 
 	// Add the address of the MCParticle to the map, with the track ID as the key.
-	particleMap[fTrackID] = &particle; 
+	particleMap[fSimTrackID] = &particle; 
 
 	// Histogram the PDG code of every particle in the event.
-	fPDG = particle.PdgCode();
-	fPDGCodeHist->Fill( fPDG );
+	fSimPDG = particle.PdgCode();
+	fPDGCodeHist->Fill( fSimPDG );
 
 	// For this example, we want to fill the n-tuples and histograms
 	// only with information from the primary particles in the
 	// event, whose PDG codes match a value supplied in the .fcl file.
-	if ( particle.Process() == "primary"  &&  fPDG == fSelectedPDG )
+	if ( particle.Process() == "primary"  &&  fSimPDG == fSelectedPDG )
 	  {
 	    // A particle has a trajectory, consisting of a set of
 	    // 4-positions and 4-mommenta.
@@ -436,14 +471,14 @@ namespace AnalysisExample {
 	    // otherwise, so that there will be no overhead.
 	    // A bit of debug information is always useful; too much is detrimental.
 	    LOG_DEBUG("AnalysisExample")
-	      << "track ID=" << fTrackID << " (PDG ID: " << fPDG << ") "
+	      << "track ID=" << fSimTrackID << " (PDG ID: " << fSimPDG << ") "
 	      << trackLength << " cm long, momentum " << momentumStart.P()
 	      << " GeV/c, has " << numberTrajectoryPoints << " trajectory points";
 	    
 	    // Determine the number of dE/dx bins for the n-tuple.
-	    fNdEdxBins = int( trackLength / fBinSize ) + 1;
+	    fSimNdEdxBins = int( trackLength / fBinSize ) + 1;
 	    // Initialize the vector of dE/dx bins to empty.
-	    fdEdxBins.clear();
+	    fSimdEdxBins.clear();
 
 	    // FIXME add comment about a different way to get the information
 	    // To look at the energy deposited by this particle's track,
@@ -499,7 +534,7 @@ namespace AnalysisExample {
 			    // FIXME turn this in a "continue"
 			    // Check if the track that deposited the
 			    // energy matches the track of the particle.
-			    if ( energyDeposit.trackID == fTrackID )
+			    if ( energyDeposit.trackID == fSimTrackID )
 			      {
 				// Get the (x,y,z) of the energy deposit.
 				TVector3 location( energyDeposit.x,
@@ -514,18 +549,18 @@ namespace AnalysisExample {
 				unsigned int bin = (unsigned int)( distance / fBinSize );
 				
 				// Is the dE/dx array big enough to include this bin?
-				if ( fdEdxBins.size() < bin+1 )
+				if ( fSimdEdxBins.size() < bin+1 )
 				  {
 				    //  Increase the array size, padding it with zeros.
 				    //  Accommodate the new one too (that has index: #bin).
-				    fdEdxBins.resize( bin+1 , 0. );
+				    fSimdEdxBins.resize( bin+1 , 0. );
 				  }
 
 				// Add the energy deposit to that bin. (If you look at the
 				// definition of sim::IDE, you'll see that there's another
 				// way to get the energy. Are the two methods equivalent?
 				// Compare the results and see!)
-				fdEdxBins[bin] += energyDeposit.numElectrons * fElectronsToGeV;
+				fSimdEdxBins[bin] += energyDeposit.numElectrons * fElectronsToGeV;
 			      }
 			  } // For each energy deposit
 		      } // For each time slice
@@ -703,18 +738,18 @@ namespace AnalysisExample {
     for ( const auto& dEdxEntry : dEdxMap )
       {
 	// Here, the map entries are <first,second>=<track ID, dE/dx vector>
-	fTrackID = dEdxEntry.first;
+	fRecoTrackID = dEdxEntry.first;
 	// This is an example of how we'd pick out the PDG code if
 	// there are multiple particle types or tracks in a single
 	// event allowed in the n-tuple.
-	fPDG = particleMap[fTrackID]->PdgCode();
+	fRecoPDG = particleMap[fRecoTrackID]->PdgCode();
 
 	// Get the number of bins for this track.
 	const std::vector<double>& dEdx = dEdxEntry.second;
-	fNdEdxBins = dEdx.size();
+	fRecoNdEdxBins = dEdx.size();
 
 	// Copy this track's dE/dx information.
-	fdEdxBins = dEdx;
+	fRecodEdxBins = dEdx;
 
 	// At this point, we've filled in all the reconstruction
 	// n-tuple's variables. Write it.
