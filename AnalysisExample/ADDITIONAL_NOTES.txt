@@ -27,6 +27,9 @@ it by now). Believe it or not, it's to teach you something useful.
      you use the name of this class in a "module_type" statement in a
      .fcl file; there's an example in the sample .fcl file in this
      directory.
+     Also, that will help the system to compile it in its own library
+     and not to mix with other things and modules from the same
+     source directory.
 
  (4) If you're familiar with C++, then the "_module.cc" file takes the
      place of a 'main' routine in LArSoft. If you create any external
@@ -34,8 +37,9 @@ it by now). Believe it or not, it's to teach you something useful.
      package, you'll put the headers in a .h file and the
      implementation in a .cxx file.
 
- (5) Don't confuse the name "AnalysisExample" with the contents of the
-     package "AnalysisBase." The AnalysisBase package contains classes
+ (5) Don't confuse the name "AnalysisExample" (in larexamples repository)
+     with the contents of the package "AnalysisBase" (in lardata
+     repository). The AnalysisBase package contains classes
      that define the final physics objects produced by the
      reconstruction process (particle ID, shower energy, etc.). The
      AnalysisExample package provides an example of how to analyze
@@ -55,16 +59,15 @@ it by now). Believe it or not, it's to teach you something useful.
      enough to get you started as you follow the LArSoft
      reconstruction chain, either forwards or backwards.
 
- (8) As written, the code in the .cc file is a bit obsolete: It
-     fetches simb::MCParticle and sim::SimChannel objects
-     directly. Since that code was written, a service was created that
-     reads those objects for you, along with simb::MCTruth
+ (8) The code in the .cc file fetches simb::MCParticle and sim::SimChannel
+     objects directly. Since that code was written, a service was created
+     that reads those objects for you, along with simb::MCTruth
      objects. This service is cheat::BackTracker.
 
      To use this service, get a handle to cheat::BackTracker in the
      same way you get a handle to art::TFileService in the .cc file,
      then use that handle to invoke any of the methods in
-     ${LARSIM_DIR}/include/MCCheater/BackTracker.h.
+     ${LARSIM_INC}/MCCheater/BackTracker.h.
 
      So why not use that service in AnalysisExample? Because for the
      work you'll be doing, you'll probably won't be just reading in
@@ -73,6 +76,11 @@ it by now). Believe it or not, it's to teach you something useful.
      still use the same methods to read in those objects that are
      shown in the .cc file: create an art::Handle to a std::vector,
      then use art::Event::GetByLabel to fill the vector.
+     Also, importing data products via services will make expert mutter
+     about good practises. The rule is that if your module uses
+     a data product, it should fetch it by itself. BackTracker is
+     still appreciated for its ability to recover connections
+     between reconstructed and generated particles.
 
      Sound a bit complicated? It can be. That's why there are examples
      in the code, plus comments in the .fcl file to help you
