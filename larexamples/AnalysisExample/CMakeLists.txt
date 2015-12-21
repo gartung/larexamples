@@ -1,6 +1,6 @@
 
 simple_plugin(AnalysisExample "module"
-			Geometry_service
+			larcore_Geometry_Geometry_service
                         Geometry
                         ${SIMULATIONBASE}
                         ${ART_FRAMEWORK_CORE}
@@ -15,7 +15,7 @@ simple_plugin(AnalysisExample "module"
 			${MF_UTILITIES}
 			${CETLIB}
 			${ROOT_BASIC_LIB_LIST}
-              BASENAME_ONLY
+              
 )
 
 install_headers()

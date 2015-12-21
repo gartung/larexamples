@@ -55,7 +55,7 @@ include(ArtMake)
 include(BuildPlugins)
 
 # source
-add_subdirectory(AnalysisExample)
+add_subdirectory(larexamples)
 
 # ups - table and config files
 add_subdirectory(ups)
