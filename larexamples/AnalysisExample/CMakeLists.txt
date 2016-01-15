@@ -1,7 +1,7 @@
 
 simple_plugin(AnalysisExample "module"
 			larcore_Geometry_Geometry_service
-                        Geometry
+                        larcore_Geometry
                         ${SIMULATIONBASE}
                         ${ART_FRAMEWORK_CORE}
 			${ART_FRAMEWORK_PRINCIPAL}
