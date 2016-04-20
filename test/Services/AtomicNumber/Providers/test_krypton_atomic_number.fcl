@@ -1,0 +1,31 @@
+#
+# File:   test_krypton_number_service.fcl
+# Brief:  Test for AtomicNumber
+# Author: Gianluca Petrillo (petrillo@fnal.gov)
+# Date:   April 14, 2016
+# Description:
+# Test for AtomicNumber example service provider.
+#     
+# Dependencies: none
+#
+#
+
+#include "atomic_number_standard.fcl"
+
+
+services: {
+   AtomicNumberService: @local::krypton_atomic_number
+} # services
+
+
+physics: {
+   analyzers: {
+      
+      expected: {
+         AtomicNumber: @local::services.AtomicNumberService.AtomicNumber
+      }
+      
+   } # analyzers
+   
+} # physics
+

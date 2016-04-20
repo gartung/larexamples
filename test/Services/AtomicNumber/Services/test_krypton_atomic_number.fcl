@@ -1,0 +1,47 @@
+#
+# File:   test_atomic_number_service.fcl
+# Brief:  Test for AtomicNumberService
+# Author: Gianluca Petrillo (petrillo@fnal.gov)
+# Date:   April 14, 2016
+# Description:
+# Test for AtomicNumberService example service.
+#     
+# Dependencies:
+#
+#
+
+#include "atomic_number_standard.fcl"
+
+process_name: AtomicNumberServiceTest
+
+
+services: {
+   AtomicNumberService: @local::argon_atomic_number
+} # services
+
+
+source: {
+   module_type: EmptyEvent
+   maxEvents:   1
+}
+
+outputs: {}
+
+physics: {
+   analyzers: {
+      
+      atomicnumbertest: {
+         module_type:  AtomicNumberTest
+         
+         AtomicNumber: @local::services.AtomicNumberService.AtomicNumber
+      }
+      
+   } # analyzers
+   
+   tests: [ atomicnumbertest ]
+   
+   trigger_paths: []
+   end_paths:     [ tests ]
+   
+} # physics
+

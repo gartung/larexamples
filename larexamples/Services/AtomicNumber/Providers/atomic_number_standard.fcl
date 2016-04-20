@@ -1,0 +1,47 @@
+#
+# File:   atomic_number_standard.fcl
+# Brief:  Standard configurations for the AtomicNumberService example service
+# Author: Gianluca Petrillo (petrillo@fnal.gov)
+# Date:   April 13, 2016
+# Description:
+# Standard configurations for the AtomicNumberService example service.
+# Include it as:
+#     
+#     services.AtomicNumberService: @local::argon_atomic_number
+#     
+# Provides the following preset configurations:
+# 
+# - argon_atomic_number: configuration for argon detectors
+# - krypton_atomic_number: configuration for krypton detectors
+# - xenon_atomic_number: configuration for xenon detectors
+# 
+# Dependencies: none
+#
+#
+
+BEGIN_PROLOG
+
+# ------------------------------------------------------------------------------
+
+argon_atomic_number: {
+   AtomicNumber:  18
+} # argon_atomic_number
+
+
+# ------------------------------------------------------------------------------
+
+krypton_atomic_number: {
+   AtomicNumber:  36
+} # krypton_atomic_number
+
+
+# ------------------------------------------------------------------------------
+
+xenon_atomic_number: {
+   AtomicNumber:  54
+} # xenon_atomic_number
+
+
+# ------------------------------------------------------------------------------
+
+END_PROLOG
