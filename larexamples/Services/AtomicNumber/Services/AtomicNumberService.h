@@ -11,7 +11,7 @@
 #define LAREXAMPLES_SERVICES_ATOMICNUMBER_SERVICE_ATOMICNUMBERSERVICE_H 1
 
 // LArSoft libraries
-#include "larcore/CoreUtils/SimpleServiceProviderWrapper.h"
+#include "larcore/CoreUtils/ServiceProviderWrappers.h"
 #include "larexamples/Services/AtomicNumber/Providers/AtomicNumber.h"
 
 // framework and support libraries

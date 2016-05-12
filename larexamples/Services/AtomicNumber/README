@@ -28,7 +28,7 @@ Missing features that you need to go elsewhere if you need to implement:
 
 Technical choices:
 
-* employs the service/provider factorization model
+* employs the service/provider factorisation model
 * uses validation of the configuration
 * has four tests (three for the provider and one for the service)
 * it is fully documented via Doxygen interpreted comments

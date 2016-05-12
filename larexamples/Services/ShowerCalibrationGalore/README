@@ -1,0 +1,809 @@
+| Example name:   | ShowerCalibrationGalore               |
+| --------------- | ------------------------------------- |
+| Type:           | LArSoft service and provider          |
+| Author:         | Gianluca Petrillo (petrillo@fnal.gov) |
+| Created on:     | April 26, 2016                        |
+
+
+
+#  A service with multiple implementations: `ShowerCalibrationGaloreService`  ##
+
+
+This example shows a complete service with a small abstract interface and
+multiple implementations.
+
+Features of the service:
+
+* the interface returns a single calibration constant, parametrised
+* two implementations are provided, one of which must be chosen at run time
+
+
+Missing features that you need to go elsewhere if you need to implement:
+
+* reaction to framework events (new event, end of run, closing input file...)
+* integration test
+* extension of LArSoft test utilities to easily have this provider in unit tests
+
+Technical choices:
+
+* employs the service/provider factorisation model
+OLD * uses validation of the configuration
+OLD * has four tests (three for the provider and one for the service)
+* it is fully documented via Doxygen interpreted comments
+
+
+This documentation assumes some prerequisite knowledge that can be found in
+other LArSoft examples:
+
+* the "factorisation model" for LArSoft service [see example `AtomicNumber`]
+
+
+### How to use this document                                                 ###
+
+This document is pretty long. You are encouraged to read it all, but you might
+understandably opt out of that.
+The document is organised in sections. We suggest that you read the section
+above to know what this example is about, and the (very terse) explanation of
+the model, and the beginning of the section of the provider header.
+These contain information about the design that can stimulate your own.
+Then, you can dig into the code and come back to the pertinent section when you
+have questions.
+
+For every questions, answered or not here, you are strongly encouraged to
+contact the example's author (contact information is at the top of this file).
+
+And, if you want to have a bit more printer friendly format, know this text file
+is written in markdown format and you can convert it to something else with:
+    
+    pandoc -s -S --toc -o README.html README
+    pandoc -s -S --toc -o README.pdf README
+    
+et cetera.
+
+
+## Design of the interface  ####################################################
+
+To be clear: the design of the interface **is** the hardest part of creating a
+service. More so if it is expected to accommodate multiple implementations, some
+of which can't be even imagined at the time of design.
+
+This example applies to services that _allow_ (as opposed as _have_) multiple
+implementations. When designing a new service and its interface, you should
+consider very carefully the possibility of some other person or experiment
+needing a radically different implementation, and avoid choices that
+gratuitously make that harder.
+
+TODO
+
+
+
+
+## The factorisation model for services with multiple implementations  #########
+
+The factorisation model prescribes the code to be split in a functional part
+that is independent of the framework, and a framework interface.
+
+A more extensive description of this model can be found in LArSoft wiki:
+<https://cdcvs.fnal.gov/redmine/projects/larsoft/wiki/Writing_LArSoft_service>.
+The example `AtomicNumber` illustrates the model for a single implementation
+service.
+
+As a reminder, services with multiple implementations are natively supported by
+the _art_ framework. The implementations are C++ classes required to derive from
+a common service interface class. User code interacts exclusively with the
+interface and it does not know anything about any implementation. The
+implementation is only mentioned in the service configuration, where it is
+selected with a `service_provider` parameter.
+
+> There is an unfortunate term conflict between what _art_ calls a service
+> provider (that is, an implementation of a service allowing multiple
+> implementations) and what LArSoft calls a service provider (that is, a
+> separate, framework independent class that implements the core service
+> functionality).
+> 
+> On top of this, LArSoft calls a _art_ service interface a class that works as
+> a _art_ service and manages a (LArSoft-flavoured) service provider. Within
+> _art_, a service interface might mean the interface of a service with multiple
+> implementations allowed.
+>
+> Yes, it's confusing.
+
+In case of services with multiple implementations, each of the implementations
+individually follows the pattern of a factorised service.
+In addition, all service implementation headers must derive from the common
+_art_ service interface (this is a _art_ requirement), and all the provider
+headers must derive from a common provider interface (this is a LArSoft
+requirement).
+
+This is, admittedly, some degree of complication the service designer must
+undergo. The following diagram illustrates the components of this example: we
+have an provider interface `ShowerCalibrationGalore` that is implemented in a
+provider with a uniform scale factor (`ShowerCalibrationGaloreScale`) and one
+that relies on external data (`ShowerCalibrationGaloreFromPID`).
+Each of them comes with its own _art_ service:
+
+~~~~
+                         ,-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~.
+                  .......| ShowerCalibrationGaloreService |......
+                  :      `-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~'     :
+                  :                      |                      :
+                  :                      |                      :
+,-------------------------------------.  |  ,---------------------------------------.
+| ShowerCalibrationGaloreScaleService |  |  | ShowerCalibrationGaloreFromPIDService |
+`-------------------------------------'  |  `---------------------------------------'
+                  |                      |                      |
+                  |        ,-~-~-~-~-~-~-~-~-~-~-~-~-.          |
+                  |   .....| ShowerCalibrationGalore |......    |
+                  |   :    `-~-~-~-~-~-~-~-~-~-~-~-~-'     :    |
+                  |   :                                    :    |
+   ,------------------------------.            ,--------------------------------.
+   | ShowerCalibrationGaloreScale |            | ShowerCalibrationGaloreFromPID |
+   `------------------------------'            `--------------------------------'
+~~~~
+
+The dotted lines show inheritance, while the continuous lines show ownership.
+Each continuous line groups two classes that form a complete factorised service.
+The two boxes with the wiggled lines are special in that they do not have actual
+code (they are pure abstract classes with no source file beside the header).
+This is, in general, recommended for interface classes.
+
+
+> We can see you asking: do services need to have silly names?
+> 
+> Answer: no! This is a privilege reserved to our official examples. The reason
+> is that we don't want to burn a good service name (e.g., `ShowerCalibration`)
+> for an example. But if your service gets to be in LArSoft, that comes with
+> the right and duty of a pertinent name.
+
+
+
+## Files  ######################################################################
+
+OLD The example is split between two directories:
+OLD 
+~~~~
+~~~~
+OLD larexamples/Services/AtomicNumber/         ### contains all the service code ###
+OLD |-- README                                                          # this file
+OLD |-- Providers                                        ## service provider code ##
+OLD |   |-- AtomicNumber.h                        # header for the service provider
+OLD |   |-- AtomicNumber.cxx                      # source for the service provider
+OLD |   `-- atomic_number_standard.fcl          # "standard" service configurations
+OLD `-- Services                                    ## art service interface code ##
+OLD     |-- AtomicNumberService.h            # header for the art service interface
+OLD     `-- AtomicNumberService_service.cc # implementation of art service interface
+OLD 
+OLD test/Services/AtomicNumber/                   ### contains the service tests ###
+OLD |-- Providers                              ## unit tests for service provider ##
+OLD |   |-- AtomicNumber_test.cc         # plain unit test with fixed configuration
+OLD |   |-- BoostedAtomicNumber_test.cc     # unit test based on Boost test library
+OLD |   |-- ValidateAtomicNumberConfiguration_test.cc   # unit test with validation
+OLD |   `-- test_krypton_atomic_number.fcl      # configuration for Boost unit test
+OLD `-- Services                           ## unit test for art service interface ##
+OLD     |-- AtomicNumberTest_module.cc              # test module using the service
+OLD     `-- test_krypton_atomic_number.fcl      # configuration of a test using art
+OLD 
+OLD Each directory also has its own `CMakeLists.txt` file.
+OLD 
+OLD LArSoft mildly recommends the following file name suffices:
+OLD 
+OLD * `.h` for all the header files
+OLD * `.cc` for modules, services and tests; this is because CET build macros prefer
+OLD   the `.cc` suffix
+OLD * `.cxx` for algorithm implementation and anything not connected to _art_
+OLD 
+OLD If adding code to an existing directory, it's good practise to spend a couple of
+OLD minutes to observe the name patterns of files in the directory, its parent and
+OLD its siblings.
+OLD 
+
+### Directory structure                                                      ###
+
+OLD The directory structure is overly detailed for such a small project, but it
+OLD contains main essential components.
+OLD 
+OLD First, the code is divided into two disjoint subtrees that replicate the same
+OLD internal structure. This is a LArSoft prescription: all the code and            TODO point to the wiki prescription
+OLD configuration files are in `larexamples` subdirectory, and the tests are under
+OLD the `test` subdirectory.
+OLD 
+OLD The choice of two sublevels `Services` and then `AtomicNumber` is driven by
+OLD clarity of organisation, and may be too much for your service.
+OLD It is conceivable that the same directory hosts more than one service (see e.g.
+OLD `lardata/DetectorInfo` and `lardata/DetectorInfoServices`).
+OLD 
+OLD Internally, the subdirectory `AtomicNumber` contains two directories.
+OLD It is important that the art service interfaces, that are art-dependent, are
+OLD compiled in separate libraries than the service providers, that have smaller
+OLD framework dependency. The simplest way to achieve this is to have the two sets
+OLD in two different directories, as in this example. Alternatively, multiple
+OLD libraries can be compiled from sources in a single directory by a careful tuning
+OLD of the `CMakeLists.txt` file.
+OLD 
+OLD 
+OLD 
+
+## The service provider interface: `ShowerCalibrationGalore`  ##################
+
+The service provider interface is the fundamental class of the service.
+**Algorithms that require shower calibration will see only this interface.**
+
+It is important to design this interface well, because every time it needs to be
+expanded or modified, all provider implementations have to be updated
+accordingly, across all the experiments that use it.
+Unfortunately, there is no sure recipe to get there.
+
+The return value should be a correction factor. For any science purpose, the
+correction must also include an uncertainty. The uncertainty may be expensive to
+compute, though, and there may be cases where it is of no use.
+So we include two hooks, for the computation of the correction factor only, and
+for the complete correction with uncertainty. The uncertainty is probably made
+of multiple contributions, and it's conceivable that studies would isolate and
+treat separately the various contributions. A possible extension of this
+interface sees the addition of a bit mask argument specifying which
+contributions to the total uncertainty to include. From there, one could also
+plan for a error matrix. We stop at the global uncertainty in this example.
+
+Here I considered that shower calibration correction may depend on the shower
+energy and direction, but also on number of hits, charge profile and section,
+etc. It is not easy to put all this in a mandatory interface.
+So I decided that it would be the calibration object task to extract the
+information that is relevant to it from the reconstructed shower itself.
+The correction might be invoked later in the event analysis, when more is known
+about it. For example, a particle identification might be available.
+The best candidate for this other argument is again a LArSoft representation of
+the particle ID. At the time of writing this example (LArSoft 5.9) the standard
+way to represent such an ID is evolving, and so we stick to a simpler
+representation: a plain PDG ID. Keep in mind that using the full particle ID
+from LArSoft might be more convenient, and that there must be a way to specify
+that no ID information should be used.
+
+
+
+
+OLD The service provider is where all the action goes.
+OLD In this example, there is not much action ongoing though: the provider just
+OLD reads a value from the configuration, and it returns it back when asked.
+OLD 
+OLD The provider is split in the usual header and implementation file.
+OLD 
+OLD 
+OLD ### `CMakeLists.txt`                                                         ###
+OLD 
+OLD The tasks of this `CMakeLists.txt` file are:
+OLD 
+OLD - generate a library for the provider
+OLD - install headers and source code (meaning to make sure they appear in the
+OLD   final UPS product
+OLD - install FHiCL configuration (as above)
+OLD 
+OLD The installation part is done by the usual macros (`install_XXX()`).
+OLD The generation of the library can happen with either `art_make()` or
+OLD `art_make_library()` macros. They both do very similar things in this case,
+OLD and they will grab all the source files that end in `.cc`, `.cxx` etc. and that
+OLD do not have a "magic" ending (`_module.cc`, `_service.cc`, ...), and pull them
+OLD together into a library that will be called after the path it is created from,
+OLD which turns into `larexamples_Services_AtomicNumber_Providers`.
+OLD We recommend that, although inconvenient, the library name is left this long,
+OLD since it helps avoiding collisions (`Providers` is not a good library name):
+OLD 
+OLD - the library file name is `liblarexamples_Services_AtomicNumber_Providers.so`
+OLD   (in Linux) or `.dylib` (in Darwin), in `$LAREXAMPLES_LIB` directory
+OLD - the name to be used in `CMakeLists.txt` files including it (as in this service
+OLD   below) is `larexamples_Services_AtomicNumber_Providers`
+OLD - this name does not appear in the configuration files
+OLD 
+OLD In this case, we opted for `art_make()`.
+OLD Filling the list of libraries can be tricky.
+OLD A way to address the problem is to give a minimalist first try and then add as
+OLD needed: the build system settings will tell us loudly if anything is missing.
+OLD A recipe that gives good results to have a first list is to:
+OLD 
+OLD 1. check all the included headers
+OLD 2. add a library for each of them
+OLD 
+OLD Running the following command from
+OLD `${MRB_SOURCES}/larexamples/larexamples/Services/AtomicNumber/Providers` :
+OLD 
+OLD ~~~~    
+OLD grep -h -e '# *include' *
+OLD ~~~~
+OLD 
+OLD gives the output:
+OLD 
+OLD ~~~~
+OLD #include "AtomicNumber.h"
+OLD #include "art/Utilities/Exception.h"
+OLD #include "fhiclcpp/ParameterSet.h"
+OLD #include "fhiclcpp/types/Atom.h"
+OLD #include "fhiclcpp/types/Table.h"
+OLD ~~~~
+OLD 
+OLD The first is the library we are building, so we don't include it.
+OLD The second header comes from `art/Utilities`: the library name is contained in
+OLD a variable in _cmake_ called `${ART_UTILITIES}`.
+OLD The next three describe things in the FHiCL C++ library. Following the pattern,
+OLD we would get two libraryes: `${FHICLCPP}` and `${FHICLCPP_TYPES}`. It turns out,
+OLD FHiCL C++ produces only one library with everything, and that is in
+OLD `${FHICLCPP}`.
+OLD You can peek at the libraries from that UPS product by running
+OLD 
+OLD ~~~~
+OLD ls "$FHICLCPP_LIB"
+OLD ~~~~
+OLD 
+OLD In this case, it worked pretty well. The UPS products where this approach
+OLD typically fails are _nutools_ (where the include path does not even tell you
+OLD it's a _nutools_ header), ROOT, CLHEP.
+OLD 
+OLD 
+OLD ### `AtomicNumber.h`                                                         ###
+OLD 
+OLD The design of this service is extremely simple.
+OLD We allow it to receive configuration from the framework, and we have just one
+OLD information we provide.
+OLD 
+OLD #### Documentation explanation
+OLD 
+OLD The header is documented with Doxygen.
+OLD The complete documentation goes into the header. This is recommended because
+OLD headers might be shipped without implementation, and because headers contain
+OLD all the declarations that callers may use.
+OLD 
+OLD We first document the file itself (at the very beginning) to include author name
+OLD and contact information, and a short description of the content of the file.
+OLD The date is a _creation_ date and it's not essential.
+OLD 
+OLD The namespace should be documented only if unique, that is not the case here.
+OLD 
+OLD The provider class should have documentation for the class itself, for every
+OLD non-obvious member function, and for _all_ data members.
+OLD The class documentation includes a detailed description of the configuration
+OLD parameters, that can be much more verbose than the one by `fhicl::Comment`
+OLD (see [configuration and validation] below).
+OLD Note the use of grouping to collect together methods dealing with the same
+OLD topic. In this example its use (the "Accessors" group) is quite specious, since
+OLD there is only one method after all. This construct is used for example in
+OLD `geo::GeometryCore` documentation to group methods operating with TPCs, with
+OLD wire planes, with wires, etc.
+OLD 
+OLD #### Namespace
+OLD 
+OLD The provider is placed in a namespace that describes its general category.
+OLD The namespace `lar` is used for things that are specific of LArSoft mechanics.
+OLD Services and algorithms rarely fall in it, as there are more appropriate ones
+OLD like `sim` (simulation), `reco` (reconstruction), etc.
+OLD 
+OLD #### Configuration and validation
+OLD 
+OLD The configuration of the provider relies on FHiCL constructs to document and
+OLD validate it at run time. This infrastructure is described at
+OLD <https://cdcvs.fnal.gov/redmine/projects/fhicl-cpp/wiki/Configuration_validation_and_fhiclcpp_types>.
+OLD The idea is that the configuration parameters are represented by special data
+OLD member within a single data structure. In our example this data structure is
+OLD contained in the provider itself and it's called `Config`. All of its one
+OLD elements have a "comment" concisely describing their purpose (and normally
+OLD the unit their values are expressed in). The link shows how to create more
+OLD complex structures than just simple numbers.
+OLD The provider constructor directly accepts a class of type `Config`. The only
+OLD easy way to construct a `Config` object is via a parameter set. The _art_
+OLD framework does that in one way (see [AtomicNumberService.h]), and the tests do
+OLD it in another (see [ValidateAtomicNumberConfiguration_test.cc] and the other
+OLD `AtomicNumber` constructor): the `Config` constructor is where the two ways
+OLD finally merge.
+OLD Note that the provider does not run the validation. The test must invoke
+OLD validation explicitly, and _art_ framework does the same behind the scenes
+OLD when constructing the service.
+OLD 
+OLD #### Coding practises
+OLD 
+OLD The ridiculously long include guard
+OLD `LAREXAMPLES_SERVICES_ATOMICNUMBER_PROVIDER_ATOMICNUMBER_H` is in
+OLD fact the recommended one. Having naming collisions for include guards is pretty
+OLD much guaranteed to yield misleading compilation errors. So we stick the whole
+OLD file path into it.
+OLD 
+OLD There are two constructors. One is the usual one based on FHiCL `ParameterSet`,
+OLD the other is a more unusual one directly based on our configuration class.
+OLD The latter one is intended to be used indirectly and it is exposed for the _art_
+OLD service and the tests to be able to enable configuration validation (see also
+OLD [Configuration and validation] above). The explanation of their existence is
+OLD better seen in their use, in [AtomicNumber_test.cc], in
+OLD [ValidateAtomicNumberConfiguration_test.cc] and in [AtomicNumberService.h].
+OLD Keep in mind that the constructor based on a `ParameterSet` does _not_ use
+OLD validation. The other one does not either, but it enables the caller to do
+OLD that.
+OLD 
+OLD LArSoft recommends that service providers are not copyable nor movable.
+OLD Some LArSoft utilities (noticeably, `lar::providerFrom()` function) will refuse
+OLD to work otherwise. A set of deleted constructors and assignment operators
+OLD fulfils this requirement.
+OLD 
+OLD We also insist that the data members be private. This complicates the interface
+OLD because of the need of "accessors" (like the `Z()` method here) but improve
+OLD maintainability, allowing changes in the underneath representation being
+OLD absorbed by the implementation of the interface, that can stay unchanged (for
+OLD example, imagine replacing a C array data member with a `std::vector` or
+OLD `std::array`).
+OLD 
+OLD The choice of a data member name ending with an underscore character (`Z_`) is
+OLD not a recommendation, but just one of the possible solutions.
+OLD It _is_ recommended that the names for the interface methods have clear meaning,
+OLD internally consistent style, and then briefness: e.g., avoid having
+OLD `atomic_number()` and `nucleonNumber()` together. Remember that especially for
+OLD a service once the names are set the whole community will have to live with
+OLD them.
+OLD 
+OLD 
+OLD ### `AtomicNumber.cxx`                                                       ### 
+OLD 
+OLD In this example, the implementation file is completely trivial.
+OLD Its mere presence, though, has the effect that a library is generated for
+OLD `AtomicNumber`. You will rarely find yourself in a situation where the
+OLD implementation file is not necessary, and we suggest that also in such case
+OLD you add a trivial one nonetheless.
+OLD 
+OLD 
+OLD ### `atomic_number_standard.fcl`                                             ### 
+OLD 
+OLD With the service provider, it's a good idea to provide also some example
+OLD configuration that reflects the most common use case (or cases).
+OLD The FHiCL file provided here can be used to configure both the provider and the
+OLD art service.
+OLD It contains the configurations in a "prolog", that is a special section that
+OLD contains pieces of configuration that can be reused in the main configuration.
+OLD An example of how is in the test configuration `test_krypton_atomic_number.fcl`
+OLD (see below).
+OLD It also contains a fair amount of comments, describing what is inside the file
+OLD itself. It would also include a list of "dependencies", mainly a list of
+OLD services this provider depends on: nothing in this example, but check for other
+OLD examples that do have this kind of dependency.
+OLD 
+OLD This configuration file must be present in the final UPS product. This is
+OLD achieved by the `install_fhicl()` macro in `CMakeLists.txt` in `Providers`
+OLD directory.
+OLD 
+OLD 
+OLD 
+OLD ## The service: `AtomicNumberService`  #########################################
+OLD 
+OLD The _art_ service is extremely simple in this example: it does not need to react
+OLD to framework state changes (like the opening of a new input file or event), and
+OLD it does not implement an abstract interface (that is, there is only one possible
+OLD implementation for this service).
+OLD The only tasks of this service are:
+OLD 
+OLD * manage and provide the service provider, `AtomicNumber`
+OLD * implement the (terse) service interface that _art_ requires
+OLD * implement the (even terser) interface that LArSoft recommends
+OLD 
+OLD It is placed in a separate directory to have dependencies independent from the
+OLD ones of the provider (see [Directory structure] above for an explanation).
+OLD 
+OLD ### AtomicNumberService.h                                                    ###
+OLD 
+OLD The header has two main components: the declaration of the service class and
+OLD the declaration of the _art_ service macros.
+OLD 
+OLD For the first part we use a template that LArSoft providers to create the
+OLD simplest _art_ service possible, that can only return its provider.
+OLD This template imposes requirements on the provider, that are documented with
+OLD the template itself.
+OLD 
+OLD The second part is required by _art_, that is in this way informed of the
+OLD existence of this class as a service.
+OLD 
+OLD The only interesting part here are names: we encourage the _art_ service to live
+OLD in the same name as the service provider. Also, we recommend to have the names
+OLD of service and provider be easy to match: LArSoft uses often a (meaningful) name
+OLD for the provider, and the same name with "Service" appended for the _art_
+OLD service. Other times, the provider is appended a "Provider" suffix too; this is
+OLD usually to avoid name conflicts with existing classes.
+OLD 
+OLD Note that basically no documentation is provided. The provider documents all the
+OLD information specific to the service.
+OLD 
+OLD ### `AtomicNumberService_service.cc`                                         ###
+OLD 
+OLD The implementation file is required as it needs to contain the _art_ service
+OLD definition macro call. The (already small) implementation of the service class
+OLD itself is included in the template itself, and no customisation is required
+OLD here.
+OLD 
+OLD 
+OLD ## Tests  ######################################################################
+OLD 
+OLD The purpose of these "unit" tests is to exercise all the features of the service
+OLD provider and its _art_ interface.
+OLD We have two groups of tests. The first group exercises the provider only, and
+OLD it does not depend on the framework. The second one exercises the functions that
+OLD are specific to the _art_ service interface, and does not necessarily tests the
+OLD features that were tested also by the provider. An even better pattern is to
+OLD have a test that can be run in both modes -- one of `geo::GeometryCore` tests
+OLD is such: it has a test library and both the provider and the service tests call
+OLD it.
+OLD The following tests are implemented:
+OLD 
+OLD * `AtomicNumber_test`: provider unit test with no configuration
+OLD * `BoostedAtomicNumber_test`: provider unit test that uses Boost unit test,
+OLD    configured via FHiCL file 
+OLD * `ValidateAtomicNumberConfiguration_test`: provider unit test using
+OLD   configuration presentation and validation
+OLD * `AtomicNumberTest_module`: service unit test
+OLD 
+OLD When `mrb test` is used, all the tests are run automatically and all failures
+OLD are individually reported. A global output log is also available somewhere,
+OLD typically in `${MRB_BUILDDIR}/Testing/Temporary/LastTest.log`.
+OLD 
+OLD 
+OLD ### CMakeLists.txt                                                           ###
+OLD 
+OLD Tests are declared to `cmake` via the `cet_test()` macro.
+OLD This macro can compile the test libraries and executable, run the test, verify
+OLD the output and report errors. Some of these features are only rarely used.
+OLD 
+OLD In case of a stand-alone unit test, it's usually enough specify a test name
+OLD (mandatory), source files to be compiled into the test executable, and a list
+OLD of libraries to link with it. In our examples we did not specify the source
+OLD files, which are therefore guessed by `cet_test()` by adding `.cc` to the test
+OLD name: for example, in `AtomicNumber_test`, the source will be expected to be in
+OLD `AtomicNumber_test.cc`.
+OLD In `BoostedAtomicNumber_test`,we added a command line argument with `TEST_ARGS`
+OLD and we also specified that that file needs to be copied in the test directory
+OLD with `DATAFILES`. We rely on `cet_test()` to link the proper Boost libraries to
+OLD enable unit testing, by `USE_BOOST_UNIT` flag.
+OLD 
+OLD For the _art_ service test, we run a full `lar` job: we specify that the
+OLD executable name is special, `lar`, with `TEST_EXEC`, and we also tell
+OLD `cet_test()` that it should not bother to try and build it: it's `HANDBUILT`
+OLD already. We add the _lar_ option `--rethrow-all` that should prevent _art_ from
+OLD absorbing, dealing with and eventually hiding exceptions: if an exception
+OLD occurs and reaches _art_, it will not try to handle it.
+OLD The job requires a test module. To build its library we use the usual
+OLD `simple_plugin()` macro, that is not specific for testing. It's worth noting
+OLD that the this list of libraries is the only one including _art_: the provider
+OLD tests do not depend on it.
+OLD 
+OLD 
+OLD ### AtomicNumber_test.cc                                                     ###
+OLD 
+OLD This test uses hard-coded configurations. This is an approach complementary to
+OLD using user-supplied configurations: it allows to test with total predictability
+OLD of results, but it does not necessarily test real use cases.
+OLD The `BoostedAtomicNumber_test` test takes the alternative approach.
+OLD 
+OLD The general pattern of this test is to have a test function that accepts a
+OLD configuration and the expected test results, performs the test and verifies the
+OLD results. This function is called here twice, to test the default configuration
+OLD and a custom one. The test is a common executable with a `main()` function that
+OLD runs the tests and returns an exit code. Failing tests have to return a non-zero
+OLD exit code, in the UNIX tradition. We chose here to return, in fact, the number
+OLD of errors encountered. Note that exit codes can be 8 bit signed integers, that
+OLD don't accommodate for large values.
+OLD 
+OLD The actual test function, `TestConfiguration()`, illustrates the use of a
+OLD somehow cryptic facility, the `TesterEnvironment` class.
+OLD The gain in using it is that it takes care of:
+OLD 
+OLD * parsing a FHiCL file (if provided, which we don't here)
+OLD * initializing the message facility service
+OLD * keeping track of all service configurations (and test algorithm configuration
+OLD   too: another facility we don'y use here)
+OLD 
+OLD This facility can be extended to set up, manage and provide other service
+OLD providers too, which makes it a small test framework in his own. But we don't do
+OLD that here either.
+OLD 
+OLD The test environment is a template that requires a configuration object.
+OLD The configuration object holds information about the configuration: a bunch of
+OLD strings representing names of services, configuration file paths, and actual
+OLD FHiCL configuration. The test environment is initialised with one of these
+OLD objects and will use its information.
+OLD 
+OLD We first initialise the configuration object, giving it a test name (mostly eye
+OLD candy) and we inform it of which configuration string is associated to a service
+OLD called `"AtomicNumberService"`. This is now just a label, but it matches the
+OLD label that would be used in a full _art_-aware configuration file.
+OLD Then we create a `TesterEnvironment` object with this configuration.
+OLD There are many ways to do that; in this example we take the simplest one of
+OLD using a function that does just that, given the configuration as first argument.
+OLD 
+OLD We create a new service provider `AtomicNumber Zprov` using the constructor that
+OLD takes a `fhicl::ParameterSet` as a argument. We obtain the parameter set from
+OLD the test environment, asking it about the same label we just set. In the while,
+OLD it converted the configuration _string_ we gave it into a _parameter set_.
+OLD 
+OLD The test itself is fairly trivial. We call the member function `Z()` and if the
+OLD result is unexpected, we write an error message and increase an error count.
+OLD 
+OLD In the end, the error count is returned. The `main()` functions will sum all the
+OLD error counts and exit with that as the exit code, and the system running the
+OLD test will know whether it was successful (exit code 0) or not.
+OLD 
+OLD 
+OLD ### BoostedAtomicNumber_test.cc                                              ###
+OLD 
+OLD This test is similar to `AtomicNumber_test`, differing in two important aspects:
+OLD 
+OLD * it requires a configuration file from command line
+OLD * it is implemented with Boost unit test suite
+OLD 
+OLD The configuration file is required to have a section configuring `AtomicNumber`
+OLD provider as it were in a _art_ job, via `AtomicNumberService` parameter set,
+OLD and also have the expected results expressed in a`physics.analyzers.expected`
+OLD parameter set, in a configuration equivalent to a _art_ job with an analyser
+OLD module instance called `expected`. The test expects this parameter set to have
+OLD the same structure as the service provider configuration.
+OLD Such a FHiCL configuration file is provided: `test_krypton_atomic_number.fcl`.
+OLD 
+OLD Note that the requirement on the configuration file are documented at top of
+OLD the test source, in the customary Doxygen format.
+OLD 
+OLD #### Running a Boost test
+OLD 
+OLD A Boost unit test executable supports a large number of options.
+OLD Among the most useful: `--report_level=detailed` will give a precise report of
+OLD what went well and what went wrong in the test; `--log_level=all` will print all
+OLD the checks on screen. For example:
+OLD ~~~~
+OLD "${MRB_BUILDDIR}/larexamples/bin/BoostedAtomicNumber_test" --log_level=all \
+OLD   "${MRB_SOURCE}/larexamples/test/Services/AtomicNumber/Providers/test_krypton_atomic_number.fcl"
+OLD ~~~~
+OLD 
+OLD #### Boost unit test library
+OLD 
+OLD The Boost unit test suite is made of C preprocessor macros that make the code
+OLD look like invalid C++ and make error messages nearly unusable.
+OLD It provides a good deal of facilities to automate the most common test tasks and
+OLD reduce the amount of typing.
+OLD The implementation we use here uses a _fixture_. A fixture is a class that
+OLD provides an environment in which the tests run. The tests in the
+OLD `BOOST_AUTO_TEST_CASE()` blocks are aware of the content of the fixture. In
+OLD fact, they see all the public members of the fixture class directly (they
+OLD constitute member functions of a class derived by the fixture class, created
+OLD automatically by Boost).
+OLD We use our own class `AtomicNumberTextFixture` as a fixture, that has among
+OLD its public data members an instance of `AtomicNumber` provider called `Zprov`.
+OLD Therefore, our tests in `BOOST_AUTO_TEST_CASE()` will be able to access it
+OLD directly, for example writing `auto Z = Zprov.Z();`.
+OLD 
+OLD #### The custom fixture class
+OLD 
+OLD Our fixture class can be seen as made of two parts:
+OLD 
+OLD 1. general test environment including configuration handling
+OLD 2. an instance of our provider
+OLD 
+OLD The fixture class _derives_ from a test environment, that is very similar to
+OLD `TesterEnvironment` class used in `AtomicNumber_test`. The difference is that
+OLD the configuration object is not `testing::BasicEnvironmentConfiguration`, but
+OLD a class derived from it, `testing::BoostCommandLineConfiguration`, that adds
+OLD the ability of automatically read the configuration file from command line.
+OLD Here tricks are needed because we don't create the fixture object explicitly,
+OLD but rather have Boost take care of that. Boost will use the default constructor,
+OLD so we must be sure that our fixture constructs exactly as we want on the spot,
+OLD since after the construction e are not given a chance to fix, tune or adjust it.
+OLD The `testing::BasicEnvironmentConfiguration` and `testing::TesterEnvironment`
+OLD classes take care of all those tricks. Still we need additional data members
+OLD (for example, we need an instance of the service provider `AtomicNumber`),
+OLD so we have to derive our fixture from `testing::TesterEnvironment` instead of
+OLD using it directly.
+OLD 
+OLD The instance of service provider is held as data member, and initialised in the
+OLD default constructor in the same way as in `AtomicNumber_test`, calling the
+OLD constructor with a parameter set. Here the parameter set is obtained by the
+OLD fixture class itself, that derives from `testing::TesterEnvironment`.
+OLD 
+OLD We also save the set of values describing the expected results, that comes from
+OLD the configuration file with the label `"expected"`. `TesterParameters()` method
+OLD assumes that there are test analyser modules, configured in `physics.analyzers`
+OLD as per _art_ rules.
+OLD 
+OLD #### The test cases
+OLD 
+OLD The test starts with the declaration of which fixture class we use, and a name
+OLD for the test: `BOOST_FIXTURE_TEST_SUITE()`. This is matched by the declaration
+OLD that the test is over: `BOOST_AUTO_TEST_SUITE_END()`. You can imagine the call
+OLD `BOOST_FIXTURE_TEST_SUITE(BoostedAtomicNumberTest, AtomicNumberTestFixture)`
+OLD to be equivalent to a line
+OLD `class BoostedAtomicNumberTest: public AtomicNumberTestFixture {`, and the
+OLD closing `BOOST_AUTO_TEST_SUITE_END()` equivalent to a `};`: everything in
+OLD between these belongs to the `BoostedAtomicNumberTest` test class. The test case
+OLD `BOOST_AUTO_TEST_CASE(AllTests)` macro call might be method definitions, like
+OLD `void AllTests()`.
+OLD Boost unit test suite will know what to do with this class and its methods.
+OLD 
+OLD The only test case we have performs the same test as `AtomicNumber_test`.
+OLD First, we extract from `physics.analyzers.expected.Z` the value we expect for Z,
+OLD and then we verify that `AtomicNumber::Z()` returns that very same value.
+OLD To do that we use a `BOOST_CHECK_EQUAL()` macro that will take care of
+OLD communicating errors in a way that depends on the test arguments.
+OLD 
+OLD 
+OLD ### ValidateAtomicNumberConfiguration_test.cc                                ###
+OLD 
+OLD This test just checks that the given service configuration is valid.
+OLD It relies on the validation feature of FHiCL library and on the fact that the
+OLD provider supports configuration via objects based on `fhicl::Atom`,
+OLD `fhicl::Table` and the such (`AtomicNumber::Config`).
+OLD 
+OLD As usual, the instructions for running the test are described in words in the
+OLD documentation of the source file.
+OLD 
+OLD The test is made of three part: configuration of the test environment, printing
+OLD the allowed provider configuration on screen, and checking the provider
+OLD configuration from the file specified on the command line.
+OLD 
+OLD #### Testing environment
+OLD 
+OLD The test environment here is similar to the one in `AtomicNumber_test`, with two
+OLD differences.
+OLD 
+OLD The first difference is that the configuration file path is read from the
+OLD command line. The configuration object is created with knowledge of the command
+OLD line arguments (`argc` and `argv`), which it will use to extract the path.
+OLD 
+OLD The second difference is that we don't provide a default configuration. We don't
+OLD need to, since we expect the configuration from command line. But this means
+OLD that if no configuration file is specified, we do not have any fallback
+OLD configuration and the test will immediately fail.
+OLD 
+OLD #### Printing the allowed configuration
+OLD 
+OLD An object of type `fhicl::Table` is able to print the configuration it
+OLD represents. All we have to do is to create such a table with provider's `Config`
+OLD as content. Such an object is useful enough that `AtomicNumber` provider has a
+OLD name for it, `parameters_type`. A technical detail is that to create such a
+OLD table we need to give either a parameter set or a name. Neither of them is
+OLD important, so we choose the fastest way, just provide a name.
+OLD Then it's only matter of calling its `print_allowed_configuration()` method.
+OLD 
+OLD #### Testing the validity of the configuration
+OLD 
+OLD The other thing an object of type `fhicl::Table` can do is to validate a FHiCL
+OLD parameter set. We provide this method a parameter set and a list of keys that
+OLD should be ignored, and the method `validate_ParameterSet()` checks that:
+OLD 
+OLD * all the elements of the wrapped `Config` object that have no default value
+OLD   are present in the specified parameter set
+OLD * that no key in the parameter set is present that does not match any element in
+OLD   the wrapped `Config` object, with the possible exception of the ignored keys
+OLD 
+OLD If any of these checks fails, an exception is thrown.
+OLD In the test, we have asked to ignore a key called `"service_type"`. This key is
+OLD by default added by _art_ and some configuration files end up having it (for
+OLD example, configuration files derived from the dump of a _art_-processed
+OLD configuration, as with `config_dumper` or the `--debug-config` option of `art`).
+OLD With this, any valid _art_ configuration file including the service
+OLD `AtomicNumberService` is expected to pass this test.
+OLD 
+OLD 
+OLD ### AtomicNumberTest_module.cc                                               ###
+OLD 
+OLD A test for an _art_ service requires running `lar` with the proper configuration
+OLD file, possibly including one or more test modules.
+OLD 
+OLD The configuration file, called `test_krypton_atomic_number.fcl`, that is in fact
+OLD based on its namesake in the `Providers` test directory, but dressed to work
+OLD with _art_: it adds a test module `"atomicnumbertest"` of type
+OLD `AtomicNumberTest`.
+OLD 
+OLD In this example, the _art_ service does not add any functionality on top of the
+OLD provider, so only the trivial test `AtomicNumberTest` is provided. It obtains
+OLD the service provider from the framework (testing that `lar::providerFrom()`
+OLD works with our service), and exercises the provider one-method interface.
+OLD The test is performed in the `beginJob()` method: at that time, services are
+OLD already available but no input file is open. In this way, no input file is
+OLD actually needed for the test to run --- and in fact we don't provide any.
+OLD 
+OLD The validation of the configuration, that for the provider was explicitly
+OLD checked only in `ValidateAtomicNumberConfiguration_test`, is automatically
+OLD performed by _art_, both in this test and every time the service is instantiated
+OLD in a regular run.
+
+
+## Questions?  #################################################################
+
+If you have any question about the example, please contact its author.
+This section will be populated with questions and their answers.
+

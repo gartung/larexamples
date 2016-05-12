@@ -1,0 +1,53 @@
+#
+# File:   test_shower_calibration_from_pid.fcl
+# Brief:  Test for ShowerCalibrationGaloreFromPIDService
+# Author: Gianluca Petrillo (petrillo@fnal.gov)
+# Date:   May 4, 2016
+# Description:
+# Test for ShowerCalibrationGaloreService example service using the
+# ShowerCalibrationGaloreFromPIDService implementation.
+#     
+# Dependencies:
+#
+#
+
+#include "showercalibrationgalore_standard.fcl"
+
+process_name: ShowerCalibrationGaloreFromPIDServiceTest
+
+
+services: {
+   ShowerCalibrationGaloreService: @local::standard_shower_calibration_by_particle
+} # services
+
+# we need to specify a calibration file
+services.ShowerCalibrationGaloreService.CalibrationFile: "examples/CalibrationExample.root:Shower"
+
+source: {
+   module_type: EmptyEvent
+   maxEvents:   1
+}
+
+outputs: {}
+
+physics: {
+   analyzers: {
+      
+      showercalibrationtest: {
+         module_type:  ShowerCalibrationGaloreTest
+         
+         Emin:  0.0
+         Emax:  2.5
+         Estep: 0.1
+         PID: [ 11, -11, 13, -13, 211, 111, 2112, 2212, 22, 0 ]
+      }
+      
+   } # analyzers
+   
+   tests: [ showercalibrationtest ]
+   
+   trigger_paths: []
+   end_paths:     [ tests ]
+   
+} # physics
+
