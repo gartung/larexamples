@@ -18,7 +18,6 @@
 #include "cetlib/search_path.h"
 
 // ROOT libraries
-#include "TSpline.h" // TSpline3
 #include "TGraphErrors.h"
 #include "TFile.h"
 #include "TDirectory.h"
@@ -157,16 +156,13 @@ lar::example::ShowerCalibrationGaloreFromPID::readParticleCalibration
    info.minE = graph->GetX()[0];
    info.maxE = graph->GetX()[N - 1];
    
-   // a cubic spline with initial and final derivatives ("b1" and "e1")
+   // a spline; if there are at least 5 points, use AKIMA spline, that is
+   // "stable" for outliers (reducing over/undershoot)
    // set to zero
-   info.factor = std::make_unique<TSpline3>
-     (("Calib_" + GraphName).c_str(), graph.get(), "b1 e1", 0., 0.);
+   info.factor = createInterpolator(N, graph->GetX(), graph->GetY());
    
    // compute the error in the same way; kind of an approximation here
-   info.error = std::make_unique<TSpline3>(
-     ("CalibError_" + GraphName).c_str(), graph->GetX(), graph->GetEY(), N,
-     "b1 e1", 0., 0.
-     );
+   info.error = createInterpolator(N, graph->GetX(), graph->GetEY());
    
    return info;
 } // lar::example::ShowerCalibrationGaloreFromPID::readParticleCalibration()
@@ -306,6 +302,30 @@ lar::example::ShowerCalibrationGaloreFromPID::CalibrationInfo_t::evalError
    double const boundE = std::min(maxE, std::max(minE, E));
    return error->Eval(boundE);
 }
+
+
+//------------------------------------------------------------------------------
+std::unique_ptr<ROOT::Math::Interpolator>
+lar::example::ShowerCalibrationGaloreFromPID::createInterpolator
+  (unsigned int N, double const* x, double const* y)
+{
+   
+   // decide the type of interpolation based on the available number of points
+   ROOT::Math::Interpolation::Type type;
+   if      (N >= 5) type = ROOT::Math::Interpolation::kAKIMA;
+   else if (N >= 3) type = ROOT::Math::Interpolation::kCSPLINE;
+   else             type = ROOT::Math::Interpolation::kLINEAR;
+   
+   auto interp
+     = std::make_unique<ROOT::Math::Interpolator>(std::max(N, 2U), type);
+   if (N > 1) interp->SetData(N, x, y);
+   else { // we need to make up the second point
+     double const x_p[2] = { *x, *x + 1. };
+     double const y_p[2] = { *y, *y };
+     interp->SetData(2, x_p, y_p);
+   }
+   return interp;
+} // lar::example::ShowerCalibrationGaloreFromPID::createInterpolator()
 
 
 //------------------------------------------------------------------------------

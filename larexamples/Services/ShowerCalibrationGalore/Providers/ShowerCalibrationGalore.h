@@ -13,7 +13,7 @@
 
 
 /// LArSoft libraries
-#include "larcore/CoreUtils/UncopiableAndUnmoveableClass.h"
+#include "larcore/CoreUtils/UncopiableAndUnmovableClass.h"
 #include "lardata/RecoBase/Shower.h"
 
 // C/C++ standard libraries
@@ -29,12 +29,17 @@ namespace lar {
        * The service provider computes a calibration factor for a reconstructed
        * shower.
        * 
+       * It offers:
+       * 
+       * * correction() to get the calibration factor with uncertainty
+       * * correctionFactor() to get just the calibration factor
+       * 
        * This is an abstract interface. The corresponding _art_ service
        * interface is called `ShowerCalibrationGaloreService`.
        * 
        */
       class ShowerCalibrationGalore
-         : protected lar::UncopiableAndUnmoveableClass
+         : protected lar::UncopiableAndUnmovableClass
       {
             public:
          

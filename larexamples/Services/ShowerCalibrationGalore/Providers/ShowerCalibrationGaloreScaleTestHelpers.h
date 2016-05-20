@@ -60,7 +60,7 @@ namespace testing {
       {
         return SimpleEnvironmentStandardSetupByName<
           lar::example::ShowerCalibrationGaloreScale, // provider class
-          lar::example::ShowerCalibrationGalore,        // providet interface
+          lar::example::ShowerCalibrationGalore,      // provider interface
           TestEnv
           >
           (env, "ShowerCalibrationGaloreService"); // configuration key

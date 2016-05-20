@@ -22,7 +22,7 @@
 #include "cetlib/exception.h"
 
 // ROOT libraries
-#include "TSpline.h"
+#include "Math/Interpolator.h"
 #include "TDirectory.h"
 #include "TClass.h"
 #include "TH1.h"
@@ -34,6 +34,10 @@
 #include <memory> // std::unique_ptr()
 #include <type_traits> // std::is_base_of<>
 #include <initializer_list>
+
+
+// forward declarations
+class TGraph; // from ROOT
 
 
 namespace lar {
@@ -203,10 +207,10 @@ namespace lar {
             double maxE = -1.; ///< upper end of the energy range covered [GeV]
             
             /// parametrisation of the correction factor
-            std::unique_ptr<TSpline> factor;
+            std::unique_ptr<ROOT::Math::Interpolator> factor;
             
             /// parametrisation of the correction uncertainty
-            std::unique_ptr<TSpline> error;
+            std::unique_ptr<ROOT::Math::Interpolator> error;
             
             double evalFactor(double E) const;
             double evalError(double E) const;
@@ -252,6 +256,9 @@ namespace lar {
          /// Opens the specified ROOT directory, as in path/to/file.root:dir/dir
          static TDirectory* OpenROOTdirectory(std::string path);
          
+         /// Creates a ROOT interpolator from a set of N points
+         static std::unique_ptr<ROOT::Math::Interpolator>
+         createInterpolator(unsigned int N, double const* x, double const* y);
       
       }; // class ShowerCalibrationGaloreFromPID
       
@@ -335,21 +342,11 @@ void lar::example::ShowerCalibrationGaloreFromPID::CalibrationInfo_t::reportTo
          << error->Eval(minE) << " for all energies";
    }
    else {
-      double minF = factor->Eval(maxE), maxF = minF;
-      
-      for (Int_t i = 0; i < factor->GetNp(); ++i) {
-         double E, f;
-         factor->GetKnot(i, E, f);
-         if (f > maxF) maxF = f;
-         if (f < minF) minF = f;
-      } // for
-      
-      out << "correction in range E=[ " << minE << " ; " << maxE << " ] GeV;"
-         " correction in [ " << minF << " ; " << maxF << " ]"
-         "; at limits: E(min) = " << minE << " f=" << factor->Eval(minE) << " +/- "
-         << error->Eval(minE)
-         << "; E(max) = " << maxE << " f=" << factor->Eval(maxE) << " +/- "
-         << error->Eval(maxE);
+      out << "correction valid from E=" << minE
+         << " GeV (" << factor->Eval(minE) << " +/- " << error->Eval(minE)
+         << ") to E=" << maxE
+         << " GeV (" << factor->Eval(maxE) << " +/- " << error->Eval(maxE)
+         << ")";
    }
    if (!appliesTo.empty()) {
       out << "; covers particles ID={";

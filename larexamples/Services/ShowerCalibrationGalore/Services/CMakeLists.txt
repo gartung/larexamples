@@ -4,7 +4,6 @@ art_make(
     lardata_RecoBase
     art_Framework_Services_Registry
     art_Utilities
-    ${ROOT_CORE}
   )
 
 install_fhicl()

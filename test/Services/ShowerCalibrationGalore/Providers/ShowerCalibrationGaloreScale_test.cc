@@ -5,15 +5,13 @@
  * @date   April 28, 2016
  * @see    ShowerCalibrationGaloreScale.h
  * 
- * Command line arguments:
+ * Runs a test that instantiates a ShowerCalibrationGaloreScale provider with
+ * a known configuration and verifies that the same factor is returned for
+ * a nominal reconstructed shower.
+ * It also prints on screen a "standard" table of corrections, as printed by
+ * ShowerCalibrationTableTest().
  * 
- * CreateTestCalibrationFromPID  [OutputPath]
- * 
- * OutputPath is a full ROOT directory path made of a UNIX path and a ROOT
- * directory path. For example, "data/calibrations.root:Showers/ByType" will
- * create a directory "data" and a "calibrations.root" ROOT file in it (or
- * update it if exists), create a structure of two nested ROOT directories,
- * "Showers/ByType", and write all the calibration graphs in there.
+ * Command line arguments: none.
  * 
  */
 
@@ -62,7 +60,7 @@ int main() {
   //
   unsigned int nErrors = 0; // error count
   
-  // get the provider we just set up (but accessing it by the interface)ß  
+  // get the provider we just set up (but accessing it by the interface)
   auto const* Calibration
     = TesterEnv.Provider<lar::example::ShowerCalibrationGalore>();
   

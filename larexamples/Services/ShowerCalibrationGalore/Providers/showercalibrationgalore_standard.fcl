@@ -28,8 +28,8 @@ standard_shower_calibration_uniform: {
    service_provider: "ShowerCalibrationGaloreScaleService"
    
    # this is the uniform shower calibration factor
-   factor: 1.1
-   error:  0.3
+   factor: 1.0
+   error:  0.0
    
 } # shower_calibration_uniform
 

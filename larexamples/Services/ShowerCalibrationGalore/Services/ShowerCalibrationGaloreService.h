@@ -4,8 +4,6 @@
  * @author Gianluca Petrillo (petrillo@fnal.gov)
  * @date   April 27, 2016
  * @see    ShowerCalibrationGalore.h
- * 
- * 
  */
 
 
