@@ -1,0 +1,112 @@
+#
+# File:    point_isolation_test.fcl
+# Purpose: Test of RemoveIsolatedSpacePoints module
+# Author:  Gianluca Petrillo (petrillo@fnal.gov)
+# Date:    June 3rd, 2016
+# Version: 1.0
+# 
+# The job creates some input space points, then runs the removal module
+# with a loose configuration (that should preserve all points) and a tight one
+# (that should remove all of them).
+# It uses the single-TPC LAr TPC "standard" detector.
+# The spacing of 20 cm populates the only TPC with about 10000 space points.
+# 
+# Dependencies:
+# - geometry service
+# 
+# Expected result: pass
+# 
+# Changes:
+# 20160603 (petrillo@fnal.gov) [v1.0]
+#   original version
+#
+
+#include "geometry_lartpcdetector.fcl"
+
+process_name: IsolTest
+
+
+services: {
+  TimeTracker:            { printSummary: true }
+  Geometry:               @local::lartpcdetector_geometry
+  ExptGeoHelperInterface: @local::lartpcdetector_geometry_helper
+}
+
+source: {
+  module_type: EmptyEvent
+  maxEvents:   1
+}
+
+
+physics: {
+  producers: {
+    
+    createInput: {
+      module_type: SpacePointMaker
+      
+      spacing: 20 # cm
+      
+    } # SpacePointMaker["createInput"]
+    
+    
+    looseIsolTest: {
+      module_type: RemoveIsolatedSpacePoints
+      
+      # input space points
+      spacePoints: "createInput"
+      
+      # SpacePointIsolationAlg configuration
+      isolation: {
+        radius: 30 # cm (same unit as space point coordinates)
+      }
+      
+    } # RemoveIsolatedSpacePoints["looseIsolTest"]
+    
+    
+    tightIsolTest: {
+      module_type: RemoveIsolatedSpacePoints
+      
+      # input space points
+      spacePoints: "createInput"
+      
+      # SpacePointIsolationAlg configuration
+      isolation: {
+        radius:  10 # cm (same unit as space point coordinates)
+      }
+      
+    } # RemoveIsolatedSpacePoints["tightIsolTest"]
+    
+  } # producers
+  
+  analyzers: {
+    
+    checkTightIsol: {
+      
+      module_type: "CheckDataProductSize"
+      
+      inputLabel:   tightIsolTest
+      expectedSize: 0
+      
+    } # checkTightIsol
+    
+    
+    checkLooseIsol: {
+      
+      module_type: "CheckDataProductSize"
+      
+      inputLabel:   looseIsolTest
+      sameSizeAs:   createInput
+      
+    } # checkTightIsol
+    
+    
+  } # analyzers
+  
+  test: [ createInput, looseIsolTest, tightIsolTest ]
+  check: [ checkLooseIsol, checkTightIsol ]
+  
+  trigger_paths: [ test ]
+  end_paths: [ check ]
+  
+} # physics
+

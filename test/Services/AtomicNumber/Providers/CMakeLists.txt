@@ -32,5 +32,5 @@ cet_test(ValidateAtomicNumberConfiguration_test
    DATAFILES ./test_krypton_atomic_number.fcl
    TEST_ARGS ./test_krypton_atomic_number.fcl
    )
-   
-   
+
+install_source()

@@ -15,3 +15,5 @@ cet_test(AtomicNumberService_test HANDBUILT
    TEST_EXEC lar
    TEST_ARGS --rethrow-all --config ./test_krypton_atomic_number.fcl
    )
+
+install_source()

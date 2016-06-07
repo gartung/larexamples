@@ -22,3 +22,4 @@ cet_test(ShowerCalibrationGaloreFromPIDTest HANDBUILT
    TEST_ARGS --rethrow-all --config ./test_shower_calibration_from_pid.fcl
    )
 
+install_source()

@@ -33,3 +33,5 @@ cet_test(ShowerCalibrationGaloreScale_test
     ${ROOT_CORE}
     ${ROOT_HIST}
   )
+
+install_source()
