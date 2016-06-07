@@ -279,7 +279,9 @@ The ridiculously long include guard
 `LAREXAMPLES_SERVICES_ATOMICNUMBER_PROVIDER_ATOMICNUMBER_H` is in
 fact the recommended one. Having naming collisions for include guards is pretty
 much guaranteed to yield misleading compilation errors. So we stick the whole
-file path into it.
+file path into it. You can learn more about this in the _art_ workbook (appendix
+F in version 0.90). We have used an upcase identifier as it's custom to have
+C preprocessor definition names, _and only those_, uppercase.
 
 There are two constructors. One is the usual one based on FHiCL `ParameterSet`,
 the other is a more unusual one directly based on our configuration class.
