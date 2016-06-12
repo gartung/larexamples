@@ -54,11 +54,11 @@ std::vector<Point> createPointsInCube(unsigned int pointsPerSide) {
   points.reserve(cube(pointsPerSide));
   
   Point p;
-  for (unsigned int i = 0; i <= pointsPerSide; ++i) {
+  for (unsigned int i = 0; i < pointsPerSide; ++i) {
     p[0] = i;
-    for (unsigned int j = 0; j <= pointsPerSide; ++j) {
+    for (unsigned int j = 0; j < pointsPerSide; ++j) {
       p[1] = j;
-      for (unsigned int k = 0; k <= pointsPerSide; ++k) {
+      for (unsigned int k = 0; k < pointsPerSide; ++k) {
         p[2] = k;
         points.push_back(p);
       } // for k
