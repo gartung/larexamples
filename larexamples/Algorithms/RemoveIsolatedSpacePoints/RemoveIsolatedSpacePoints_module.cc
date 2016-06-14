@@ -1,8 +1,12 @@
 /**
  * @file   RemoveIsolatedSpacePoints_module.cc
- * @brief  Module running SpacePointIsolationAlg algorithm
+ * @brief  Module running `lar::example::SpacePointIsolationAlg` algorithm
  * @author Gianluca Petrillo (petrillo@fnal.gov)
  * @date   June 3, 2016
+ * 
+ * Provides:
+ * 
+ * * `lar::example::RemoveIsolatedSpacePoints` module
  * 
  */
 
@@ -38,6 +42,19 @@ namespace lar {
      * Isolation is determined by the `SpacePointIsolationAlg` algorithm.
      * 
      * The space points are not associated to anything.
+     * 
+     * Input
+     * ------
+     * 
+     * A collection of `recob::SpacePoint` is required.
+     * 
+     * 
+     * Output
+     * ------
+     * 
+     * A collection of `recob::SpacePoint` is produced, containing copies of
+     * the non-isolated inpt points.
+     * 
      * 
      * Configuration parameters
      * =========================

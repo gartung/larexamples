@@ -357,6 +357,13 @@ The main point of this algorithm is to call `PointIsolationAlg`, and its
 structure revolves on the latter's. The documentation again shows how to use the
 algorithm, highlighting the construction, set up and execution phases.
 
+One task of the implementation is to extract from the geometry description the
+total size of the volume to be covered. This volume is defined as a box
+including the volume from all TPC's in the detector (across all cryostats).
+This approach can be nefarious in case of DUNE Far Detector, where the cryostats
+are very far from each other. A more sensible approach would be to treat the
+cryostats independently.
+
 The type `Coord_t` is written in a C++11-heavy way and it translates into
 `double`. That definition in fact reads the type directly from the type of
 _x_ coordinate of `recob::SpacePoint`. Ideally, `recob::SpacePoint` itself would
