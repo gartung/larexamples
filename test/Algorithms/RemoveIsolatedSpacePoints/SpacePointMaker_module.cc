@@ -7,7 +7,7 @@
  */
 
 // LArSoft libraries
-#include "larexamples/test/Algorithms/RemoveIsolatedSpacePoints/SpacePointTestUtils.h"
+#include "SpacePointTestUtils.h"
 #include "lardata/RecoBase/SpacePoint.h"
 #include "larcore/Geometry/Geometry.h"
 

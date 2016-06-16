@@ -7,7 +7,7 @@
  * 
  */
 
-#include "larexamples/test/Algorithms/RemoveIsolatedSpacePoints/SpacePointTestUtils.h"
+#include "SpacePointTestUtils.h"
 
 // C/C++ standard libraries
 #include <utility> // std::pair<>
