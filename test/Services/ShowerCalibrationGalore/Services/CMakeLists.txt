@@ -7,6 +7,7 @@ simple_plugin(ShowerCalibrationGaloreTest "module"
   mf_Utilities
   fhiclcpp
   cetlib 
+  ${ROOT_BASIC_LIB_LIST}
 )
 
 

@@ -2,6 +2,7 @@ art_make(
   EXCLUDE PointIsolationAlg_test.cc PointIsolationAlgStress_test.cc
   LIB_LIBRARIES
     lardata_RecoBase
+    ${ROOT_CORE}
   MODULE_LIBRARIES
     lardata_RecoBase
     larcore_Geometry
