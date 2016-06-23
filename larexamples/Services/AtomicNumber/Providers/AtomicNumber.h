@@ -12,7 +12,7 @@
 
 
 // support libraries
-#include "art/Utilities/Exception.h"
+#include "canvas/Utilities/Exception.h"
 #include "fhiclcpp/ParameterSet.h"
 #include "fhiclcpp/types/Table.h"
 #include "fhiclcpp/types/Atom.h"

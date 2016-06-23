@@ -15,7 +15,7 @@
 
 // LArSoft libraries
 #include "larexamples/Services/ShowerCalibrationGalore/Providers/ShowerCalibrationGalore.h"
-#include "lardata/RecoBase/Shower.h"
+#include "lardataobj/RecoBase/Shower.h"
 
 // C/C++ standard libraries
 #include <string>

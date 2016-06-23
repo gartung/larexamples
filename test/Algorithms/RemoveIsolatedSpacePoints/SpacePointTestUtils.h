@@ -16,7 +16,7 @@
 #define LAREXAMPLES_TEST_ALGORITHMS_REMOVEISOLATEDSPACEPOINTS_SPACEPOINTTESTUTILS_H
 
 // LArSoft libraries
-#include "lardata/RecoBase/SpacePoint.h"
+#include "lardataobj/RecoBase/SpacePoint.h"
 #include "larcore/Geometry/BoxBoundedGeo.h"
 
 // C/C++ standard libraries

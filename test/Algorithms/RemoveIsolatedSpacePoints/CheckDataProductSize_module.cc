@@ -7,14 +7,14 @@
  */
 
 // LArSoft libraries
-#include "lardata/RecoBase/SpacePoint.h"
+#include "lardataobj/RecoBase/SpacePoint.h"
 
 // framework libraries
 #include "art/Framework/Core/EDAnalyzer.h"
 #include "art/Framework/Core/ModuleMacros.h"
 #include "art/Framework/Principal/Event.h"
 #include "art/Framework/Principal/Handle.h" // art::ValidHandle
-#include "art/Utilities/InputTag.h"
+#include "canvas/Utilities/InputTag.h"
 #include "messagefacility/MessageLogger/MessageLogger.h"
 #include "fhiclcpp/types/Atom.h"
 #include "fhiclcpp/types/OptionalAtom.h"

@@ -2,7 +2,7 @@ simple_plugin(AtomicNumberTest "module"
    ${ART_FRAMEWORK_CORE}
    ${ART_FRAMEWORK_CORE}
    ${ART_FRAMEWORK_SERVICES_REGISTRY}
-   ${ART_UTILITIES}
+   art_Utilities canvas_Utilities
    ${MF_MESSAGELOGGER}
    ${MF_UTILITIES}
    ${FHICLCPP}

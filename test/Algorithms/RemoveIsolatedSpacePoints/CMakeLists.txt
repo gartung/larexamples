@@ -1,10 +1,10 @@
 art_make(
   EXCLUDE PointIsolationAlg_test.cc PointIsolationAlgStress_test.cc
   LIB_LIBRARIES
-    lardata_RecoBase
+    lardataobj_RecoBase
     ${ROOT_CORE}
   MODULE_LIBRARIES
-    lardata_RecoBase
+    lardataobj_RecoBase
     larcore_Geometry
     larcore_Geometry_Geometry_service
     larexamples_Algorithms_RemoveIsolatedSpacePoints
@@ -12,7 +12,7 @@ art_make(
     art_Framework_Core
     art_Framework_Services_Registry
     art_Framework_Principal
-    art_Utilities
+    art_Utilities canvas_Utilities
     ${MF_MESSAGELOGGER}
     ${MF_UTILITIES}
     ${FHICLCPP}

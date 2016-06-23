@@ -8,7 +8,7 @@
 
 // LArSoft libraries
 #include "SpacePointTestUtils.h"
-#include "lardata/RecoBase/SpacePoint.h"
+#include "lardataobj/RecoBase/SpacePoint.h"
 #include "larcore/Geometry/Geometry.h"
 
 // framework libraries

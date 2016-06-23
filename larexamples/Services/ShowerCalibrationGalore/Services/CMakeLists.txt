@@ -1,9 +1,9 @@
 art_make(
   SERVICE_LIBRARIES
     larexamples_Services_ShowerCalibrationGalore_Providers
-    lardata_RecoBase
+    lardataobj_RecoBase
     art_Framework_Services_Registry
-    art_Utilities
+    art_Utilities canvas_Utilities
   )
 
 install_fhicl()

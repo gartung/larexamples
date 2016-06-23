@@ -1,8 +1,8 @@
 simple_plugin(ShowerCalibrationGaloreTest "module"
-  lardata_RecoBase
+  lardataobj_RecoBase
   art_Framework_Core
   art_Framework_Services_Registry
-  art_Utilities
+  art_Utilities canvas_Utilities
   mf_MessageLogger
   mf_Utilities
   fhiclcpp

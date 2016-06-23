@@ -12,7 +12,7 @@
 
 // LArSoft libraries
 #include "larexamples/Algorithms/RemoveIsolatedSpacePoints/PointIsolationAlg.h"
-#include "lardata/RecoBase/SpacePoint.h"
+#include "lardataobj/RecoBase/SpacePoint.h"
 
 
 // infrastructure and utilities

@@ -1,6 +1,6 @@
 art_make(
   LIB_LIBRARIES
-    lardata_RecoBase
+    lardataobj_RecoBase
     ${FHICLCPP}
     ${CETLIB}
     ${ROOT_HIST}
