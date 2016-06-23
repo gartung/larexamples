@@ -1,0 +1,35 @@
+#
+# File:    removeisolatedspacepoints_standard.fcl
+# Purpose: provide default configuration for RemoveIsolatedSpacePoints module
+# Author:  Gianluca Petrillo (petrillo@fnal.gov)
+# Date:    June 7, 2016
+# Version: 1.0
+# 
+# Provides: 
+# 
+# - standard_removeisolatedspacepoints: base configuration
+#   (but all elements must be overridden)
+# 
+# Changes:
+# 20160607 (petrillo@fnal.gov) [1.0]
+#   original version
+#
+
+BEGIN_PROLOG
+
+
+standard_removeisolatedspacepoints: {
+  module_type: RemoveIsolatedSpacePoints
+  
+  # input space points
+  spacePoints: @nil
+  
+  # SpacePointIsolationAlg configuration
+  isolation: {
+    radius: @nil # cm (same unit as space point coordinates)
+  }
+  
+} # standard_removeisolatedspacepoints
+
+
+END_PROLOG

@@ -1,0 +1,49 @@
+#
+# File:   test_shower_calibration_scale.fcl
+# Brief:  Test for ShowerCalibrationGaloreScale service
+# Author: Gianluca Petrillo (petrillo@fnal.gov)
+# Date:   May 4, 2016
+# Description:
+# Test for ShowerCalibrationGaloreScaleService example service.
+#     
+# Dependencies:
+#
+#
+
+#include "showercalibrationgalore_standard.fcl"
+
+process_name: ShowerCalibrationGaloreScaleServiceTest
+
+
+services: {
+   ShowerCalibrationGaloreService: @local::standard_shower_calibration_uniform
+} # services
+
+
+source: {
+   module_type: EmptyEvent
+   maxEvents:   1
+}
+
+outputs: {}
+
+physics: {
+   analyzers: {
+      
+      showercalibrationtest: {
+         module_type:  ShowerCalibrationGaloreTest
+         
+         Emin:  0.0
+         Emax:  5.0
+         Estep: 1.0
+         PID: [ 11, 22 ]
+      }
+      
+   } # analyzers
+   
+   tests: [ showercalibrationtest ]
+   
+   trigger_paths: []
+   end_paths:     [ tests ]
+   
+} # physics

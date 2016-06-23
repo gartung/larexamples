@@ -59,6 +59,7 @@ include(BuildPlugins)
 
 # source
 add_subdirectory(larexamples)
+add_subdirectory(test)
 
 # ups - table and config files
 add_subdirectory(ups)
