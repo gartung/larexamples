@@ -2,7 +2,8 @@
 | --------------- | ------------------------------------- |
 | Type:           | LArSoft algorithm with module         |
 | Author:         | Gianluca Petrillo (petrillo@fnal.gov) |
-| Created on:     | May 26, 2016                          |
+| Created on:     | June 30, 2016                         |
+| Version:        | 1.1                                   |
 
 
 
@@ -45,8 +46,9 @@ there first. Also, bits of information that are already present in LArSoft
 example `AtomicNumber` are not repeated in their entirety here.
 
 This document is organised in sections. We suggest that you read the section
-above to know what this example is about, and the (very terse) explanation of
-the model, and the beginning of the section of the provider header.
+above to know what this example is about, and, below, the (very terse)
+explanation of the model and the beginning of the section of the
+[Algorithm task and design choices].
 These contain information about the design that can stimulate your own.
 Then, you can dig into the code and come back to the pertinent section when you
 have questions.
@@ -72,8 +74,7 @@ that is independent of the framework, and a framework interface.
 Here we call the functional part solving a given problem simply _algorithm_.
 Its _art_ framework interface is an _art_ module.
 
-A more extensive description of this model can be found in LArSoft wiki:
-<https://cdcvs.fnal.gov/redmine/projects/larsoft/wiki/Writing_LArSoft_algorithms>.
+A more extensive description of this model can be found in [LArSoft wiki].
 
 
 
@@ -85,6 +86,7 @@ The example is split between two directories:
 larexamples/Algoritmhs/RemoveIsolatedSpacePoints/    ## contains example code ##
 |-- README                                                          # this file
 |-- PointIsolationAlg.h                           # generic isolation algorithm
+|-- SpacePartition.h            # container used by PointIsolationAlg algorithm
 |-- SpacePointIsolationAlg.h    # header for the space point specific algorithm
 |-- SpacePointIsolationAlg.cxx  # source for the space point specific algorithm
 |-- RemoveIsolatedSpacePoints_module.cc                  # art module interface
@@ -94,6 +96,7 @@ test/Algoritmhs/RemoveIsolatedSpacePoints/           ## contains example test ##
 |-- SpacePointTestUtils.h        # header with common utilities for these tests
 |-- SpacePointTestUtils.cxx      # source with common utilities for these tests
 |-- PointIsolationAlg_test.cc    # a simple unit test for the generic algorithm
+|-- PointIsolationAlgRandom_test.cc # other unit test for the generic algorithm
 |-- PointIsolationAlgStress_test.cc   # a stress test for the generic algorithm 
 |-- point_isolation_test.fcl          # configuration of the test of art module
 |-- SpacePointMaker_module.cc                     # module producing test input
@@ -111,7 +114,7 @@ LArSoft mildly recommends the following file name suffices:
  
 If adding code to an existing directory, it's good practise to spend a couple of
 minutes to observe the name patterns of files in the directory, its parent and
-its siblings.
+its siblings, and adapt to them.
 
 
 ### Directory structure                                                      ###
@@ -120,7 +123,7 @@ The directory structure in this example is minimal, with a code section under
 the repository code tree (`larexamples`) and a test section under the proper
 tree (`test`).
 Compared with the service examples, this structure is simpler.
-A goal of the factorization is to have the algorithm library independent of the
+A goal of the factorisation is to have the algorithm library independent of the
 framework. Here we obtain that effect by a careful tuning of _cmake_.
 A consequence is that not all the code in the directory compiles in an
 out-of-framework environment. If that is a requirement, the code should be split
@@ -137,8 +140,8 @@ LArSoft prescription: all the code and configuration files are in `larexamples` 
 ## The algorithm  ##############################################################
 
 In this section the algorithm purpose, design choices and implementation are
-described. The next section will describe its framework interface, the _art_
-module.
+described. The next section will then describe its framework interface, the
+_art_ module.
 
 
 ### Algorithm task and design choices                                        ###
@@ -177,7 +180,7 @@ In general, the life of the algorithm is expected to be as follows:
 7. (back to 1., 2. or 3.)
 
 where the creation and configuration are often merged and expected to happen
-rarely (possibly only once), while the remaining points are frequent.
+rarely (possibly only once), while the remaining points happen many times.
 
 The algorithm is simple enough that it can receive all its input in a single
 method call, and its return value is easily expressed in a return value.
@@ -185,7 +188,7 @@ Therefore, we chose to have a *"stateless" algorithm* (except for the
 configuration). This means that no information is cached between public method calls. For example, between the configuration call and the algorithm execution
 call, the algorithm object has no input stored, and immediately after the
 execution call has returned, the algorithm has already forgotten both
-the input points and the result. This pattern is *very much recommended*, coming
+input points and result. This pattern is *very much recommended*, coming
 with advantages like:
 
 * no need to "clear" results or inputs; we have seen cases in LArSoft where this
@@ -267,9 +270,19 @@ included in the calling function without the processor having to jump to another
 place to get it, and code locality is an important optimisation factor in modern
 processors.
 
+The algorithm uses a container to organise the input points. This container is
+segregated in its own header, `SpacePartition.h`. While we don't necessarily
+want one header per class, having complex, self-standing classes in their own
+file is a good practice. The `SpacePartition` class could prove to be useful in
+other contexts, and it will be easier to reuse if in a separated file.
+
 Note that the algorithm uses basically only standard C++ libraries (the use of
-`cet::sum_squares()` might be very easily replaced) and has no LArSoft nor _art_
-dependency.
+`cet::sum_squares()` might be very easily replaced) and has no _art_ dependency.
+It _does_ have a LArSoft dependency, in the form of a utility library
+`GridContainers.h` (currently in `lardata` repository). This header, and the
+ones it includes, do not introduce additional dependencies as they are pure C++
+and pure header libraries (in fact, they were created for this example, and
+promoted to general utility code later).
 
 
 #### The configuration data structure
@@ -305,16 +318,39 @@ This relies on the collection supporting `std::cbegin()` and `std::cend()`: this
 techniques is similar to the one we used with `PositionExtractor`, but it comes
 directly from the C++ standard library.
 
-The current implementation of the algorithm is brute force, and a dumb one even
-in that: it tries all combinations and then decide. While this scales very badly
-with input data size, it is easier to get right. Future implementation can
-retain this as a cross check implementation for unit tests.
+A possible, basic implementation of the algorithm is brute force, trying all combinations and then decide. While this scales very badly with input data size,
+it is easier to get right. Such an algorithm is available in a method, to be
+used as cross check implementation for unit tests with arbitrary content.
+
+The limit of the brute force approach is that it compares each of the _N_ points
+in the input with each other of the still _N_ points: this is a _N_ x _N_
+algorithm, that means doubling the input quadruplicates the time taken.
+The main implementation of the example algorithm tries to reduce the number of comparisons. The idea is simple: we can partition the input points in space
+cells, and then compare cells first, as most of them might be far enough that
+the points in one can't affect the isolation of the points in the other.
+We have a container that arranges points by cells (that is `SpacePartition`
+class), then we define for each cell which neighbouring cells _could_ render a
+point in one cell non-isolated, and then we will compare only points in those
+cells. The size of the cell is a critical choice to have the algorithm
+efficient. Here, with not too much of a thinking, we chose it so that if there
+is more than one point in it, all the points in the cell are non-isolated.
+We buy execution speed with the use of additional memory to rearrange the input;
+if the cell size is chosen too small, memory usage will explode (it increases as
+the _cube_ of _N_). So we have a rough estimation of the basic memory required
+for the optimal cell size, and if that is too much, we increase the cell size.
+The algorithm will not be able to rely on the assumption that more points in
+a single cells mean they are not all isolated, and it will be slower.
 
 The `closeEnough()` method hides all the coordinate extraction.
 It employs `PositionExtractor` via some helper functions that have the advantage
 they don't need the template type explicitly specified --- the compiler guesses
 it. Also note the use of `cet::sum_of_squares()` for convenience, and that we
 compare distance squares to avoid expensive square root evaluations.
+
+The algorithm can be improved in many ways. Some of them are marked as "TODO" in
+the code, for future developers to consider and implement them.
+With some additional knowledge, it might be possible also to back up to just
+use the brute force approach, that may be faster with few points in input.
 
 
 #### Documentation
@@ -375,8 +411,7 @@ expose the type of its coordinate directly by defining a type name.
 Configuration happens only on construction, which is served in two flavours:
 with configuration from a `Config` data structure, or via a FHiCL parameter set.
 In the end, the former is always used, and it implements FHiCL configuration
-validation. Documentation on FHiCL validation can be found in _fhiclcpp_ wiki:
-https://cdcvs.fnal.gov/redmine/projects/fhicl-cpp/wiki/Configuration_validation_and_fhiclcpp_types . In short, if the FHiCL parameter
+validation. Documentation on FHiCL validation can be found in [_fhiclcpp_ wiki][fhiclcpp]. In short, if the FHiCL parameter
 set that generates the `Config` object has unknown parameters or has mandatory
 parameters missing, an exception will be automatically thrown.
 
@@ -486,8 +521,7 @@ will be also able to print information about the module itself. Try it out:
 lar --print-description RemoveIsolatedSpacePoints
 ~~~~
 
-More information on these features is available in the _art_ wiki:
-https://cdcvs.fnal.gov/redmine/projects/art/wiki/Configuration_validation_and_description .
+More information on these features is available in the [_art_ wiki][art wiki].
 
 The resulting configuration can be seen in the example FHiCL configuration:
 `removeisolatedspacepoints_standard.fcl`. That is not a very usable
@@ -667,6 +701,43 @@ of `BOOST_TEST_MESSAGE` arguments is not correct C++, and it works because
 Boost magics book.
 
 
+### `PointIsolationAlgRandom_test`                                           ###
+
+This test runs the algorithm on some randomly generated data point
+distributions.
+There are two sensitive aspects in this kind of tests.
+
+Foremost, it's hard to predict the result of an algorithm on random input. In
+fact, another general algorithm would be needed, and then that one is in general
+as questionable as ours.
+We have such a second algorithm, that was unit-tested and is therefore
+reasonably safe. The reason why this is not the main algorithm is that it takes
+much longer to run in the general case, and this is a price our test will have
+to pay. Incidentally, this tests proves that this "brute force" algorithm is not
+always slower than the main one.
+
+The second aspect is that a test needs to be reproducible in order to provide
+the chance of debugging on failure. Therefore, we allow to specify the random
+seed, and we always print it on the screen.
+
+Technically, the test is similar to `PointIsolationAlg_test`.
+It performs tests on two input data set sizes and four different isolation
+radii, running the two versions of the algorithm and comparing their result each
+time. It also provides timing information on screen for each algorithm
+execution.
+
+One technical difference in the test implementation is the use of a "fixture"
+class, that provides the Boost test cases with an "environment" (if the fixture
+is global, that environment is shared among them). The member variables of the
+fixture class are directly accessible in the test cases, and our fixture has
+two, the usual `argc` / `argv` pair, which are obtained from the Boost unit test
+framework and stored locally.
+
+As an anecdote, this test was added as an after-tough while updating this
+document just before release. And it discovered a bug in the algorithm that was
+not exposed by any of the other tests, which have a much more controlled set up.
+
+
 ### `PointIsolationAlgStress_test`                                           ###
 
 The stress test runs the algorithm once with a large data set, and reports the
@@ -693,7 +764,7 @@ typically very short, but will report the "CPU time", that excludes slow downs
 due to other processes running on the same machine.
 
 
-### Test of the _art_module                                                  ###
+### Test of the _art_ module                                                 ###
 
 The main purpose of this test is to verify that the _art_ interface to the
 algorithm is operating as expected. The correctness of the algorithm is a less
@@ -807,4 +878,20 @@ all FHiCL files.
 If you have any question about the example, please contact its author.
 This section will be populated with questions and their answers.
 
-ß
+
+## Change log  #################################################################
+
+Version 1.0: May 26, 2016 (petrillo@fnal.gov)
+  original version
+
+Version 1.1: June 30, 2016 (petrillo@fnal.gov)
+  changed the algorithm implementation from a brute-force, try-every-combination
+  approach to one that spends memory to reduce the number of comparisons
+
+
+[LArSoft wiki]:
+  <https://cdcvs.fnal.gov/redmine/projects/larsoft/wiki/Writing_LArSoft_algorithms>
+[fhiclcpp]:
+  <https://cdcvs.fnal.gov/redmine/projects/fhicl-cpp/wiki/Configuration_validation_and_fhiclcpp_types>
+[art wiki]:
+  <https://cdcvs.fnal.gov/redmine/projects/art/wiki/Configuration_validation_and_description>

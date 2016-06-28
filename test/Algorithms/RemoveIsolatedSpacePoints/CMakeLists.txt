@@ -1,7 +1,11 @@
 art_make(
-  EXCLUDE PointIsolationAlg_test.cc PointIsolationAlgStress_test.cc
+  EXCLUDE
+    PointIsolationAlg_test.cc
+    PointIsolationAlgRandom_test.cc
+    PointIsolationAlgStress_test.cc
   LIB_LIBRARIES
     lardata_RecoBase
+    ${ROOT_CORE}
   MODULE_LIBRARIES
     lardata_RecoBase
     larcore_Geometry
@@ -18,6 +22,7 @@ art_make(
   )
 
 cet_test(PointIsolationAlg_test USE_BOOST_UNIT)
+cet_test(PointIsolationAlgRandom_test USE_BOOST_UNIT)
 
 cet_test(
   PointIsolation_test
