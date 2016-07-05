@@ -18,8 +18,6 @@
 // this code may fall out of date. In doubt, ask!
 // The last revision of this code was done on July 2015 with LArSoft v04_17_00.
 
-#ifndef AnalysisExample_Module
-#define AnalysisExample_Module
 
 // Always include headers defining everything you use, and only that.
 // Starting from LArSoft and ending with standard C++ is a good check
@@ -32,12 +30,11 @@
 #include "lardata/RecoBase/Cluster.h"
 #include "larcore/Geometry/Geometry.h"
 #include "larcore/Geometry/GeometryCore.h"
+#include "larcore/SimpleTypesAndConstants/geo_types.h"
 #include "SimulationBase/MCParticle.h"
 #include "SimulationBase/MCTruth.h"
-#include "larcore/SimpleTypesAndConstants/geo_types.h"
 
 // Framework includes
-#include "art/Utilities/Exception.h"
 #include "art/Framework/Core/EDAnalyzer.h"
 #include "art/Framework/Principal/Event.h"
 #include "art/Framework/Principal/Handle.h"
@@ -45,8 +42,13 @@
 #include "art/Framework/Services/Optional/TFileService.h"
 #include "art/Framework/Core/ModuleMacros.h"
 #include "art/Framework/Core/FindManyP.h"
+#include "art/Utilities/Exception.h"
+#include "art/Utilities/InputTag.h"
+
+// utility libraries
 #include "messagefacility/MessageLogger/MessageLogger.h"
 #include "fhiclcpp/ParameterSet.h"
+#include "cetlib/pow.h" // cet::sum_of_squares()
 
 // ROOT includes. Note: To look up the properties of the ROOT classes,
 // use the ROOT web site; e.g.,
@@ -76,12 +78,13 @@ namespace {
   // We will define this function at the end, but we at least declare it here
   // so that the module can freely use it.
   /// Utility function to get the diagonal of the detector
-  float DetectorDiagonal(geo::GeometryCore const& geom);
+  double DetectorDiagonal(geo::GeometryCore const& geom);
   
 } // local namespace
 
 
-namespace AnalysisExample {
+namespace lar {
+namespace example {
 
   //-----------------------------------------------------------------------
   //-----------------------------------------------------------------------
@@ -184,9 +187,9 @@ namespace AnalysisExample {
     // go from this custom example to your own task.
 
     // The parameters we'll read from the .fcl file.
-    std::string fSimulationProducerLabel; ///< The name of the producer that tracked simulated particles through the detector
-    std::string fHitProducerLabel;        ///< The name of the producer that created hits
-    std::string fClusterProducerLabel;    ///< The name of the producer that created clusters
+    art::InputTag fSimulationProducerLabel; ///< The name of the producer that tracked simulated particles through the detector
+    art::InputTag fHitProducerLabel;        ///< The name of the producer that created hits
+    art::InputTag fClusterProducerLabel;    ///< The name of the producer that created clusters
     int fSelectedPDG;                     ///< PDG code of particle we'll focus on
     double fBinSize;                      ///< For dE/dx work: the value of dx. 
 
@@ -347,11 +350,11 @@ namespace AnalysisExample {
   {
     // Read parameters from the .fcl file. The names in the arguments
     // to p.get<TYPE> must match names in the .fcl file.
-    fSimulationProducerLabel = parameterSet.get< std::string >("SimulationLabel");
-    fHitProducerLabel        = parameterSet.get< std::string >("HitLabel");
-    fClusterProducerLabel    = parameterSet.get< std::string >("ClusterLabel");
-    fSelectedPDG             = parameterSet.get< int         >("PDGcode");
-    fBinSize                 = parameterSet.get< double      >("BinSize");
+    fSimulationProducerLabel = parameterSet.get< art::InputTag >("SimulationLabel");
+    fHitProducerLabel        = parameterSet.get< art::InputTag >("HitLabel");
+    fClusterProducerLabel    = parameterSet.get< art::InputTag >("ClusterLabel");
+    fSelectedPDG             = parameterSet.get< int           >("PDGcode");
+    fBinSize                 = parameterSet.get< double        >("BinSize");
   }
 
   //-----------------------------------------------------------------------
@@ -373,7 +376,9 @@ namespace AnalysisExample {
     // with the MCParticles not being there for us: if they are not available
     // in the input file, art will throw a ProductNotFound exception and we
     // will immediately know there is a problem.
-    art::ValidHandle< std::vector<simb::MCParticle> > particleHandle
+    // The "auto" type here is nothing but a art::ValidHandle; the name of
+    // the method "getValidHandle()" should make that clear enough.
+    auto particleHandle
       = event.getValidHandle<std::vector<simb::MCParticle>>
       (fSimulationProducerLabel);
 
@@ -384,7 +389,7 @@ namespace AnalysisExample {
     // A single SimChannel is similar, but being from simulation only, it also
     // keeps track of the separate charge contribution of each particle
     // (in Geant jargon, which "track").
-    art::ValidHandle< std::vector<sim::SimChannel> > simChannelHandle
+    auto simChannelHandle
       = event.getValidHandle<std::vector<sim::SimChannel>>
       (fSimulationProducerLabel);
 
@@ -504,7 +509,7 @@ namespace AnalysisExample {
 		// normally requires a special data type. Let's use
 		// "auto" so we don't have to remember that.
 		// It's raw::ChannelID_t, anyway.)
-		auto channelNumber = channel.Channel();
+		auto const channelNumber = channel.Channel();
 
 		// A little care: There is more than one plane that
 		// reacts to charge in the TPC. We only want to
@@ -608,25 +613,24 @@ namespace AnalysisExample {
     // Read in the Hits. We don't use art::ValidHandle here
     // because we accept that there might be no hits in the input,
     // and we still want the simulated information.
-    art::Handle< std::vector<recob::Hit> > hitHandle;
-    event.getByLabel(fHitProducerLabel, hitHandle);
-
-    // Did we read in any recob::Hit objects? If not, the hitHandle
-    // will be invalid; we might as well skip the rest of this module.
-
+    //
+    // If there are no hits (maybe the input is not reconstructed yet?),
+    // we may as well skip the rest of this module.
+    //
     // I make this test because this module might be tested on the
     // output of a typical simulation job, instead of a reconstruction
     // job; without the reconstruction steps, there won't be any hits.
-
+    //
     // Note that if I don't make this test, and there aren't any
     // recob::Hit objects, then the first time we access hitHandle,
     // ART will display a "ProductNotFound" exception message and,
     // depending on art settings, it may skip all processing for
     // the rest of this event, including any subsequent analysis steps,
     // or stop the execution.
+    
+    art::Handle< std::vector<recob::Hit> > hitHandle;
+    if (!event.getByLabel(fHitProducerLabel, hitHandle)) return;
 
-    if ( ! hitHandle.isValid() ) return;
-  
     // Our goal is to accumulate the dE/dx of any particles associated
     // with the hits that match our criteria: primary particles with the
     // PDG code from the .fcl file. I don't know how many such particles
@@ -946,19 +950,18 @@ namespace AnalysisExample {
   // .fcl file; see AnalysisExample.fcl for more information.
   DEFINE_ART_MODULE(AnalysisExample)
 
-} // namespace AnalysisExample
+} // namespace example
+} // namespace lar
 
 
 namespace {
   // time to define that function...
-  float DetectorDiagonal(geo::GeometryCore const& geom) {
+  double DetectorDiagonal(geo::GeometryCore const& geom) {
     const double length = geom.DetLength();
     const double width = 2. * geom.DetHalfWidth();
     const double height = 2. * geom.DetHalfHeight();
     
-    return std::sqrt(length*length + width*width + height*height);
+    return std::sqrt(cet::sum_of_squares(length, width, height));
   } // DetectorDiagonal()
 } // local namespace
 
-
-#endif // AnalysisExample_Module
