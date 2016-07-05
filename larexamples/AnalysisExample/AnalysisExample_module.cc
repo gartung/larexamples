@@ -126,16 +126,17 @@ namespace example {
    * Configuration parameters
    * =========================
    * 
-   * - *SimulationLabel* (string, default: "largeant"): label of the input data
+   * - *SimulationLabel* (string, default: "largeant"): tag of the input data
    *   product with the detector simulation information (typically an instance
    *   of LArG4 module)
-   * - *HitLabel* (string, mandatory): label of the input data product with
+   * - *HitLabel* (string, mandatory): tag of the input data product with
    *   reconstructed hits
-   * - *ClusterLabel* (string, mandatory): label of the input data product with
+   * - *ClusterLabel* (string, mandatory): tag of the input data product with
    *   reconstructed clusters
    * - *PDGcode* (integer, mandatory): particle type (PDG ID) to be selected;
    *   only primary particles of this type will be considered
-   * - *BinSize* (real, mandatory): dx [cm] used for the dE/dx calculation
+   * - *BinSize* (real, mandatory): @f$ dx @f$ [cm] used for the @f$ dE/dx @f$
+   *   calculation
    * 
    */
   class AnalysisExample : public art::EDAnalyzer
@@ -895,7 +896,7 @@ namespace example {
     // time.)
 
     // First, read in the clusters.
-    // Again, here we require clusters to be available by gettin a ValidHandle.
+    // Again, here we require clusters to be available by getting a ValidHandle.
     // Otherwise, the following code would not work.
     art::ValidHandle< std::vector<recob::Cluster> > clusterHandle
       = event.getValidHandle<std::vector<recob::Cluster>>
