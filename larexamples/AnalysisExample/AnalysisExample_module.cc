@@ -1,22 +1,25 @@
-// AnalysisExample_module.cc
-// A basic "skeleton" to read in art::Event records from a file,
-// access their information, and do something with them. 
-
-// See
-// <https://cdcvs.fnal.gov/redmine/projects/larsoftsvn/wiki/Using_the_Framework>
-// for a description of the ART classes used here.
-
-// Almost everything you see in the code below may have to be changed
-// by you to suit your task. The example task is to make histograms
-// and n-tuples related to dE/dx of particle tracks in the detector.
-
-// As you try to understand why things are done a certain way in this
-// example ("What's all this stuff about 'auto const&'?"), it will help
-// to read ADDITIONAL_NOTES.txt in the same directory as this file.
-
-// Also note that, despite our efforts, the documentation and the practices in
-// this code may fall out of date. In doubt, ask!
-// The last revision of this code was done on July 2015 with LArSoft v04_17_00.
+/**
+ * @file   AnalysisExample_module.cc
+ * @brief  A basic "skeleton" to read in art::Event records from a file,
+ *         access their information, and do something with them. 
+ * @author William Seligman (seligman@nevis.columbia.edu)
+ * 
+ * See
+ * <https://cdcvs.fnal.gov/redmine/projects/larsoftsvn/wiki/Using_the_Framework>
+ * for a description of the ART classes used here.
+ *
+ * Almost everything you see in the code below may have to be changed
+ * by you to suit your task. The example task is to make histograms
+ * and n-tuples related to @f$ dE/dx @f$ of particle tracks in the detector.
+ *
+ * As you try to understand why things are done a certain way in this
+ * example ("What's all this stuff about 'auto const&'?"), it will help
+ * to read ADDITIONAL_NOTES.txt in the same directory as this file.
+ *
+ * Also note that, despite our efforts, the documentation and the practices in
+ * this code may fall out of date. In doubt, ask!
+ * The last revision of this code was done on July 2016 with LArSoft v05_14_00.
+ */
 
 
 // Always include headers defining everything you use, and only that.
