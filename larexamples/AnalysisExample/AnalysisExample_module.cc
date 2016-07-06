@@ -51,6 +51,8 @@
 // utility libraries
 #include "messagefacility/MessageLogger/MessageLogger.h"
 #include "fhiclcpp/ParameterSet.h"
+#include "fhiclcpp/types/Table.h"
+#include "fhiclcpp/types/Atom.h"
 #include "cetlib/pow.h" // cet::sum_of_squares()
 
 // ROOT includes. Note: To look up the properties of the ROOT classes,
@@ -142,11 +144,75 @@ namespace example {
   class AnalysisExample : public art::EDAnalyzer
   {
   public:
- 
-    // Standard constructor for an ART module; we don't need a special
-    // destructor here.
-    /// Default constructor
-    explicit AnalysisExample(fhicl::ParameterSet const& parameterSet);
+    
+    //
+    // This structure describes the full configuration of the module.
+    // It is constraining, in that missing and unknown parameters will generate
+    // a configuration error.
+    // It is also self-describing, and with one additional step (see below)
+    // allow the documentation of the configuration to appear at the command
+    // line.
+    // Note that the Name() string (that is, the name you call a parameter in
+    // the FHiCL configuration file) and the data member name in the Config
+    // struct (that is, the name you access that parameter in your C++ code)
+    // match. This is by deliberate choice but not required at all.
+    // We do that so it's easier to remember them.
+    // 
+    // More details at:
+    // https://cdcvs.fnal.gov/redmine/projects/fhicl-cpp/wiki/Configuration_validation_and_fhiclcpp_types
+    //
+    struct Config {
+      
+      // save some typing:
+      using Name = fhicl::Name;
+      using Comment = fhicl::Comment;
+      
+      // one Atom for each parameter
+      fhicl::Atom<art::InputTag> SimulationLabel {
+        Name("SimulationLabel"),
+        Comment("tag of the input data product with the detector simulation information")
+        };
+      
+      fhicl::Atom<art::InputTag> HitLabel {
+        Name("HitLabel"),
+        Comment("tag of the input data product with reconstructed hits")
+        };
+      
+      fhicl::Atom<art::InputTag> ClusterLabel {
+        Name("ClusterLabel"),
+        Comment("tag of the input data product with reconstructed clusters")
+        };
+      
+      fhicl::Atom<int> PDGcode {
+        Name("PDGcode"),
+        Comment("particle type (PDG ID) of the primary particle to be selected")
+        };
+      
+      fhicl::Atom<double> BinSize {
+        Name("BinSize"),
+        Comment("dx [cm] used for the dE/dx calculation")
+        };
+      
+    }; // Config
+    
+    //
+    // this is the second part of the trick: call this type "Parameters"
+    // and art will know to use it for module description.
+    // See what this command does:
+    // 
+    // lar --print-description AnalysisExample
+    // 
+    // The details of the art side of this business are at:
+    //
+    // https://cdcvs.fnal.gov/redmine/projects/art/wiki/Configuration_validation_and_description
+    //
+    using Parameters = art::EDAnalyzer::Table<Config>;
+    
+    
+    // Standard constructor for an ART module with configuration validation;
+    // we don't need a special destructor here (in fact, we should never need one)
+    /// Constructor: configures the module (see Config structure)
+    explicit AnalysisExample(Parameters const& config);
 
     // the following methods have a standard meaning and a standard signature
     // inherited from the framework (art::EDAnalyzer class).
@@ -175,12 +241,6 @@ namespace example {
     // good place to read databases or files that may have
     // run-dependent information.
     virtual void beginRun(const art::Run& run) override;
-
-    // This method reads in any parameters from the .fcl files. This
-    // method is called 'reconfigure' because it might be called in the
-    // middle of a job; e.g., if the user changes parameter values in an
-    // interactive event display.
-    virtual void reconfigure(fhicl::ParameterSet const& parameterSet) override;
 
     // The analysis routine, called once per event. 
     virtual void analyze (const art::Event& event) override;
@@ -257,14 +317,22 @@ namespace example {
 
   //-----------------------------------------------------------------------
   // Constructor
-  AnalysisExample::AnalysisExample(fhicl::ParameterSet const& parameterSet)
-    : EDAnalyzer(parameterSet)
+  // 
+  // Note that config is a Table<Config>, and to access the Config value we
+  // need to use the call operator: "config()". In the same way, each element
+  // in Config is a Atom<Type>, so to access the type we need again the call
+  // operator, e.g. "SimulationLabel()".
+  // 
+  AnalysisExample::AnalysisExample(Parameters const& config)
+    : EDAnalyzer(config)
+    , fSimulationProducerLabel(config().SimulationLabel())
+    , fHitProducerLabel       (config().HitLabel())
+    , fClusterProducerLabel   (config().ClusterLabel())
+    , fSelectedPDG            (config().PDGcode())
+    , fBinSize                (config().BinSize())
   {
     // get a pointer to the geometry service provider
     fGeometry = &*(art::ServiceHandle<geo::Geometry>());
-    
-    // Read in the parameters from the .fcl file.
-    reconfigure(parameterSet);
   }
 
   
@@ -347,18 +415,6 @@ namespace example {
     // But sim::LArG4Parameters might in principle ask a database for it.
     art::ServiceHandle<sim::LArG4Parameters> larParameters;
     fElectronsToGeV = 1./larParameters->GeVToElectrons();
-  }
-
-  //-----------------------------------------------------------------------
-  void AnalysisExample::reconfigure(fhicl::ParameterSet const& parameterSet)
-  {
-    // Read parameters from the .fcl file. The names in the arguments
-    // to p.get<TYPE> must match names in the .fcl file.
-    fSimulationProducerLabel = parameterSet.get< art::InputTag >("SimulationLabel");
-    fHitProducerLabel        = parameterSet.get< art::InputTag >("HitLabel");
-    fClusterProducerLabel    = parameterSet.get< art::InputTag >("ClusterLabel");
-    fSelectedPDG             = parameterSet.get< int           >("PDGcode");
-    fBinSize                 = parameterSet.get< double        >("BinSize");
   }
 
   //-----------------------------------------------------------------------
