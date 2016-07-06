@@ -332,7 +332,7 @@ namespace example {
     , fBinSize                (config().BinSize())
   {
     // get a pointer to the geometry service provider
-    fGeometry = &*(art::ServiceHandle<geo::Geometry>());
+    fGeometry = lar::providerFrom<geo::Geometry>();
   }
 
   
