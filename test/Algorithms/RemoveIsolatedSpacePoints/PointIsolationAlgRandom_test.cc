@@ -18,6 +18,7 @@
 
 // LArSoft libraries
 #include "larexamples/Algorithms/RemoveIsolatedSpacePoints/PointIsolationAlg.h"
+#include "larcore/TestUtils/StopWatch.h"
 
 // infrastructure and utilities
 #include "cetlib/pow.h" // cet::sum_squares()
@@ -32,37 +33,9 @@
 #include <vector>
 #include <random>
 #include <chrono>
+#include <ratio> // std::milli
 #include <iostream>
 #include <algorithm> // std::sort()
-
-
-/// Simple class to measure a time interval
-class StopWatch {
-    public:
-  using Clock_t = std::chrono::high_resolution_clock;
-  
-  /// Constructs and starts the watch
-  StopWatch(): start(read()) {}
-  
-  /// Restarts the count (returns the last elapsed time)
-  auto restart()
-    { auto last = elapsed(); start = read(); return last; }
-  
-  /// Return the current interval
-  std::chrono::duration<double> elapsed() const
-    {
-      return std::chrono::duration_cast<std::chrono::duration<double>>
-        (read() - start);
-    }
-  
-  /// Read the current absolute time
-  static Clock_t::time_point read() { return Clock_t::now(); }
-  
-    protected:
-  Clock_t::time_point start; ///< time of the last restart
-  
-}; // class StopWatch
-
 
 
 //------------------------------------------------------------------------------
@@ -117,7 +90,9 @@ void PointIsolationTest(
   //
   // for each isolation radius:
   //
-  StopWatch timer;
+  
+  // measurement in milliseconds, double precision:
+  testing::StopWatch<std::chrono::duration<double, std::milli>> timer;
   for (Coord_t radius: radii) {
     
     //
@@ -136,7 +111,7 @@ void PointIsolationTest(
       = algo.bruteRemoveIsolatedPoints(points.begin(), points.end());
     auto elapsed = timer.elapsed();
     std::sort(expected.begin(), expected.end());
-    std::cout << "  brute force: " << (elapsed.count() * 1000.) << " ms"
+    std::cout << "  brute force: " << elapsed << " ms"
       << std::endl;
     
     //
@@ -146,7 +121,7 @@ void PointIsolationTest(
     auto actual = algo.removeIsolatedPoints(points);
     elapsed = timer.elapsed();
     std::sort(actual.begin(), actual.end());
-    std::cout << "  regular:     " << (elapsed.count() * 1000.) << " ms"
+    std::cout << "  regular:     " << elapsed << " ms"
       << std::endl;
     
     //
