@@ -85,7 +85,8 @@ implementation, that implementation does not necessarily have to be _useful_ to
 every experiment. In this example, one implementation reads the calibration as
 a single uniform factor. An experiment that does not want yet to bother with
 calibration can set up this implementation to always return a neutral factor 1.
-This may well be the default for a Monte Carlo simulation, if the energy is reconstructed with no bias there.
+This may well be the default for a Monte Carlo simulation, if the energy is
+reconstructed with no bias there.
 
 
 ## The factorisation model for services with multiple implementations  #########
@@ -283,6 +284,13 @@ header-only and they do not require linking to their library.
 The resulting library name will be
 `larexamples_Services_ShowerCalibrationGalore_Providers`.
 
+Our examples follow a non-standard and not recommended practice: we install
+`CMakeLists.txt` files and FHiCL files with `install_source()`. This is done
+only because this is an example that should be distributed complete.
+Normally, FHiCL files are installed in the correct location thanks to the
+`install_fhicl()` directive, and `CMakeLists.txt` files are not installed at
+all.
+
 
 ### `ShowerCalibrationGalore.h`                                              ###
 
@@ -407,10 +415,12 @@ and define a single static `setup()` function with a well defined prototype.
 The content is also misleadingly simple: just a call to a function also provided
 by LArSoft. This is one possible "standard" implementation. This function is
 designed to work with a `testing::TesterEnvironment` and to set up the provider
-from a certain available service parameter set (we chose `"ShowerCalibrationGaloreScaleService"`, that will translate in the environment
+from a certain available service parameter set (we chose
+`"ShowerCalibrationGaloreScaleService"`, that will translate in the environment
 looking for `"services.ShowerCalibrationGaloreScaleService"` parameter set in
 the configuration: that is, the exact same key used in a valid _art_
-configuration). The provider will be of type `lar::example::ShowerCalibrationGaloreScale` (no surprise here), and it will
+configuration). The provider will be of type
+`lar::example::ShowerCalibrationGaloreScale` (no surprise here), and it will
 also fill in for `lar::example::ShowerCalibrationGalore` (that is, the interface
 it implements).
 Again, this is good enough for our provider. In the example above of a provider
@@ -731,7 +741,8 @@ arguments are the provider implementation and the _art_ service interface.
 Note that these two classes don't know each other, although they both know the
 provider interface `ShowerCalibrationGalore`.
 The requirements to use this wrapper are documented with the wrapper itself, and
-they can be summarised in: the provider must have a configuration object called `Config` and a constructor that takes one of them as only argument
+they can be summarised in: the provider must have a configuration object called
+`Config` and a constructor that takes one of them as only argument.
 In addition, this template can't be used as is, when callback methods need to be
 registered.
 
@@ -801,11 +812,15 @@ Tests are as always declared to `cmake` via the `cet_test()` macro.
 
 For the _art_ service test, we have a test module that needs to be built.
 We use the `simple_plugin()` macro specifying the name of the module and the
-link list. The link list does _not_ include any library related to `ShowerCalibrationGalore`. The test module uses the abstract service interface,
+link list. The link list does _not_ include any library related to
+`ShowerCalibrationGalore`. The test module uses the abstract service interface,
 and it will be _art_ to decide which libraries to link at run time.
 
 There are two tests driven by _art_, that exercise the two service providers.
 The other tests have their own executable file.
+
+As mentioned while describing the other `CMakeLists.txt`, we perform here a more
+complete installation than it would usually be done for non-example code.
 
 
 ### `CreateTestShowerCalibrationFromPID_test.cc`                             ###

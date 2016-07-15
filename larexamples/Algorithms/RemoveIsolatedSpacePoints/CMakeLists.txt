@@ -19,3 +19,14 @@ art_make(
     ${FHICLCPP}
   )
 
+install_headers()
+install_fhicl()
+
+# install all sources, plus CMakeLists.txt and all configuration files
+file(GLOB TESTFHICLFILES
+     LIST_DIRECTORIES false
+     *.fcl
+     )
+install_source(EXTRAS README CMakeLists.txt ${TESTFHICLFILES})
+unset(TESTFHICLFILES)
+

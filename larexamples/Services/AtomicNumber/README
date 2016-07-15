@@ -67,8 +67,7 @@ In case of services, LArSoft calls the functional part a _service provider_
 (or just _provider_) and the interface a _art service_ (sometimes just
 _service_).
 
-A more extensive description of this model can be found in LArSoft wiki:
-<https://cdcvs.fnal.gov/redmine/projects/larsoft/wiki/Writing_LArSoft_service>.
+A more extensive description of this model can be found in [LArSoft wiki].
 
 
 
@@ -118,7 +117,7 @@ The directory structure is overly detailed for such a small project, but it
 contains main essential components.
 
 First, the code is divided into two disjoint subtrees that replicate the same
-internal structure. This is a LArSoft prescription: all the code and            TODO point to the wiki prescription
+internal structure. This is a LArSoft prescription: all the code and
 configuration files are in `larexamples` subdirectory, and the tests are under
 the `test` subdirectory.
 
@@ -214,6 +213,13 @@ In this case, it worked pretty well. The UPS products where this approach
 typically fails are _nutools_ (where the include path does not even tell you
 it's a _nutools_ header), ROOT, CLHEP.
 
+Our examples follow a non-standard and not recommended practice: we install
+`CMakeLists.txt` files and FHiCL files with `install_source()`. This is done
+only because this is an example that should be distributed complete.
+Normally, FHiCL files are installed in the correct location thanks to the
+`install_fhicl()` directive, and `CMakeLists.txt` files are not installed at
+all.
+
 
 ### `AtomicNumber.h`                                                         ###
 
@@ -255,8 +261,8 @@ like `sim` (simulation), `reco` (reconstruction), etc.
 #### Configuration and validation
 
 The configuration of the provider relies on FHiCL constructs to document and
-validate it at run time. This infrastructure is described at
-<https://cdcvs.fnal.gov/redmine/projects/fhicl-cpp/wiki/Configuration_validation_and_fhiclcpp_types>.
+validate it at run time. This infrastructure is described in the
+[_fhicl-cpp_ wiki][fhiclcpp].
 The idea is that the configuration parameters are represented by special data
 member within a single data structure. In our example this data structure is
 contained in the provider itself and it's called `Config`. All of its one
@@ -443,6 +449,9 @@ The job requires a test module. To build its library we use the usual
 `simple_plugin()` macro, that is not specific for testing. It's worth noting
 that the this list of libraries is the only one including _art_: the provider
 tests do not depend on it.
+
+As mentioned while describing the other `CMakeLists.txt`, we perform here a more
+complete installation than it would usually be done for non-example code.
 
 
 ### AtomicNumber_test.cc                                                     ###
@@ -687,3 +696,8 @@ in a regular run.
 If you have any question about the example, please contact its author.
 This section will be populated with questions and their answers.
 
+
+[LArSoft wiki]:
+  <https://cdcvs.fnal.gov/redmine/projects/larsoft/wiki/Writing_LArSoft_algorithms>
+[fhiclcpp]:
+  <https://cdcvs.fnal.gov/redmine/projects/fhicl-cpp/wiki/Configuration_validation_and_fhiclcpp_types>

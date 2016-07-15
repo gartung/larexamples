@@ -1,25 +1,26 @@
-// AnalysisExample_module.cc
-// A basic "skeleton" to read in art::Event records from a file,
-// access their information, and do something with them. 
+/**
+ * @file   AnalysisExample_module.cc
+ * @brief  A basic "skeleton" to read in art::Event records from a file,
+ *         access their information, and do something with them. 
+ * @author William Seligman (seligman@nevis.columbia.edu)
+ * 
+ * See
+ * <https://cdcvs.fnal.gov/redmine/projects/larsoftsvn/wiki/Using_the_Framework>
+ * for a description of the ART classes used here.
+ *
+ * Almost everything you see in the code below may have to be changed
+ * by you to suit your task. The example task is to make histograms
+ * and n-tuples related to @f$ dE/dx @f$ of particle tracks in the detector.
+ *
+ * As you try to understand why things are done a certain way in this
+ * example ("What's all this stuff about 'auto const&'?"), it will help
+ * to read ADDITIONAL_NOTES.txt in the same directory as this file.
+ *
+ * Also note that, despite our efforts, the documentation and the practices in
+ * this code may fall out of date. In doubt, ask!
+ * The last revision of this code was done on July 2016 with LArSoft v05_14_00.
+ */
 
-// See
-// <https://cdcvs.fnal.gov/redmine/projects/larsoftsvn/wiki/Using_the_Framework>
-// for a description of the ART classes used here.
-
-// Almost everything you see in the code below may have to be changed
-// by you to suit your task. The example task is to make histograms
-// and n-tuples related to dE/dx of particle tracks in the detector.
-
-// As you try to understand why things are done a certain way in this
-// example ("What's all this stuff about 'auto const&'?"), it will help
-// to read ADDITIONAL_NOTES.txt in the same directory as this file.
-
-// Also note that, despite our efforts, the documentation and the practices in
-// this code may fall out of date. In doubt, ask!
-// The last revision of this code was done on July 2015 with LArSoft v04_17_00.
-
-#ifndef AnalysisExample_Module
-#define AnalysisExample_Module
 
 // Always include headers defining everything you use, and only that.
 // Starting from LArSoft and ending with standard C++ is a good check
@@ -45,8 +46,13 @@
 #include "art/Framework/Services/Optional/TFileService.h"
 #include "art/Framework/Core/ModuleMacros.h"
 #include "canvas/Persistency/Common/FindManyP.h"
+
+// utility libraries
 #include "messagefacility/MessageLogger/MessageLogger.h"
 #include "fhiclcpp/ParameterSet.h"
+#include "fhiclcpp/types/Table.h"
+#include "fhiclcpp/types/Atom.h"
+#include "cetlib/pow.h" // cet::sum_of_squares()
 
 // ROOT includes. Note: To look up the properties of the ROOT classes,
 // use the ROOT web site; e.g.,
@@ -76,12 +82,13 @@ namespace {
   // We will define this function at the end, but we at least declare it here
   // so that the module can freely use it.
   /// Utility function to get the diagonal of the detector
-  float DetectorDiagonal(geo::GeometryCore const& geom);
+  double DetectorDiagonal(geo::GeometryCore const& geom);
   
 } // local namespace
 
 
-namespace AnalysisExample {
+namespace lar {
+namespace example {
 
   //-----------------------------------------------------------------------
   //-----------------------------------------------------------------------
@@ -120,26 +127,91 @@ namespace AnalysisExample {
    * Configuration parameters
    * =========================
    * 
-   * - *SimulationLabel* (string, default: "largeant"): label of the input data
+   * - *SimulationLabel* (string, default: "largeant"): tag of the input data
    *   product with the detector simulation information (typically an instance
    *   of LArG4 module)
-   * - *HitLabel* (string, mandatory): label of the input data product with
+   * - *HitLabel* (string, mandatory): tag of the input data product with
    *   reconstructed hits
-   * - *ClusterLabel* (string, mandatory): label of the input data product with
+   * - *ClusterLabel* (string, mandatory): tag of the input data product with
    *   reconstructed clusters
    * - *PDGcode* (integer, mandatory): particle type (PDG ID) to be selected;
    *   only primary particles of this type will be considered
-   * - *BinSize* (real, mandatory): dx [cm] used for the dE/dx calculation
+   * - *BinSize* (real, mandatory): @f$ dx @f$ [cm] used for the @f$ dE/dx @f$
+   *   calculation
    * 
    */
   class AnalysisExample : public art::EDAnalyzer
   {
   public:
- 
-    // Standard constructor for an ART module; we don't need a special
-    // destructor here.
-    /// Default constructor
-    explicit AnalysisExample(fhicl::ParameterSet const& parameterSet);
+    
+    //
+    // This structure describes the full configuration of the module.
+    // It is constraining, in that missing and unknown parameters will generate
+    // a configuration error.
+    // It is also self-describing, and with one additional step (see below)
+    // allow the documentation of the configuration to appear at the command
+    // line.
+    // Note that the Name() string (that is, the name you call a parameter in
+    // the FHiCL configuration file) and the data member name in the Config
+    // struct (that is, the name you access that parameter in your C++ code)
+    // match. This is by deliberate choice but not required at all.
+    // We do that so it's easier to remember them.
+    // 
+    // More details at:
+    // https://cdcvs.fnal.gov/redmine/projects/fhicl-cpp/wiki/Configuration_validation_and_fhiclcpp_types
+    //
+    struct Config {
+      
+      // save some typing:
+      using Name = fhicl::Name;
+      using Comment = fhicl::Comment;
+      
+      // one Atom for each parameter
+      fhicl::Atom<art::InputTag> SimulationLabel {
+        Name("SimulationLabel"),
+        Comment("tag of the input data product with the detector simulation information")
+        };
+      
+      fhicl::Atom<art::InputTag> HitLabel {
+        Name("HitLabel"),
+        Comment("tag of the input data product with reconstructed hits")
+        };
+      
+      fhicl::Atom<art::InputTag> ClusterLabel {
+        Name("ClusterLabel"),
+        Comment("tag of the input data product with reconstructed clusters")
+        };
+      
+      fhicl::Atom<int> PDGcode {
+        Name("PDGcode"),
+        Comment("particle type (PDG ID) of the primary particle to be selected")
+        };
+      
+      fhicl::Atom<double> BinSize {
+        Name("BinSize"),
+        Comment("dx [cm] used for the dE/dx calculation")
+        };
+      
+    }; // Config
+    
+    //
+    // this is the second part of the trick: call this type "Parameters"
+    // and art will know to use it for module description.
+    // See what this command does:
+    // 
+    // lar --print-description AnalysisExample
+    // 
+    // The details of the art side of this business are at:
+    //
+    // https://cdcvs.fnal.gov/redmine/projects/art/wiki/Configuration_validation_and_description
+    //
+    using Parameters = art::EDAnalyzer::Table<Config>;
+    
+    
+    // Standard constructor for an ART module with configuration validation;
+    // we don't need a special destructor here (in fact, we should never need one)
+    /// Constructor: configures the module (see Config structure)
+    explicit AnalysisExample(Parameters const& config);
 
     // the following methods have a standard meaning and a standard signature
     // inherited from the framework (art::EDAnalyzer class).
@@ -169,12 +241,6 @@ namespace AnalysisExample {
     // run-dependent information.
     virtual void beginRun(const art::Run& run) override;
 
-    // This method reads in any parameters from the .fcl files. This
-    // method is called 'reconfigure' because it might be called in the
-    // middle of a job; e.g., if the user changes parameter values in an
-    // interactive event display.
-    virtual void reconfigure(fhicl::ParameterSet const& parameterSet) override;
-
     // The analysis routine, called once per event. 
     virtual void analyze (const art::Event& event) override;
 
@@ -184,9 +250,9 @@ namespace AnalysisExample {
     // go from this custom example to your own task.
 
     // The parameters we'll read from the .fcl file.
-    std::string fSimulationProducerLabel; ///< The name of the producer that tracked simulated particles through the detector
-    std::string fHitProducerLabel;        ///< The name of the producer that created hits
-    std::string fClusterProducerLabel;    ///< The name of the producer that created clusters
+    art::InputTag fSimulationProducerLabel; ///< The name of the producer that tracked simulated particles through the detector
+    art::InputTag fHitProducerLabel;        ///< The name of the producer that created hits
+    art::InputTag fClusterProducerLabel;    ///< The name of the producer that created clusters
     int fSelectedPDG;                     ///< PDG code of particle we'll focus on
     double fBinSize;                      ///< For dE/dx work: the value of dx. 
 
@@ -250,14 +316,22 @@ namespace AnalysisExample {
 
   //-----------------------------------------------------------------------
   // Constructor
-  AnalysisExample::AnalysisExample(fhicl::ParameterSet const& parameterSet)
-    : EDAnalyzer(parameterSet)
+  // 
+  // Note that config is a Table<Config>, and to access the Config value we
+  // need to use the call operator: "config()". In the same way, each element
+  // in Config is a Atom<Type>, so to access the type we need again the call
+  // operator, e.g. "SimulationLabel()".
+  // 
+  AnalysisExample::AnalysisExample(Parameters const& config)
+    : EDAnalyzer(config)
+    , fSimulationProducerLabel(config().SimulationLabel())
+    , fHitProducerLabel       (config().HitLabel())
+    , fClusterProducerLabel   (config().ClusterLabel())
+    , fSelectedPDG            (config().PDGcode())
+    , fBinSize                (config().BinSize())
   {
     // get a pointer to the geometry service provider
-    fGeometry = &*(art::ServiceHandle<geo::Geometry>());
-    
-    // Read in the parameters from the .fcl file.
-    reconfigure(parameterSet);
+    fGeometry = lar::providerFrom<geo::Geometry>();
   }
 
   
@@ -343,18 +417,6 @@ namespace AnalysisExample {
   }
 
   //-----------------------------------------------------------------------
-  void AnalysisExample::reconfigure(fhicl::ParameterSet const& parameterSet)
-  {
-    // Read parameters from the .fcl file. The names in the arguments
-    // to p.get<TYPE> must match names in the .fcl file.
-    fSimulationProducerLabel = parameterSet.get< std::string >("SimulationLabel");
-    fHitProducerLabel        = parameterSet.get< std::string >("HitLabel");
-    fClusterProducerLabel    = parameterSet.get< std::string >("ClusterLabel");
-    fSelectedPDG             = parameterSet.get< int         >("PDGcode");
-    fBinSize                 = parameterSet.get< double      >("BinSize");
-  }
-
-  //-----------------------------------------------------------------------
   void AnalysisExample::analyze(const art::Event& event) 
   {
     // Start by fetching some basic event information for our n-tuple.
@@ -373,7 +435,9 @@ namespace AnalysisExample {
     // with the MCParticles not being there for us: if they are not available
     // in the input file, art will throw a ProductNotFound exception and we
     // will immediately know there is a problem.
-    art::ValidHandle< std::vector<simb::MCParticle> > particleHandle
+    // The "auto" type here is nothing but a art::ValidHandle; the name of
+    // the method "getValidHandle()" should make that clear enough.
+    auto particleHandle
       = event.getValidHandle<std::vector<simb::MCParticle>>
       (fSimulationProducerLabel);
 
@@ -384,7 +448,7 @@ namespace AnalysisExample {
     // A single SimChannel is similar, but being from simulation only, it also
     // keeps track of the separate charge contribution of each particle
     // (in Geant jargon, which "track").
-    art::ValidHandle< std::vector<sim::SimChannel> > simChannelHandle
+    auto simChannelHandle
       = event.getValidHandle<std::vector<sim::SimChannel>>
       (fSimulationProducerLabel);
 
@@ -504,7 +568,7 @@ namespace AnalysisExample {
 		// normally requires a special data type. Let's use
 		// "auto" so we don't have to remember that.
 		// It's raw::ChannelID_t, anyway.)
-		auto channelNumber = channel.Channel();
+		auto const channelNumber = channel.Channel();
 
 		// A little care: There is more than one plane that
 		// reacts to charge in the TPC. We only want to
@@ -608,25 +672,24 @@ namespace AnalysisExample {
     // Read in the Hits. We don't use art::ValidHandle here
     // because we accept that there might be no hits in the input,
     // and we still want the simulated information.
-    art::Handle< std::vector<recob::Hit> > hitHandle;
-    event.getByLabel(fHitProducerLabel, hitHandle);
-
-    // Did we read in any recob::Hit objects? If not, the hitHandle
-    // will be invalid; we might as well skip the rest of this module.
-
+    //
+    // If there are no hits (maybe the input is not reconstructed yet?),
+    // we may as well skip the rest of this module.
+    //
     // I make this test because this module might be tested on the
     // output of a typical simulation job, instead of a reconstruction
     // job; without the reconstruction steps, there won't be any hits.
-
+    //
     // Note that if I don't make this test, and there aren't any
     // recob::Hit objects, then the first time we access hitHandle,
     // ART will display a "ProductNotFound" exception message and,
     // depending on art settings, it may skip all processing for
     // the rest of this event, including any subsequent analysis steps,
     // or stop the execution.
+    
+    art::Handle< std::vector<recob::Hit> > hitHandle;
+    if (!event.getByLabel(fHitProducerLabel, hitHandle)) return;
 
-    if ( ! hitHandle.isValid() ) return;
-  
     // Our goal is to accumulate the dE/dx of any particles associated
     // with the hits that match our criteria: primary particles with the
     // PDG code from the .fcl file. I don't know how many such particles
@@ -888,7 +951,7 @@ namespace AnalysisExample {
     // time.)
 
     // First, read in the clusters.
-    // Again, here we require clusters to be available by gettin a ValidHandle.
+    // Again, here we require clusters to be available by getting a ValidHandle.
     // Otherwise, the following code would not work.
     art::ValidHandle< std::vector<recob::Cluster> > clusterHandle
       = event.getValidHandle<std::vector<recob::Cluster>>
@@ -946,19 +1009,18 @@ namespace AnalysisExample {
   // .fcl file; see AnalysisExample.fcl for more information.
   DEFINE_ART_MODULE(AnalysisExample)
 
-} // namespace AnalysisExample
+} // namespace example
+} // namespace lar
 
 
 namespace {
   // time to define that function...
-  float DetectorDiagonal(geo::GeometryCore const& geom) {
+  double DetectorDiagonal(geo::GeometryCore const& geom) {
     const double length = geom.DetLength();
     const double width = 2. * geom.DetHalfWidth();
     const double height = 2. * geom.DetHalfHeight();
     
-    return std::sqrt(length*length + width*width + height*height);
+    return std::sqrt(cet::sum_of_squares(length, width, height));
   } // DetectorDiagonal()
 } // local namespace
 
-
-#endif // AnalysisExample_Module
