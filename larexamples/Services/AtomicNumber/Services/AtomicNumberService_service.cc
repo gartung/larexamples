@@ -12,14 +12,6 @@
 // LArSoft libraries
 #include "larexamples/Services/AtomicNumber/Services/AtomicNumberService.h"
 
-#if 0
-// -----------------------------------------------------------------------------
-lar::example::AtomicNumberService::AtomicNumberService
-   (Parameters const& config, art::ActivityRegistry&)
-   : prov(std::make_unique<provider_type>(config()))
-{}
-
-#endif // 0
 
 // -----------------------------------------------------------------------------
 DEFINE_ART_SERVICE(lar::example::AtomicNumberService)
