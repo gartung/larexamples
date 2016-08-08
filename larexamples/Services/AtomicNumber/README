@@ -437,7 +437,10 @@ name: for example, in `AtomicNumber_test`, the source will be expected to be in
 In `BoostedAtomicNumber_test`,we added a command line argument with `TEST_ARGS`
 and we also specified that that file needs to be copied in the test directory
 with `DATAFILES`. We rely on `cet_test()` to link the proper Boost libraries to
-enable unit testing, by `USE_BOOST_UNIT` flag.
+enable unit testing, by `USE_BOOST_UNIT` flag. Note that the double-dash (`--`)
+is required by Boost to correctly interpret the arguments as belonging to the
+test rather than to the Boost unit test framework. As such, they are needed
+only when running a test with Boost.
 
 For the _art_ service test, we run a full `lar` job: we specify that the
 executable name is special, `lar`, with `TEST_EXEC`, and we also tell

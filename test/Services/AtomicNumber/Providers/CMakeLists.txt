@@ -11,7 +11,7 @@ cet_test(AtomicNumber_test
 # test with external configuration (happens to use Boost)
 cet_test(BoostedAtomicNumber_test
    DATAFILES ./test_krypton_atomic_number.fcl
-   TEST_ARGS ./test_krypton_atomic_number.fcl
+   TEST_ARGS -- ./test_krypton_atomic_number.fcl
    LIBRARIES
       larexamples_Services_AtomicNumber_Providers
       ${MF_MESSAGELOGGER}
