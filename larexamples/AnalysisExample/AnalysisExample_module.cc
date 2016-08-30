@@ -27,7 +27,7 @@
 // on LArSoft headers too -- if they can't be loaded by their own, it's a bug!
 
 // LArSoft includes
-#include "larsimobj/Simulation/SimChannel.h"
+#include "lardataobj/Simulation/SimChannel.h"
 #include "larsim/Simulation/LArG4Parameters.h"
 #include "lardataobj/RecoBase/Hit.h"
 #include "lardataobj/RecoBase/Cluster.h"
