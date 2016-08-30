@@ -25,7 +25,7 @@
 
 // Boost libraries
 #define BOOST_TEST_MODULE ( PointIsolationAlg_test )
-#include <boost/test/auto_unit_test.hpp> // BOOST_AUTO_TEST_CASE()
+#include <cetlib/quiet_unit_test.hpp> // BOOST_AUTO_TEST_CASE()
 #include <boost/test/test_tools.hpp> // BOOST_CHECK(), BOOST_CHECK_EQUAL()
 
 // C/C++ standard libraries
