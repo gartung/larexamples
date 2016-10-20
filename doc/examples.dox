@@ -1,0 +1,53 @@
+/**
+ * @file   examples.dox
+ * @brief  Repository documentation for larexamples
+ * @author Gianluca Petrillo (petrillo@fnal.gov)
+ * @date   August 22, 2016
+ * 
+ * This is a Doxygen documentation file.
+ * 
+ * It is still declared with the usual tags do that an author and maintainer can
+ * be identified.
+ *
+ */
+
+/**
+
+@page LArExamples  LArSoft examples
+
+@tableofcontents
+
+The repository `larexamples` contains examples to guide new and experience users
+alike in the development of new code.
+
+The examples are designed for some level of cut-and-paste, but they provide an
+(extensive) `README.md` file (markdown format) to explain design and
+implementation choices. Users are encouraged to read about the code to deeply
+understand it before adapting it into their own.
+
+The examples are organized by type:
+
+ - @ref ExampleServices "services"
+ - @subpage ExampleAlgorithms "algorithms (and their modules)"
+ - @subpage ExampleAnalyzers "analyzers"
+
+
+@page ExampleAlgorithms Algorithms and modules
+
+
+The only algorithm currently offered is:
+
+ - `lar::example::RemoveIsolatedSpacePoints`
+
+
+@page ExampleAnalyzers Analyzer modules
+
+The only analyzer currently offered is:
+
+ - `lar::example::AnalysisExample`
+
+
+
+
+
+ */

@@ -32,6 +32,7 @@ namespace lar {
        *       = lar::providerFrom<lar::example::AtomicNumberService>();
        *     
        * 
+       * @ingroup AtomicNumberExample
        */
       using AtomicNumberService
          = lar::SimpleServiceProviderWrapper<AtomicNumber>;
