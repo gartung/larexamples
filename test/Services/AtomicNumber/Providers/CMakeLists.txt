@@ -5,7 +5,7 @@ cet_test(AtomicNumber_test
       ${MF_MESSAGELOGGER}
       ${MF_UTILITIES}
       ${FHICLCPP}
-      ${CETLIB}
+      cetlib cetlib_except
 )
 
 # test with external configuration (happens to use Boost)
@@ -17,7 +17,7 @@ cet_test(BoostedAtomicNumber_test
       ${MF_MESSAGELOGGER}
       ${MF_UTILITIES}
       ${FHICLCPP}
-      ${CETLIB}
+      cetlib cetlib_except
    USE_BOOST_UNIT
    )
 
@@ -28,7 +28,7 @@ cet_test(ValidateAtomicNumberConfiguration_test
       ${MF_MESSAGELOGGER}
       ${MF_UTILITIES}
       ${FHICLCPP}
-      ${CETLIB}
+      cetlib cetlib_except
    DATAFILES ./test_krypton_atomic_number.fcl
    TEST_ARGS ./test_krypton_atomic_number.fcl
    )
