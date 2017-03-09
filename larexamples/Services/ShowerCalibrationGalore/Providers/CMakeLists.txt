@@ -2,7 +2,7 @@ art_make(
   LIB_LIBRARIES
     lardataobj_RecoBase
     ${FHICLCPP}
-    ${CETLIB}
+    cetlib cetlib_except
     ${ROOT_HIST}
     ${ROOT_MATHMORE}
     ${ROOT_RIO}
