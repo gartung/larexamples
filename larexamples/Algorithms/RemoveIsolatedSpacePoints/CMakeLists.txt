@@ -2,7 +2,7 @@ art_make(
   LIB_LIBRARIES
     larcore_Geometry
     lardataobj_RecoBase
-    ${CETLIB}
+    cetlib cetlib_except
     ${MESSAGE_FACILITY}
     ${FHICLCPP}
     ${ROOT_CORE}
@@ -13,7 +13,7 @@ art_make(
     art_Framework_Core
     art_Framework_Services_Registry
     art_Framework_Principal
-    art_Utilities canvas_Utilities
+    art_Utilities canvas
     ${MF_MESSAGELOGGER}
     ${MF_UTILITY}
     ${FHICLCPP}

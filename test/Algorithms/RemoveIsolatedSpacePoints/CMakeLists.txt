@@ -15,7 +15,7 @@ art_make(
     art_Framework_Core
     art_Framework_Services_Registry
     art_Framework_Principal
-    art_Utilities canvas_Utilities
+    art_Utilities canvas
     ${MF_MESSAGELOGGER}
     ${MF_UTILITIES}
     ${FHICLCPP}

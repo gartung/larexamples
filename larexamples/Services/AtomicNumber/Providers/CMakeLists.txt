@@ -1,7 +1,9 @@
 art_make(
   LIB_LIBRARIES
-    art_Utilities canvas_Utilities
+    art_Utilities
+    canvas
     ${FHICLCPP}
+    cetlib cetlib_except
   )
 
 install_fhicl()

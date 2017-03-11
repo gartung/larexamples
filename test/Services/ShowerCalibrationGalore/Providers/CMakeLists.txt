@@ -15,7 +15,7 @@ cet_test(ShowerCalibrationGaloreFromPID_test
     MF_MessageLogger
     MF_Utilities
     fhiclcpp
-    cetlib
+    cetlib cetlib_except
     ${ROOT_BASIC_LIB_LIST}
     ${ROOT_CORE}
     ${ROOT_HIST}
@@ -28,7 +28,7 @@ cet_test(ShowerCalibrationGaloreScale_test
     MF_MessageLogger
     MF_Utilities
     fhiclcpp
-    cetlib
+    cetlib cetlib_except
     ${ROOT_BASIC_LIB_LIST}
     ${ROOT_CORE}
     ${ROOT_HIST}

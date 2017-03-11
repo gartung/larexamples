@@ -2,6 +2,7 @@ art_make(
   SERVICE_LIBRARIES
     larexamples_Services_AtomicNumber_Providers
     ${ART_FRAMEWORK_SERVICES_REGISTRY}    
+    cetlib cetlib_except
   )
 
 install_fhicl()
