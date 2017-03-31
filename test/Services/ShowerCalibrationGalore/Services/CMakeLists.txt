@@ -2,11 +2,11 @@ simple_plugin(ShowerCalibrationGaloreTest "module"
   lardataobj_RecoBase
   art_Framework_Core
   art_Framework_Services_Registry
-  art_Utilities canvas_Utilities
+  art_Utilities canvas
   mf_MessageLogger
   mf_Utilities
   fhiclcpp
-  cetlib 
+  cetlib cetlib_except 
   ${ROOT_BASIC_LIB_LIST}
 )
 

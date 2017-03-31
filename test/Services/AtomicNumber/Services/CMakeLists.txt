@@ -2,11 +2,11 @@ simple_plugin(AtomicNumberTest "module"
    ${ART_FRAMEWORK_CORE}
    ${ART_FRAMEWORK_CORE}
    ${ART_FRAMEWORK_SERVICES_REGISTRY}
-   art_Utilities canvas_Utilities
+   art_Utilities canvas
    ${MF_MESSAGELOGGER}
    ${MF_UTILITIES}
    ${FHICLCPP}
-   ${CETLIB}
+   cetlib cetlib_except
 )
 
 
