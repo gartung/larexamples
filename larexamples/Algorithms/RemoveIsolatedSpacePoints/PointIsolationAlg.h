@@ -27,13 +27,6 @@
 #include <iterator> // std::cbegin(), std::cend(), std::distance()
 #include <stdexcept> // std::runtime_error
 
-#if ((__GNUC__ == 5) && (__GNUC_MINOR__ >= 1)) || (__GNUC__ >= 6)
-// FIXME GCC51
-// when this error will be triggered, fix the code to use std::cbegin() and
-// std::cend() and remove this check
-# error "Update to use std::cbegin()/std::cend() with GCC 5.1 and above"
-#endif
-
 
 namespace lar {
   namespace example {
@@ -203,9 +196,7 @@ namespace lar {
        */
       template <typename Cont>
       std::vector<size_t> removeIsolatedPoints (Cont const& points) const
-        { return removeIsolatedPoints(std::begin(points), std::end(points)); }
-// FIXME GCC51
-//        { return removeIsolatedPoints(std::cbegin(points), std::cend(points)); }
+        { return removeIsolatedPoints(std::cbegin(points), std::cend(points)); }
       
       
       /**
