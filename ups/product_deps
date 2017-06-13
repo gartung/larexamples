@@ -1,12 +1,12 @@
 # The parent line must be the first non-comment line in the file
 # This line defines the product name and version
-parent	larexamples	v06_03_07_02
+parent	larexamples	v06_04_00
 defaultqual	e14
 #
 fcldir product_dir job
 #
 product         version
-larsim		v06_23_00_02
+larsim		v06_24_00
 
 cetbuildtools	v5_09_01	-	only_for_build
 end_product_list
