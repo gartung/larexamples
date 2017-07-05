@@ -18,7 +18,7 @@
 
 // LArSoft libraries
 #include "larexamples/Algorithms/RemoveIsolatedSpacePoints/PointIsolationAlg.h"
-#include "larcore/TestUtils/StopWatch.h"
+#include "larcorealg/TestUtils/StopWatch.h"
 
 // infrastructure and utilities
 #include "cetlib/pow.h" // cet::sum_squares()

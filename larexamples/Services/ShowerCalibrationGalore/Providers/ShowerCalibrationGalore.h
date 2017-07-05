@@ -13,7 +13,7 @@
 
 
 /// LArSoft libraries
-#include "larcore/CoreUtils/UncopiableAndUnmovableClass.h"
+#include "larcorealg/CoreUtils/UncopiableAndUnmovableClass.h"
 #include "lardataobj/RecoBase/Shower.h"
 
 // C/C++ standard libraries

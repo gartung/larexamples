@@ -15,7 +15,7 @@
 
 /// LArSoft libraries
 #include "larexamples/Services/ShowerCalibrationGalore/Providers/ShowerCalibrationGaloreScale.h"
-#include "larcore/TestUtils/ProviderTestHelpers.h"
+#include "larcorealg/TestUtils/ProviderTestHelpers.h"
 
 // C/C++ standard libraries
 #include <string>

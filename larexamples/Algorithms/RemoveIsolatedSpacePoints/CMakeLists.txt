@@ -1,6 +1,6 @@
 art_make(
   LIB_LIBRARIES
-    larcore_Geometry
+    larcorealg_Geometry
     lardataobj_RecoBase
     cetlib cetlib_except
     ${MESSAGE_FACILITY}

@@ -8,7 +8,7 @@ art_make(
     ${ROOT_CORE}
   MODULE_LIBRARIES
     lardataobj_RecoBase
-    larcore_Geometry
+    larcorealg_Geometry
     larcore_Geometry_Geometry_service
     larexamples_Algorithms_RemoveIsolatedSpacePoints
     test_Algorithms_RemoveIsolatedSpacePoints

@@ -9,7 +9,7 @@
 
 // LArSoft libraries
 #include "larexamples/Algorithms/RemoveIsolatedSpacePoints/SpacePointIsolationAlg.h"
-#include "larcore/Geometry/GeometryCore.h"
+#include "larcorealg/Geometry/GeometryCore.h"
 
 // infrastructure and utilities
 #include "cetlib/exception.h"

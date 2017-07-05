@@ -17,7 +17,7 @@
 
 // LArSoft libraries
 #include "lardataobj/RecoBase/SpacePoint.h"
-#include "larcore/Geometry/BoxBoundedGeo.h"
+#include "larcorealg/Geometry/BoxBoundedGeo.h"
 
 // C/C++ standard libraries
 #include <vector>

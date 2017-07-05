@@ -15,7 +15,7 @@
 
 // LArSoft libraries
 #include "larexamples/Services/AtomicNumber/Providers/AtomicNumber.h"
-#include "larcore/TestUtils/unit_test_base.h" // testing namespace
+#include "larcorealg/TestUtils/unit_test_base.h" // testing namespace
 
 // support libraries
 #include "fhiclcpp/ParameterSet.h"

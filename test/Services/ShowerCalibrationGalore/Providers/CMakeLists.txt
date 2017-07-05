@@ -11,7 +11,7 @@ cet_test(ShowerCalibrationGaloreFromPID_test
   SOURCES CreateTestShowerCalibrationFromPID.cxx ShowerCalibrationGaloreFromPID_test.cc
   LIBRARIES
     larexamples_Services_ShowerCalibrationGalore_Providers
-    larcore_TestUtils
+    larcorealg_TestUtils
     MF_MessageLogger
     MF_Utilities
     fhiclcpp
@@ -24,7 +24,7 @@ cet_test(ShowerCalibrationGaloreFromPID_test
 cet_test(ShowerCalibrationGaloreScale_test
   LIBRARIES
     larexamples_Services_ShowerCalibrationGalore_Providers
-    larcore_TestUtils
+    larcorealg_TestUtils
     MF_MessageLogger
     MF_Utilities
     fhiclcpp

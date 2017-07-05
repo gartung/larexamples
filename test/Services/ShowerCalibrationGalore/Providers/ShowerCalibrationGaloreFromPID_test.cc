@@ -18,7 +18,7 @@
 #include "larexamples/Services/ShowerCalibrationGalore/Providers/ShowerCalibrationGaloreFromPID.h"
 #include "larexamples/Services/ShowerCalibrationGalore/Providers/ShowerCalibrationGalore.h"
 #include "larexamples/Services/ShowerCalibrationGalore/Providers/ShowerCalibrationGaloreFromPIDTestHelpers.h"
-#include "larcore/TestUtils/unit_test_base.h"
+#include "larcorealg/TestUtils/unit_test_base.h"
 #include "test/Services/ShowerCalibrationGalore/Providers/CreateTestShowerCalibrationFromPID.h"
 #include "test/Services/ShowerCalibrationGalore/Providers/ShowerCalibrationGaloreTests.h"
 

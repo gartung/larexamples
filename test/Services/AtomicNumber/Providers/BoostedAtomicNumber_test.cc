@@ -17,8 +17,8 @@
 
 // LArSoft libraries
 #include "larexamples/Services/AtomicNumber/Providers/AtomicNumber.h"
-#include "larcore/TestUtils/unit_test_base.h" // testing::TesterEnvironment
-#include "larcore/TestUtils/boost_unit_test_base.h" // testing::BoostCommandLineConfiguration
+#include "larcorealg/TestUtils/unit_test_base.h" // testing::TesterEnvironment
+#include "larcorealg/TestUtils/boost_unit_test_base.h" // testing::BoostCommandLineConfiguration
 
 // C/C++ standard libraries
 #include <memory> // std::make_unique()
