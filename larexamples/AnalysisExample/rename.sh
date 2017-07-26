@@ -16,4 +16,4 @@ mv "AnalysisExample.fcl"        "${newname}.fcl"
 
 # Search through all the files, replacing the text "AnalysisExample"
 # with the new name. 
-sed -i "" -e "s/AnalysisExample/${newname}/g" "${newname}.fcl" "${newname}_module.cc" "CMakeLists.txt"
+sed -i -e "s/AnalysisExample/${newname}/g" "${newname}.fcl" "${newname}_module.cc" "CMakeLists.txt"
