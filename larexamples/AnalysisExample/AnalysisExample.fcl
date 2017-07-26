@@ -3,10 +3,10 @@
 # particular, in this script there are no output streams because the
 # module doesn't write any events, just histograms or n-tuples.
 
-# See <https://cdcvs.fnal.gov/redmine/projects/larsoftsvn/wiki/Running_Jobs> for 
+# See <https://cdcvs.fnal.gov/redmine/projects/fhicl/wiki> for 
 # more information on the structure of .fcl files. 
 
-# The following line will have to be changed to match your experiment;
+# The following lines will have to be changed to match your experiment;
 # e.g., "services_dune.fcl", "services_microboone.fcl".
 # Here we pick the relevant services and the FHiCL files with their
 # configurations one by one, according to what is directly used in
@@ -43,24 +43,27 @@ services:
 
   message:                @local::standard_info
 
-  # The following services are from LArSoft.
-  # We pick exactly the ones we need here.
-  # In alternative, we could load a standard set provided by the experiment,
-  # but we would be wasting resourceson unused services.
-  # 
+  # Pick the services we will need from LArSoft. In this example, we
+  # explicitly list the services.  As an alternative, we could load a
+  # standard set provided by the experiment, but we would be wasting
+  # resources on unused services.
+  #
+  # Don't forget to change the experiment name from "argoneut" to the
+  # name appropriate for your experiment. 
+  #
   # - Geometry service:
   #   provides information about the geometry of the detector and the mapping
   #   of TPC channels to the wires.
-  #   Needed by AnalysisExample module; from larcore/Geometry/geometry_argoneut.fcl .
+  #   Needed by the AnalysisExample module
   Geometry:               @local::argoneut_geo
   #
   # - Geometry service helper:
   #   used internally by Geometry to set up the channel mappings.
-  #   Needed by Geometry service; from larcore/Geometry/geometry_argoneut.fcl .
+  #   Needed by the Geometry service
   ExptGeoHelperInterface: @local::argoneut_geometry_helper
   #
   # - Geant4 simulation parameters for liquid argon
-  #   Needed by AnalysisExample module; from larsim/Simulation/simulationservices_argoneut.fcl .
+  #   Needed by the AnalysisExample module
   LArG4Parameters:        @local::argoneut_largeantparameters
 
 } # services
