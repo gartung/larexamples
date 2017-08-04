@@ -3,18 +3,21 @@
 # particular, in this script there are no output streams because the
 # module doesn't write any events, just histograms or n-tuples.
 
-# See <https://cdcvs.fnal.gov/redmine/projects/fhicl/wiki> for 
-# more information on the structure of .fcl files. 
+# See <https://cdcvs.fnal.gov/redmine/projects/larsoft/wiki/_Running_Jobs_> 
+# for more information on the structure of .fcl files. 
 
-# The following lines will have to be changed to match your experiment;
-# e.g., "services_dune.fcl", "services_microboone.fcl".
-# Here we pick the relevant services and the FHiCL files with their
-# configurations one by one, according to what is directly used in
-# AnalysisExample plus a bit of knowledge about what each service depends on
-#
-#include "geometry_argoneut.fcl"
-#include "messageservice.fcl"
-#include "simulationservices_argoneut.fcl"
+# The following line has to be changed to match your experiment; e.g.,
+# "services_dune.fcl", "services_lariat.fcl". I'm using microboone
+# solely because, as a MicroBooNE collaborator, it's easier for me to
+# test this script to make sure it works.
+
+# Note that the following loads many more services than we're going to
+# use in this example. If we're clever enough, and we worked through
+# the nested layers of fcl scripts, we could only include those
+# services that we actually use, which would save some time and
+# memory. However, for this example I'm going for simplicity.
+
+#include "services_microboone.fcl"
 
 process_name: AnalysisExample
 
@@ -42,32 +45,12 @@ services:
   # demonstration purposes.
 
   message:                @local::standard_info
-
-  # Pick the services we will need from LArSoft. In this example, we
-  # explicitly list the services.  As an alternative, we could load a
-  # standard set provided by the experiment, but we would be wasting
-  # resources on unused services.
-  #
-  # Don't forget to change the experiment name from "argoneut" to the
-  # name appropriate for your experiment. 
-  #
-  # - Geometry service:
-  #   provides information about the geometry of the detector and the mapping
-  #   of TPC channels to the wires.
-  #   Needed by the AnalysisExample module
-  Geometry:               @local::argoneut_geo
-  #
-  # - Geometry service helper:
-  #   used internally by Geometry to set up the channel mappings.
-  #   Needed by the Geometry service
-  ExptGeoHelperInterface: @local::argoneut_geometry_helper
-  #
-  # - Geant4 simulation parameters for liquid argon
-  #   Needed by the AnalysisExample module
-  LArG4Parameters:        @local::argoneut_largeantparameters
-
 } # services
 
+# This following line defines many default LArSoft resources for this
+# job. It's more than we'll need, but it's easier to include all of
+# them than to pick and choose.
+services:         @local::microboone_simulation_services
 
 # The 'source' section tells the script to expect an input file with art::Event records.
 # Note that the name of the input file is not included here. You specify that on the
@@ -83,16 +66,18 @@ source:
   # file. You can override this value with the "-n" option on the command line. 
   maxEvents:  -1 
 
-  # I've commented this out, but if you really want to include the name of
-  # an input file in this script, here's how you do it.
+  # I've commented this out, but if you want to include the name of
+  # an art::Event input file in a script, here's how you do it.
   # fileNames: ["myinput.root"]
 }
 
-# This is empty, because we're not writing any art::Events to an output file. 
+# This is empty, because we're not writing an output file with
+# art::Event objects.
 outputs:{}
 
-# The 'physics' section defines and configures some modules to do work on each event.
-# First modules are defined; they are scheduled later. Modules are grouped by type.
+# The 'physics' section defines and configures some modules to do work
+# on each event.  First modules are defined; they are scheduled
+# later. Modules are grouped by type.
 physics:
 {
   # Define the variables we'll need to run for this analysis program.
@@ -103,8 +88,8 @@ physics:
     AnalysisExample: 
     {
       # The "module_type" tells us which module to run. The name here
-      # matches the name supplied to DEFINE_ART_MODULE near the end of
-      # AnalysisExample_module.cc.
+      # must match the name supplied to DEFINE_ART_MODULE near the end
+      # of AnalysisExample_module.cc.
 
       module_type:     "AnalysisExample"
 
@@ -113,18 +98,19 @@ physics:
       # AnalysisExample.cxx. You will want to add/remove/rename the
       # example parameters below to suit your task.
 
-      # If you are reading any objects created by the simulation, then
-      # don't change the value of this parameter. This is the name of
-      # the 'producer' that ran the simulation module in a previous
-      # job. An example of a job file that runs the simulation is
-      # ${LARSIM_DIR}/job/prodsingle.fcl; look for "largeant:". It's
-      # unlikely that anyone would change the name of this producer.
+      # If you are reading any objects created by the standard
+      # simulation scripts, then don't change the value of this
+      # parameter. This is the name of the 'producer' that ran the
+      # simulation module in a previous job. An example of a job file
+      # that runs the simulation is ${LARSIM_DIR}/job/prodsingle.fcl;
+      # look for "largeant:". It's unlikely that anyone would change
+      # the name of this producer.
 
       SimulationLabel: "largeant"
 
       # Hits can be created by more than one module in
-      # ${LARRECO_DIR}/source/HitFinder. For this example, I picked
-      # the one that's usually run first.
+      # ${LARRECO_DIR}/source/larreco/HitFinder. For this example, I
+      # picked the one that's usually run first.
 
       HitLabel:        "gaushit"
 
@@ -154,4 +140,3 @@ physics:
 
   end_paths: [ analysis ]
 }
-
