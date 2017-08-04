@@ -1,5 +1,5 @@
-README.txt
-<seligman@nevis.columbia.edu>
+# README.md  
+<mailto://seligman@nevis.columbia.edu>  
 12-Mar-2012
 
 This directory is intended to be part of a soup-to-nuts example of how
@@ -22,5 +22,5 @@ There are comments (perhaps too many!) in every file to explain what
 everything does.
 
 If you want to understand what you're supposed to learn from all this,
-read ADDITIONAL_NOTES.txt in this directory.
+read ADDITIONAL_NOTES.md in this directory.
 
