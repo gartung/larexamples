@@ -1,6 +1,6 @@
 # README.md  
 <mailto://seligman@nevis.columbia.edu>  
-12-Mar-2012
+07-Aug-2017
 
 This directory is intended to be part of a soup-to-nuts example of how
 to run a LArSoft program to perform an analysis task.

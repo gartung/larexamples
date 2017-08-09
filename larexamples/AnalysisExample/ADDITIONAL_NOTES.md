@@ -1,6 +1,6 @@
 # ADDITIONAL_NOTES.md
 <mailto://seligman@nevis.columbia.edu>  
-26-Sep-2012
+07-Aug-2017
 
 This is a detailed supplement to the brief notes in README.md. These
 notes explain why things are done in a certain way in
@@ -30,7 +30,8 @@ it by now). Believe it or not, it's to teach you something useful.
 
 3.  Keep focused: You want to read in LArSoft events and create
     histograms and n-tuples. Don't get bogged down in the detailed
-    code in the .cc file. You might be better off renaming or moving
+    code in the .cc file if your task doesn't involve dE/dx of primary
+    particles in an event. You might be better off renaming or moving
     that file and creating a new one from scratch or using artmod,
     referring to the original as needed.
 
@@ -51,8 +52,8 @@ it by now). Believe it or not, it's to teach you something useful.
 
 6.  Don't confuse the name "AnalysisExample" (in the larexamples
     repository) with the contents of the package "AnalysisBase" (in
-    the lardata repository). The AnalysisBase package contains classes
-    that define the final physics objects produced by the
+    the lardataobj repository). The AnalysisBase package contains
+    classes that define the final physics objects produced by the
     reconstruction process (particle ID, shower energy, etc.). The
     AnalysisExample package provides an example of how to analyze
     "stuff" that's been put in LArSoft event records.
@@ -102,7 +103,6 @@ it by now). Believe it or not, it's to teach you something useful.
     Keep BackTracker in mind; it's a handy tool. But learn I/O from
     this example and from the wiki page at
     <https://cdcvs.fnal.gov/redmine/projects/larsoft/wiki/Using_art_in_LArSoft>
-
 
 10. If you want to do dE/dx studies using this code as a starting
     point, then you're going to need to put the following line at the
@@ -165,7 +165,7 @@ it by now). Believe it or not, it's to teach you something useful.
     memory management, and the new extensions to C++.
 
 12. "Gosh, AnalysisExample_module.cc is so loooooong! It's got many
-    layers of nest loops. Couldn't you have prepared something
+    layers of nested loops. Couldn't you have prepared something
     shorter?"  
 
     Perhaps. But every analysis program or script I've seen has
