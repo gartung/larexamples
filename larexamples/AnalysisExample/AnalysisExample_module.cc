@@ -51,6 +51,7 @@
 #include "lardataobj/Simulation/SimChannel.h"
 #include "lardataobj/RecoBase/Hit.h"
 #include "lardataobj/RecoBase/Cluster.h"
+#include "lardata/DetectorInfoServices/DetectorPropertiesService.h"
 #include "lardata/DetectorInfoServices/DetectorClocksService.h"
 #include "larcore/Geometry/Geometry.h"
 #include "larcorealg/Geometry/GeometryCore.h"
@@ -341,9 +342,10 @@ namespace example {
     /// @}
 
     // Other variables that will be shared between different methods.
-    geo::GeometryCore const* fGeometry;          ///< pointer to Geometry provider
+    geo::GeometryCore const* fGeometryService;   ///< pointer to Geometry provider
     detinfo::DetectorClocks const* fTimeService; ///< pointer to detector clock time service provider
     double                   fElectronsToGeV;    ///< conversion factor
+    int                      fTriggerOffset;     ///< (units of ticks) time of expected neutrino event
     
   }; // class AnalysisExample
 
@@ -369,9 +371,12 @@ namespace example {
     , fBinSize                (config().BinSize())
   {
     // Get a pointer to the geometry service provider.
-    fGeometry = lar::providerFrom<geo::Geometry>();
+    fGeometryService = lar::providerFrom<geo::Geometry>();
     // The same for detector TDC clock services.
     fTimeService = lar::providerFrom<detinfo::DetectorClocksService>();
+    // Access to detector properties.
+    const detinfo::DetectorProperties* detprop = lar::providerFrom<detinfo::DetectorPropertiesService>();
+    fTriggerOffset = detprop->TriggerOffset();
   }
 
   
@@ -380,7 +385,7 @@ namespace example {
   {
     // Get the detector length, to determine the maximum bin edge of one
     // of the histograms.
-    const double detectorLength = DetectorDiagonal(*fGeometry);
+    const double detectorLength = DetectorDiagonal(*fGeometryService);
 
     // Access ART's TFileService, which will handle creating and writing
     // histograms and n-tuples for us. 
@@ -632,7 +637,7 @@ namespace example {
 	    // energy from the collection plane. Note:
 	    // geo::kCollection is defined in
 	    // ${LARCOREOBJ_INC}/larcoreobj/SimpleTypesAndConstants/geo_types.h
-	    if ( fGeometry->SignalType( channelNumber ) != geo::kCollection )
+	    if ( fGeometryService->SignalType( channelNumber ) != geo::kCollection )
 	      continue;
 		
 	    // Each channel has a map inside it that connects a time
@@ -647,8 +652,7 @@ namespace example {
 	      {
 		// Each entry in a map is a pair<first,second>. For
 		// the timeSlices map, the 'first' is a time slice
-		// number, which we don't care about in this
-		// example. The 'second' is a vector of IDE objects.
+		// number. The 'second' is a vector of IDE objects.
 		auto const& energyDeposits = timeSlice.second;
 		    
 		// Loop over the energy deposits. An "energy deposit"
@@ -755,25 +759,11 @@ namespace example {
 	auto hitStart_tdc = fTimeService->TPCTick2TDC( hit.PeakTime() - 3.*hit.SigmaPeakTime() );
 	auto hitEnd_tdc   = fTimeService->TPCTick2TDC( hit.PeakTime() + 3.*hit.SigmaPeakTime() );
 
-	start_tdc = std::max(start_tdc, hitStart_tdc);
-	end_tdc   = std::min(end_tdc,   hitEnd_tdc  );
+	start_tdc = std::min(start_tdc, hitStart_tdc);
+	end_tdc   = std::max(end_tdc,   hitEnd_tdc  );
 
-	LOG_DEBUG("AnalysisExample")
-	  << "Hit index = " << hit.LocalIndex()
-	  << " channel number = " << hitChannelNumber
-	  << " start TDC tick = " << hit.StartTick()
-	  << " end TDC tick = " << hit.EndTick()
-	  << " peak TDC tick = " << hit.PeakTime()
-	  << " sigma peak time = " << hit.SigmaPeakTime()
-	  << " adjusted start TDC tick = " << fTimeService->TPCTick2TDC(hit.StartTick())
-	  << " adjusted end TDC tick = " << fTimeService->TPCTick2TDC(hit.EndTick())
-	  << " adjusted peak TDC tick = " << fTimeService->TPCTick2TDC(hit.PeakTime())
-	  << " adjusted start_tdc = " << start_tdc
-	  << " adjusted end_tdc = " << end_tdc
-	  << std::endl;
-
-	// Again, for this example let's just focus on the collection plane.
-	if ( fGeometry->SignalType( hitChannelNumber ) != geo::kCollection )
+	// For this example let's just focus on the collection plane.
+	if ( fGeometryService->SignalType( hitChannelNumber ) != geo::kCollection )
 	  continue;
 
 	LOG_DEBUG("AnalysisExample")
@@ -798,10 +788,44 @@ namespace example {
 	    auto const& timeSlices = channel.TDCIDEMap();
 	    for ( auto const& timeSlice : timeSlices )
 	      {
-		int time = timeSlice.first; 
+		// The sim::IDE objects from the simulation start
+		// counting from a "trigger offset" before the actual
+		// event. This is to allow a wide time window for
+		// overlay studies and the like. The recob::Hit times
+		// are counted from the start of the trigger, so we
+		// have to adjust one or the other to compare them.
+
+		auto time = timeSlice.first - fTriggerOffset; 
+
+		// How to debug a problem: Lots of print statements. There are
+		// debuggers such as gdb, but they can be tricky to use with
+		// shared libraries and don't work if you're using software
+		// that was compiled somewhere else (e.g., you're accessing
+		// LArSoft libraries via CVMFS). 
+		
+		// The LOG_DEBUG statements below are left over from when I
+		// was trying to solve a problem about hit timing. I could
+		// have deleted them, but decided to leave them to demonsrate
+		// what a typical debugging process looks like.
 
 		LOG_DEBUG("AnalysisExample")
-		  << " Time = " << time
+		  << "Hit index = " << hit.LocalIndex()
+		  << " channel number = " << hitChannelNumber
+		  << std::endl
+		  << " start TDC tick = " << hit.StartTick()
+		  << " end TDC tick = " << hit.EndTick()
+		  << " peak TDC tick = " << hit.PeakTime()
+		  << " sigma peak time = " << hit.SigmaPeakTime()
+		  << std::endl
+		  << " adjusted start TDC tick = " << fTimeService->TPCTick2TDC(hit.StartTick())
+		  << " adjusted end TDC tick = " << fTimeService->TPCTick2TDC(hit.EndTick())
+		  << " adjusted peak TDC tick = " << fTimeService->TPCTick2TDC(hit.PeakTime())
+		  << " adjusted start_tdc = " << start_tdc
+		  << " adjusted end_tdc = " << end_tdc
+		  << std::endl
+		  << " Time from sim::IDE = " << timeSlice.first
+		  << " trigger offset = " << fTriggerOffset
+		  << " adjusted time = " << time
 		  << " hit start = " << start_tdc
 		  << " hit end = " << end_tdc
 		  << std::endl;
@@ -811,9 +835,10 @@ namespace example {
 		// associated with a wire. To prevent double-counting
 		// the energy, make sure the time of these energy
 		// deposits corresponds to the time of the hit.
+		/*
 		if ( time < start_tdc || time > end_tdc )
 		  continue;
-
+		*/
 		LOG_DEBUG("AnalysisExample")
 		  << "Energy is in-time "
 		  << std::endl;
