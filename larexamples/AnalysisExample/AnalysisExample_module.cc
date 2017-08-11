@@ -51,8 +51,6 @@
 #include "lardataobj/Simulation/SimChannel.h"
 #include "lardataobj/RecoBase/Hit.h"
 #include "lardataobj/RecoBase/Cluster.h"
-#include "lardata/DetectorInfoServices/DetectorPropertiesService.h"
-#include "lardata/DetectorInfoServices/DetectorClocksService.h"
 #include "larcore/Geometry/Geometry.h"
 #include "larcorealg/Geometry/GeometryCore.h"
 #include "larcoreobj/SimpleTypesAndConstants/geo_types.h"
@@ -343,9 +341,7 @@ namespace example {
 
     // Other variables that will be shared between different methods.
     geo::GeometryCore const* fGeometryService;   ///< pointer to Geometry provider
-    detinfo::DetectorClocks const* fTimeService; ///< pointer to detector clock time service provider
     double                   fElectronsToGeV;    ///< conversion factor
-    int                      fTriggerOffset;     ///< (units of ticks) time of expected neutrino event
     
   }; // class AnalysisExample
 
@@ -372,11 +368,6 @@ namespace example {
   {
     // Get a pointer to the geometry service provider.
     fGeometryService = lar::providerFrom<geo::Geometry>();
-    // The same for detector TDC clock services.
-    fTimeService = lar::providerFrom<detinfo::DetectorClocksService>();
-    // Access to detector properties.
-    const detinfo::DetectorProperties* detprop = lar::providerFrom<detinfo::DetectorPropertiesService>();
-    fTriggerOffset = detprop->TriggerOffset();
   }
 
   
@@ -745,30 +736,9 @@ namespace example {
 	// The channel associated with this hit.
 	auto hitChannelNumber = hit.Channel();
 
-	// We have a hit. In a few lines we're going to look for
-	// possible energy deposits that correspond to that
-	// hit. Determine a reasonable range of times that might
-	// correspond to those energy deposits.
-
-	// In reconstruction, the channel waveforms are truncated. So
-	// we have to adjust the Hit TDC ticks to match those of the
-	// SimChannels, which were created during simulation.
-	
-	auto start_tdc    = fTimeService->TPCTick2TDC( hit.StartTick() );
-	auto end_tdc      = fTimeService->TPCTick2TDC( hit.EndTick()   );
-	auto hitStart_tdc = fTimeService->TPCTick2TDC( hit.PeakTime() - 3.*hit.SigmaPeakTime() );
-	auto hitEnd_tdc   = fTimeService->TPCTick2TDC( hit.PeakTime() + 3.*hit.SigmaPeakTime() );
-
-	start_tdc = std::min(start_tdc, hitStart_tdc);
-	end_tdc   = std::max(end_tdc,   hitEnd_tdc  );
-
 	// For this example let's just focus on the collection plane.
 	if ( fGeometryService->SignalType( hitChannelNumber ) != geo::kCollection )
 	  continue;
-
-	LOG_DEBUG("AnalysisExample")
-	  << "Hit in collection plane"
-	  << std::endl;
 
 	// In the simulation section, we started with particles to find
 	// channels with a matching track ID. Now we search in reverse:
@@ -780,70 +750,11 @@ namespace example {
 	    auto simChannelNumber = channel.Channel();
 	    if ( simChannelNumber != hitChannelNumber ) continue;
 
-	    LOG_DEBUG("AnalysisExample")
-	      << "SimChannel number = " << simChannelNumber
-	      << std::endl;
-
 	    // For every time slice in this channel:
 	    auto const& timeSlices = channel.TDCIDEMap();
 	    for ( auto const& timeSlice : timeSlices )
 	      {
-		// The sim::IDE objects from the simulation start
-		// counting from a "trigger offset" before the actual
-		// event. This is to allow a wide time window for
-		// overlay studies and the like. The recob::Hit times
-		// are counted from the start of the trigger, so we
-		// have to adjust one or the other to compare them.
-
-		auto time = timeSlice.first - fTriggerOffset; 
-
-		// How to debug a problem: Lots of print statements. There are
-		// debuggers such as gdb, but they can be tricky to use with
-		// shared libraries and don't work if you're using software
-		// that was compiled somewhere else (e.g., you're accessing
-		// LArSoft libraries via CVMFS). 
-		
-		// The LOG_DEBUG statements below are left over from when I
-		// was trying to solve a problem about hit timing. I could
-		// have deleted them, but decided to leave them to demonsrate
-		// what a typical debugging process looks like.
-
-		LOG_DEBUG("AnalysisExample")
-		  << "Hit index = " << hit.LocalIndex()
-		  << " channel number = " << hitChannelNumber
-		  << std::endl
-		  << " start TDC tick = " << hit.StartTick()
-		  << " end TDC tick = " << hit.EndTick()
-		  << " peak TDC tick = " << hit.PeakTime()
-		  << " sigma peak time = " << hit.SigmaPeakTime()
-		  << std::endl
-		  << " adjusted start TDC tick = " << fTimeService->TPCTick2TDC(hit.StartTick())
-		  << " adjusted end TDC tick = " << fTimeService->TPCTick2TDC(hit.EndTick())
-		  << " adjusted peak TDC tick = " << fTimeService->TPCTick2TDC(hit.PeakTime())
-		  << " adjusted start_tdc = " << start_tdc
-		  << " adjusted end_tdc = " << end_tdc
-		  << std::endl
-		  << " Time from sim::IDE = " << timeSlice.first
-		  << " trigger offset = " << fTriggerOffset
-		  << " adjusted time = " << time
-		  << " hit start = " << start_tdc
-		  << " hit end = " << end_tdc
-		  << std::endl;
-
-		// A channel will contain all the energy deposited on
-		// a wire, but there can be more than one hit
-		// associated with a wire. To prevent double-counting
-		// the energy, make sure the time of these energy
-		// deposits corresponds to the time of the hit.
-		/*
-		if ( time < start_tdc || time > end_tdc )
-		  continue;
-		*/
-		LOG_DEBUG("AnalysisExample")
-		  << "Energy is in-time "
-		  << std::endl;
- 
-		// Loop over the energy deposits.
+ 		// Loop over the energy deposits.
 		auto const& energyDeposits = timeSlice.second;
 		for ( auto const& energyDeposit : energyDeposits )
 		  {
