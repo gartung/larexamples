@@ -977,3 +977,6 @@ configuration of the service itself in the FHiCL configuration file.
 If you have any question about the example, please contact its author.
 This section will be populated with questions and their answers.
 
+
+Version 1.11: August 15, 2017 (seligman@nevis.columbia.edu)
+  Teeny	change:	filename README -> README.md since this is a Markdown file.

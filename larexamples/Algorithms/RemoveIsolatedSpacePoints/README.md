@@ -900,6 +900,9 @@ Version 1.1: June 30, 2016 (petrillo@fnal.gov)
   changed the algorithm implementation from a brute-force, try-every-combination
   approach to one that spends memory to reduce the number of comparisons
 
+Version 1.11: August 15, 2017 (seligman@nevis.columbia.edu)
+  Teeny change: filename README -> README.md since this is a Markdown file.
+
 
 [LArSoft wiki]:
   <https://cdcvs.fnal.gov/redmine/projects/larsoft/wiki/Writing_LArSoft_algorithms>

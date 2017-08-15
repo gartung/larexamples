@@ -24,3 +24,11 @@ everything does.
 If you want to understand what you're supposed to learn from all this,
 read ADDITIONAL_NOTES.md in this directory.
 
+The files with a .md extension (including this one) arre written in
+Markdown. If you'd like a pretty-printed version of these files, you
+can use pandoc; e.g.:
+
+```
+pandoc -s -S -o README.html README.md
+pandoc -s -S -o README.pdf  README.md
+```
