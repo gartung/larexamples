@@ -51,6 +51,8 @@
 #include "lardataobj/Simulation/SimChannel.h"
 #include "lardataobj/RecoBase/Hit.h"
 #include "lardataobj/RecoBase/Cluster.h"
+#include "lardata/DetectorInfoServices/DetectorPropertiesService.h"
+#include "lardata/DetectorInfoServices/DetectorClocksService.h"
 #include "larcore/Geometry/Geometry.h"
 #include "larcorealg/Geometry/GeometryCore.h"
 #include "larcoreobj/SimpleTypesAndConstants/geo_types.h"
@@ -102,12 +104,16 @@ namespace {
   // now on). In this way, any functions you define in this namespace
   // won't affect the environment of other modules.
   
-  // We will define this function at the end, but we declare it here
-  // so that the module can freely use it.
+  // We will define functions at the end, but we declare them here so
+  // that the module can freely use them.
 
   /// Utility function to get the diagonal of the detector
   double DetectorDiagonal(geo::GeometryCore const& geom);
-  
+
+  /// Comparison routine for using std::lower/upper_bound to search
+  /// TDCIDE vectors.
+  bool TDCIDETimeCompare( const sim::TDCIDE&, const sim::TDCIDE& );
+
 } // local namespace
 
 
@@ -341,7 +347,9 @@ namespace example {
 
     // Other variables that will be shared between different methods.
     geo::GeometryCore const* fGeometryService;   ///< pointer to Geometry provider
+    detinfo::DetectorClocks const* fTimeService; ///< pointer to detector clock time service provider
     double                   fElectronsToGeV;    ///< conversion factor
+    int                      fTriggerOffset;     ///< (units of ticks) time of expected neutrino event
     
   }; // class AnalysisExample
 
@@ -368,6 +376,11 @@ namespace example {
   {
     // Get a pointer to the geometry service provider.
     fGeometryService = lar::providerFrom<geo::Geometry>();
+    // The same for detector TDC clock services.
+    fTimeService = lar::providerFrom<detinfo::DetectorClocksService>();
+    // Access to detector properties.
+    const detinfo::DetectorProperties* detprop = lar::providerFrom<detinfo::DetectorPropertiesService>();
+    fTriggerOffset = detprop->TriggerOffset();
   }
 
   
@@ -736,9 +749,35 @@ namespace example {
 	// The channel associated with this hit.
 	auto hitChannelNumber = hit.Channel();
 
+	// We have a hit. In a few lines we're going to look for
+	// possible energy deposits that correspond to that
+	// hit. Determine a reasonable range of times that might
+	// correspond to those energy deposits.
+
+	// In reconstruction, the channel waveforms are truncated. So
+	// we have to adjust the Hit TDC ticks to match those of the
+	// SimChannels, which were created during simulation.
+
+	// Save a bit of typing, while still allowing for potential
+	// changes in the definitions of types in
+	// $LARDATAOBJ_DIR/source/lardataobj/Simulation/SimChannel.h
+
+	typedef sim::SimChannel::StoredTDC_t TDC_t;
+	TDC_t start_tdc    = fTimeService->TPCTick2TDC( hit.StartTick() );
+	TDC_t end_tdc      = fTimeService->TPCTick2TDC( hit.EndTick()   );
+	TDC_t hitStart_tdc = fTimeService->TPCTick2TDC( hit.PeakTime() - 3.*hit.SigmaPeakTime() );
+	TDC_t hitEnd_tdc   = fTimeService->TPCTick2TDC( hit.PeakTime() + 3.*hit.SigmaPeakTime() );
+
+	start_tdc = std::max(start_tdc, hitStart_tdc);
+	end_tdc   = std::min(end_tdc,   hitEnd_tdc  );
+
 	// For this example let's just focus on the collection plane.
 	if ( fGeometryService->SignalType( hitChannelNumber ) != geo::kCollection )
 	  continue;
+
+	LOG_DEBUG("AnalysisExample")
+	  << "Hit in collection plane"
+	  << std::endl;
 
 	// In the simulation section, we started with particles to find
 	// channels with a matching track ID. Now we search in reverse:
@@ -750,11 +789,83 @@ namespace example {
 	    auto simChannelNumber = channel.Channel();
 	    if ( simChannelNumber != hitChannelNumber ) continue;
 
-	    // For every time slice in this channel:
+	    LOG_DEBUG("AnalysisExample")
+	      << "SimChannel number = " << simChannelNumber
+	      << std::endl;
+
+	    // The time slices in this channel.
 	    auto const& timeSlices = channel.TDCIDEMap();
-	    for ( auto const& timeSlice : timeSlices )
+
+	    // We want to look over the range of time slices in this
+	    // channel that correspond to the range of hit times. 
+
+	    // To do this, we're going to use some fast STL search
+	    // methods; STL algorithms are usually faster than the
+	    // ones you might write yourself. The price for this speed
+	    // is a bit of code complexity: in particular, we need to
+	    // a custom comparison function, TDCIDETimeCompare, to
+	    // define a "less-than" function for the searches.
+
+	    // For an introduction to STL algorithms, see
+	    // <http://www.learncpp.com/cpp-tutorial/16-4-stl-algorithms-overview/>.
+	    // For a list of available STL algorithms, see
+	    // <http://en.cppreference.com/w/cpp/algorithm>
+
+	    // We have to create "dummy" time slices for the search.
+	    sim::TDCIDE startTime;
+	    sim::TDCIDE endTime;
+	    startTime.first = start_tdc;
+	    endTime.first   = end_tdc;
+
+	    // Here are the fast searches: 
+	    // Find a pointer to the first channel with time >= start_tdc.
+	    auto const startPointer 
+	      = std::lower_bound( timeSlices.begin(), timeSlices.end(), startTime, TDCIDETimeCompare);
+
+	    // From that time slice, find the last channel with time < end_tdc.
+	    auto const endPointer   
+	      = std::upper_bound( startPointer,       timeSlices.end(), endTime,   TDCIDETimeCompare);
+
+	    // Did we find anything? If not, skip. 
+	    if ( startPointer == timeSlices.end() || startPointer == endPointer ) continue;
+	    LOG_DEBUG("AnalysisExample")
+	      << "Time slice start = " << (*startPointer).first
+	      << std::endl;
+
+	    // Loop over the channel times we found that match the hit
+	    // times.
+	    for ( auto slicePointer = startPointer; slicePointer != endPointer; slicePointer++)
 	      {
- 		// Loop over the energy deposits.
+		auto const timeSlice = *slicePointer;
+		auto time = timeSlice.first;
+
+		// How to debug a problem: Lots of print statements. There are
+		// debuggers such as gdb, but they can be tricky to use with
+		// shared libraries and don't work if you're using software
+		// that was compiled somewhere else (e.g., you're accessing
+		// LArSoft libraries via CVMFS). 
+		
+		// The LOG_DEBUG statements below are left over from when I
+		// was trying to solve a problem about hit timing. I could
+		// have deleted them, but decided to leave them to demonsrate
+		// what a typical debugging process looks like.
+
+		LOG_DEBUG("AnalysisExample")
+		  << "Hit index = " << hit.LocalIndex()
+		  << " channel number = " << hitChannelNumber
+		  << " start TDC tick = " << hit.StartTick()
+		  << " end TDC tick = " << hit.EndTick()
+		  << " peak TDC tick = " << hit.PeakTime()
+		  << " sigma peak time = " << hit.SigmaPeakTime()
+		  << " adjusted start TDC tick = " << fTimeService->TPCTick2TDC(hit.StartTick())
+		  << " adjusted end TDC tick = " << fTimeService->TPCTick2TDC(hit.EndTick())
+		  << " adjusted peak TDC tick = " << fTimeService->TPCTick2TDC(hit.PeakTime())
+		  << " adjusted start_tdc = " << start_tdc
+		  << " adjusted end_tdc = " << end_tdc
+		  << " time = " << time
+		  << std::endl;
+ 
+		// Loop over the energy deposits.
 		auto const& energyDeposits = timeSlice.second;
 		for ( auto const& energyDeposit : energyDeposits )
 		  {
@@ -821,8 +932,8 @@ namespace example {
 		    auto& track_dEdX = dEdxMap[trackID];
 		    if ( track_dEdX.size() < bin+1 )
 		      {
-			// Increase the array size, padding it 
-			// with zeroes.
+			// Increase the vector size, padding it with
+			// zeroes.
 			track_dEdX.resize( bin+1, 0 ); 
 		      }
 		    
@@ -1047,6 +1158,13 @@ namespace {
     
     return std::sqrt(cet::sum_of_squares(length, width, height));
   } // DetectorDiagonal()
+
+  // Define a comparison function to use in std::upper_bound and
+  // std::lower_bound searches above.
+  bool TDCIDETimeCompare( const sim::TDCIDE& lhs, const sim::TDCIDE& rhs )
+  {
+    return lhs.first < rhs.first;
+  }
 
 } // local namespace
 

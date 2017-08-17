@@ -148,13 +148,15 @@ physics:
   end_paths: [ analysis ]
 }
 
-# In order to read in the reconstructed objects I use in
-# AnalysisExample, I found I needed to add the following line. For
+# In order to work with the reconstructed objects I use in
+# AnalysisExample, I found I needed to add the following lines. For
 # more details, see
 # <https://cdcvs.fnal.gov/redmine/projects/uboonecode/wiki/Guide_to_Using_FCL_files_in_MicroBooNE>
-# This is needed, in part, because I included all of
-# microboone_simulation_services near the top of this file. If I'd
-# been more selective, I might not need the following option.  Note
-# that your task and your experiment might require other modifiers to
-# do what you want.
+# Note that this is a MicroBooNE-only requirement; your experiment may
+# need different adjustments to handle the difference between
+# simulation and reconstruction waveform times.
+
 services.DetectorClocksService.InheritClockConfig: false
+services.DetectorClocksService.TriggerOffsetTPC: -400
+services.DetectorPropertiesService.NumberTimeSamples: 6400
+services.DetectorPropertiesService.ReadOutWindowSize: 6400

@@ -84,7 +84,7 @@ The example is split between two directories:
 
 ~~~~
 larexamples/Algoritmhs/RemoveIsolatedSpacePoints/    ## contains example code ##
-|-- README                                                          # this file
+|-- README.md                                                       # this file
 |-- PointIsolationAlg.h                           # generic isolation algorithm
 |-- SpacePartition.h            # container used by PointIsolationAlg algorithm
 |-- SpacePointIsolationAlg.h    # header for the space point specific algorithm
