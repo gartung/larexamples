@@ -10,20 +10,20 @@
 #    compare its CMakeLists.txt file(s) with this one, then add the
 #    necessary line(s).
 
-# 2) There's a major breaking change in the of art/LArSoft
-#    packages. To be aware of such changes, consider subscribing to
-#    the larsoft@fnal.gov mailing list. Note that changes of this sort
-#    are typically made by software librarians just before a
-#    particular version tag, so if you've followed the directions on
-#    the AnalysisExample web page (see README.md) then you'd only have
-#    to make a change if you're updating your analysis package to a
-#    later or development version of LArSoft.
+# 2) There's a breaking change in the art/LArSoft packages. To be
+#    aware of such changes, consider subscribing to the
+#    larsoft@fnal.gov mailing list. Note that changes of this sort are
+#    typically made by software librarians just before a particular
+#    version tag, so if you've followed the directions on the
+#    AnalysisExample web page (see README.md) then you'd only have to
+#    make a change if you're updating your analysis package to a later
+#    or development version of LArSoft.
 
 # Long version: 
 
 # This file is used by the utility cmake <https://cmake.org/>, a
-# utility for building and updating software packages. The cmake
-# program is invoked as part of the "mrb i" procedure. 
+# utility for building and updating software. The cmake program is
+# invoked as part of the "mrb i" procedure.
 
 # Actually, this file is part of a chain of files:
 
@@ -39,14 +39,14 @@
 # these files only has meaning in the context of art/LArSoft. You have
 # to use detective work to determine the meaning of most of what you
 # see in the CMakeLists.txt files; for example, in the "simple_plugin"
-# below, you can see "cetlib" and "cetlib_except", which presumably
-# means cet and the cet exception-handling library.
+# below, you can see "cetlib_except", which presumably means the
+# cetlib exception-handling library.
 
 # The function of cmake is to create a Makefile for use by the "make"
 # program; the "mrb i" procedure runs "make" for you after it's run
 # cmake. If you hunt around the $MRB_BUILDDIR directory, you'll see
-# the work files (including Makefile) created by the cmake/make build
-# procedure.
+# the work files (including Makefile(s)) created by the cmake/make
+# build procedure.
 
 # The following lines define AnalysisExample as a module (something
 # that can be invoked as a procedure in a .fcl file) and the
@@ -75,7 +75,8 @@ simple_plugin(AnalysisExample "module"
 # The above will create libraries in $MRB_INSTALL; these are the ".so"
 # files you saw if you followed the example on the AnalysisExample web
 # page. The following lines specify additional files that are to be
-# copied to $MRB_INSTALL; for example, the documentation (.md) files.
+# copied to $MRB_BUILDDIR and $MRB_INSTALL; for example, the
+# documentation (.md) files.
 
 # To get a sense of what gets built and installed, look at:
 #   ls $MRB_INSTALL/larexamples/$LAREXAMPLES_VERSION

@@ -10,7 +10,8 @@ For directions on how to set up and compile this example, see the LArSoft wiki:
 
 The example program in package AnalysisExample does the following:
 
-- reads a file of simulated and perhaps partially-reconstructed events;
+- reads a file of simulated and potentially partially reconstructed
+  events;
 
 - creates a few example histograms;
 
@@ -24,7 +25,7 @@ everything does.
 If you want to understand what you're supposed to learn from all this,
 read ADDITIONAL_NOTES.md in this directory.
 
-The files with a .md extension (including this one) arre written in
+The files with a .md extension (including this one) are written in
 Markdown. If you'd like a pretty-printed version of these files, you
 can use pandoc; e.g.:
 

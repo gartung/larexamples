@@ -49,7 +49,7 @@ services:
   # messages in the analysis module) the job's messages will not
   # appear on screen. They're written to a debug.log file instead.
 
-  message:                @local::standard_debug
+  message:                @local::standard_info
 
   # This following line defines many default LArSoft resources for
   # this job. It's more than we'll need, but it's easier to include
