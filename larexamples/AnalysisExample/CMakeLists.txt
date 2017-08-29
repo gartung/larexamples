@@ -23,7 +23,7 @@
 
 # This file is used by the utility cmake <https://cmake.org/>, a
 # utility for building and updating software. The cmake program is
-# invoked as part of the "mrb i" procedure.
+# invoked as part of the "mrb install" procedure.
 
 # Actually, this file is part of a chain of files:
 
@@ -43,9 +43,9 @@
 # cetlib exception-handling library.
 
 # The function of cmake is to create a Makefile for use by the "make"
-# program; the "mrb i" procedure runs "make" for you after it's run
-# cmake. If you hunt around the $MRB_BUILDDIR directory, you'll see
-# the work files (including Makefile(s)) created by the cmake/make
+# program; the "mrb iinstall" procedure runs "make" for you after it's
+# run cmake. If you hunt around the $MRB_BUILDDIR directory, you'll
+# see the work files (including Makefile(s)) created by the cmake/make
 # build procedure.
 
 # The following lines define AnalysisExample as a module (something
