@@ -59,6 +59,7 @@ services:
 
 } # services
 
+>>>>>>> origin/feature/seligman_uptodateAnalysisExample
 # The 'source' section tells the script to expect an input file with art::Event records.
 # Note that the name of the input file is not included here. You specify that on the
 # command line when you run this script; e.g.,

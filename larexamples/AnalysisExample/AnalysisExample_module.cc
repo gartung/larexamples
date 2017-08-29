@@ -676,7 +676,6 @@ namespace example {
 		    // Check if the track that deposited the
 		    // energy matches the track of the particle.
 		    if ( energyDeposit.trackID != fSimTrackID ) continue;
-
 		    // Get the (x,y,z) of the energy deposit.
 		    TVector3 location( energyDeposit.x,
 				       energyDeposit.y,
@@ -1168,6 +1167,5 @@ namespace {
   {
     return lhs.first < rhs.first;
   }
-
 } // local namespace
 
