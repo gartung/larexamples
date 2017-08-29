@@ -27,6 +27,6 @@ file(GLOB TESTFHICLFILES
      LIST_DIRECTORIES false
      *.fcl
      )
-install_source(EXTRAS README CMakeLists.txt ${TESTFHICLFILES})
+install_source(EXTRAS README.md CMakeLists.txt ${TESTFHICLFILES})
 unset(TESTFHICLFILES)
 
