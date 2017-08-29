@@ -90,9 +90,9 @@ it by now). Believe it or not, it's to teach you something useful.
     in the .cc file: create an art::Handle to a std::vector, then use
     art::Event::GetByLabel to fill the vector.
 
-    Also, importing data products via services will make expert mutter
-    about good practises. The rule is that if your module uses a data
-    product, it should fetch it by itself. BackTracker is still
+    Also, importing data products via services will make experts
+    mutter about good practises. The rule is that if your module uses
+    a data product, it should fetch it by itself. BackTracker is still
     appreciated for its ability to recover connections between
     reconstructed and generated particles.
 

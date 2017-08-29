@@ -18,7 +18,7 @@
  * Also note that, despite our efforts, the documentation and the practices in
  * this code may fall out of date. In doubt, ask!
  *
- * The last revision of this code was done on July 2017 with LArSoft v06_44_00.
+ * The last revision of this code was done in August 2017 with LArSoft v06_44_00.
  *
  * This is in-source documentation in Doxygen format. Doxygen is a
  * utility that creates web pages from specially-formatted comments in
@@ -249,30 +249,33 @@ namespace example {
     // The following methods have a standard meaning and a standard signature
     // inherited from the framework (art::EDAnalyzer class).
 
-    // The "virtual" keyword is a reminder that the function we are dealing with
-    // is, in fact, virtual. You don't need to understand it now, but it's very
-    // important when you write a new algorithm.
+    // - The "virtual" keyword is a reminder that the function we are
+    //   dealing with is, in fact, virtual. You don't need to
+    //   understand it now, but it's very important when you write a
+    //   new algorithm.
 
-    // The "override" keyword, new in C++ 2011, is an important safety measure
-    // that ensures that the method we are going to write will override a
-    // matching method in the base class. For example, if we mistyped it as
+    // - The "override" keyword, new in C++ 2011, is an important
+    //   safety measure that ensures that the method we are going to
+    //   write will override a matching method in the base class. For
+    //   example, if we mistyped it as
 
-    // virtual void beginJob() const;
+    //   virtual void beginJob() const;
 
-    // (adding "const"), the compiler will be very happy with it, but art will
-    // not touch it, because art needs a "void beginJob()" (non-const) and
-    // it will find one in the base class (void art::EDAnalyzer::beginJob())
-    // and will happily and silently use that one instead. Using:
+    //   (adding "const"), the compiler will be very happy with it,
+    //   but art will not touch it, because art needs a "void
+    //   beginJob()" (non-const) and it will find one in the base
+    //   class (void art::EDAnalyzer::beginJob()) and will silently
+    //   use that one instead. If you accidentally use:
 
-    // virtual void beginJob() const override;
+    //   virtual void beginJob() const override;
 
-    // instead, the compiler will immediately complain with us that this method
-    // is overriding nothing, hinting to some mistake (the spurious "const"
-    // in this case).
+    //   the compiler will immediately complain with us that this
+    //   method is overriding nothing, hinting to some mistake (the
+    //   spurious "const" in this case).
     
     // This method is called once, at the start of the job. In this
     // example, it will define the histograms and n-tuples we'll
-    // write.  Define the histograms and n-tuples
+    // write. 
     virtual void beginJob() override;
 
     // This method is called once, at the start of each run. It's a
@@ -364,7 +367,7 @@ namespace example {
   // Note that config is a Table<Config>, and to access the Config
   // value we need to use an operator: "config()". In the same way,
   // each element in Config is an Atom<Type>, so to access the type we
-  // need again the call operator, e.g. "SimulationLabel()".
+  // again use the call operator, e.g. "SimulationLabel()".
   // 
   AnalysisExample::AnalysisExample(Parameters const& config)
     : EDAnalyzer(config)
@@ -411,8 +414,8 @@ namespace example {
     fSimulationNtuple     = tfs->make<TTree>("AnalysisExampleSimulation",    "AnalysisExampleSimulation");
     fReconstructionNtuple = tfs->make<TTree>("AnalysisExampleReconstruction","AnalysisExampleReconstruction");
 
-    // Define the branches (columns) of our simulation n-tuple. When
-    // we write a variable, we give the address of the variable to
+    // Define the branches (columns) of our simulation n-tuple. To
+    // write a variable, we give the address of the variable to
     // TTree::Branch.
     fSimulationNtuple->Branch("Event",       &fEvent,          "Event/I");
     fSimulationNtuple->Branch("SubRun",      &fSubRun,         "SubRun/I");
@@ -472,17 +475,18 @@ namespace example {
     // <https://cdcvs.fnal.gov/redmine/projects/larsoft/wiki/Using_art_in_LArSoft>
     // for more information. 
     //
-    // Define a "handle" to point to a vector of the objects. Then
-    // tell the event to fill the vector with all the objects of that
-    // type produced by a particular producer.
-    
+    // Define a "handle" to point to a vector of the objects.
     art::Handle< std::vector<simb::MCParticle> > particleHandle;
-    // Note that if I don't make this test, and there aren't any
-    // simb::MCParticle objects, then the first time we access
-    // particleHandle, art will display a "ProductNotFound" exception
-    // message and, depending on art settings, it may skip all
-    // processing for the rest of this event (including any subsequent
-    // analysis steps) or stop the execution.
+
+    // Then tell the event to fill the vector with all the objects of
+    // that type produced by a particular producer.
+    //
+    // Note that if I don't test whether this is successful, and there
+    // aren't any simb::MCParticle objects, then the first time we
+    // access particleHandle, art will display a "ProductNotFound"
+    // exception message and, depending on art settings, it may skip
+    // all processing for the rest of this event (including any
+    // subsequent analysis steps) or stop the execution.
     if (!event.getByLabel(fSimulationProducerLabel, particleHandle)) 
       {
 	// If we have no MCParticles at all in an event, then we're in
@@ -514,12 +518,13 @@ namespace example {
     // timesaver, especially with frameworks like LArSoft which often
     // have complicated data product structures.
 
-    auto simChannelHandle
-      = event.getValidHandle<std::vector<sim::SimChannel>>
-      (fSimulationProducerLabel);
+    auto simChannelHandle =
+      event.getValidHandle<std::vector<sim::SimChannel>>(fSimulationProducerLabel);
 
+    //
     // Let's compute the variables for the simulation n-tuple first.
-    
+    //
+
     // The MCParticle objects are not necessarily in any particular
     // order. Since we may have to search the list of particles, let's
     // put them into a map, a sorted container that will make
@@ -671,6 +676,7 @@ namespace example {
 		    // Check if the track that deposited the
 		    // energy matches the track of the particle.
 		    if ( energyDeposit.trackID != fSimTrackID ) continue;
+
 		    // Get the (x,y,z) of the energy deposit.
 		    TVector3 location( energyDeposit.x,
 				       energyDeposit.y,
@@ -695,6 +701,7 @@ namespace example {
 		    // way to get the energy. Are the two methods equivalent?
 		    // Compare the results and see!)
 		    fSimdEdxBins[bin] += energyDeposit.numElectrons * fElectronsToGeV;
+
 		  } // For each energy deposit
 	      } // For each time slice
 	  } // For each SimChannel
@@ -749,10 +756,19 @@ namespace example {
 	// The channel associated with this hit.
 	auto hitChannelNumber = hit.Channel();
 
-	// We have a hit. In a few lines we're going to look for
-	// possible energy deposits that correspond to that
-	// hit. Determine a reasonable range of times that might
-	// correspond to those energy deposits.
+	// We have a hit. For this example let's just focus on the
+	// hits in the collection plane.
+	if ( fGeometryService->SignalType( hitChannelNumber ) != geo::kCollection )
+	  continue;
+
+	LOG_DEBUG("AnalysisExample")
+	  << "Hit in collection plane"
+	  << std::endl;
+
+	// In a few lines we're going to look for possible energy
+	// deposits that correspond to that hit. Determine a
+	// reasonable range of times that might correspond to those
+	// energy deposits.
 
 	// In reconstruction, the channel waveforms are truncated. So
 	// we have to adjust the Hit TDC ticks to match those of the
@@ -770,14 +786,6 @@ namespace example {
 
 	start_tdc = std::max(start_tdc, hitStart_tdc);
 	end_tdc   = std::min(end_tdc,   hitEnd_tdc  );
-
-	// For this example let's just focus on the collection plane.
-	if ( fGeometryService->SignalType( hitChannelNumber ) != geo::kCollection )
-	  continue;
-
-	LOG_DEBUG("AnalysisExample")
-	  << "Hit in collection plane"
-	  << std::endl;
 
 	// In the simulation section, we started with particles to find
 	// channels with a matching track ID. Now we search in reverse:
@@ -818,6 +826,7 @@ namespace example {
 	    endTime.first   = end_tdc;
 
 	    // Here are the fast searches: 
+
 	    // Find a pointer to the first channel with time >= start_tdc.
 	    auto const startPointer 
 	      = std::lower_bound( timeSlices.begin(), timeSlices.end(), startTime, TDCIDETimeCompare);
@@ -872,7 +881,7 @@ namespace example {
 		    // Remember that map of MCParticles we created
 		    // near the top of this method? Now we can use
 		    // it. Search the map for the track ID associated
-		    // with this energy deposit.  Since a map is
+		    // with this energy deposit. Since a map is
 		    // automatically sorted, we can use a fast binary
 		    // search method, 'find()'.
 			
@@ -1005,12 +1014,12 @@ namespace example {
     //   in ${LARSIM_DIR}/source/larsim/LArG4/LArG4_module.cc, you'll see this
     //   line:
 
-    // produces< art::Assns<simb::MCTruth, simb::MCParticle> >();
+    //   produces< art::Assns<simb::MCTruth, simb::MCParticle> >();
 
-    // That means a simulated event will have an association between
-    // simb::MCTruth (the primary particle produced by the event
-    // generator) and the simb::MCParticle objects (the secondary
-    // particles produced in the detector simulation).
+    //   That means a simulated event will have an association between
+    //   simb::MCTruth (the primary particle produced by the event
+    //   generator) and the simb::MCParticle objects (the secondary
+    //   particles produced in the detector simulation).
 
     // Let's try it. The following statement will find the
     // sim::MCTruth objects associated with the simb::MCParticle
@@ -1026,62 +1035,57 @@ namespace example {
     // Also note that at this point art::FindManyP has already found
     // all the simb::MCTruth associated with each of the particles in
     // particleHandle. This is a slow process, so in general you want
-    // to do it only once.  If we had a loop over the particles, we
+    // to do it only once. If we had a loop over the particles, we
     // would still do this outside that loop.
 
     // Now we can query the 'findManyTruth' object to access the
     // information. First, check that there wasn't some kind of error:
 
-    if ( findManyTruth.isValid() ) 
-      {
-	// I'm going to be lazy, and just look at the simb::MCTruth
-	// object associated with the first simb::MCParticle we read
-	// in. (The main reason I'm being lazy is that if I used the
-	// single-particle generator in prodsingle.fcl, every
-	// particle in the event is going to be associated with just
-	// the one primary particle from the event generator.)
-
-	size_t particle_index = 0; // look at first particle in
-				   // particleHandle's vector.
-
-	// I'm using "auto" to save on typing. The result of
-	// FindManyP::at() is a vector of pointers, in this case
-	// simb::MCTruth*. In this case it will be a vector with just
-	// one entry; I could have used art::FindOneP instead. (This
-	// will be a vector of art::Ptr, which is a type of smart
-	// pointer; see
-	// <https://cdcvs.fnal.gov/redmine/projects/larsoft/wiki/Using_art_in_LArSoft#artPtrltTgt-and-artPtrVectorltTgt>
-	// To avoid unnecessary copying, and since art::FindManyP
-	// returns a constant reference, use "auto const&".
-
-	auto const& truth = findManyTruth.at( particle_index );
-
-	// Make sure there's no problem. 
-	if ( ! truth.empty() )
-	  {
-	    // Use the message facility to write output. I don't have
-	    // to write the event, run, or subrun numbers; the message
-	    // facility takes care of that automatically. I'm "going
-	    // at warp speed" with the vectors, pointers, and methods;
-	    // see ${NUSIMDATA_INC}/nusimdata/SimulationBase/MCTruth.h and
-	    // ${NUSIMDATA_INC}/nusimdata/SimulationBase/MCParticle.h for the
-	    // nested calls I'm using.
-	    mf::LogInfo("AnalysisExample")  
-	      << "Particle ID=" << particleHandle->at( particle_index ).TrackId()
-	      << " primary PDG code=" << truth[0]->GetParticle(0).PdgCode();
-	  }
-	else
-	  {
-	    mf::LogError("AnalysisExample")  
-	      << "Particle ID=" << particleHandle->at( particle_index ).TrackId()
-	      << " has no primary!";
-	  }
-      } // FindMany valid
-    else
+    if ( ! findManyTruth.isValid() ) 
       {
 	mf::LogError("AnalysisExample")  
 	  << "findManyTruth simb::MCTruth for simb::MCParticle failed!";
       }
+
+    // I'm going to be lazy, and just look at the simb::MCTruth object
+    // associated with the first simb::MCParticle we read in. (The
+    // main reason I'm being lazy is that if I used the
+    // single-particle generator in prodsingle.fcl, every particle in
+    // the event is going to be associated with just the one primary
+    // particle from the event generator.)
+    
+    size_t particle_index = 0; // look at first particle in
+                               // particleHandle's vector.
+
+    // I'm using "auto" to save on typing. The result of
+    // FindManyP::at() is a vector of pointers, in this case
+    // simb::MCTruth*. In this case it will be a vector with just one
+    // entry; I could have used art::FindOneP instead. (This will be a
+    // vector of art::Ptr, which is a type of smart pointer; see
+    // <https://cdcvs.fnal.gov/redmine/projects/larsoft/wiki/Using_art_in_LArSoft#artPtrltTgt-and-artPtrVectorltTgt>
+    // To avoid unnecessary copying, and since art::FindManyP returns
+    // a constant reference, use "auto const&".
+
+    auto const& truth = findManyTruth.at( particle_index );
+
+    // Make sure there's no problem. 
+    if ( truth.empty() )
+      {
+	mf::LogError("AnalysisExample")  
+	  << "Particle ID=" << particleHandle->at( particle_index ).TrackId()
+	  << " has no primary!";
+      }
+
+    // Use the message facility to write output. I don't have to write
+    // the event, run, or subrun numbers; the message facility takes
+    // care of that automatically. I'm "going at warp speed" with the
+    // vectors, pointers, and methods; see
+    // ${NUSIMDATA_INC}/nusimdata/SimulationBase/MCTruth.h and
+    // ${NUSIMDATA_INC}/nusimdata/SimulationBase/MCParticle.h for the
+    // nested calls I'm using.
+    mf::LogInfo("AnalysisExample")  
+      << "Particle ID=" << particleHandle->at( particle_index ).TrackId()
+      << " primary PDG code=" << truth[0]->GetParticle(0).PdgCode();
 
     // Let's try a slightly more realistic example. Suppose I want to
     // read in the clusters, and learn what hits are associated with
@@ -1107,34 +1111,32 @@ namespace example {
     // tools like 'grep' and 'find' to locate those routines.)
     const art::FindManyP<recob::Hit> findManyHits(clusterHandle, event, fClusterProducerLabel);
 
-    if ( findManyHits.isValid() )
-      {
-	// Now we'll loop over the clusters to see the hits associated
-	// with each one. Note that we're not using a range-based for
-	// loop. That's because FindManyP::at() expects a number as an
-	// argument, so we might as well go through the cluster
-	// objects via numerical index instead.
-	for ( size_t cluster_index = 0; cluster_index != clusterHandle->size(); cluster_index++ )
-	  {
-	    // In this case, FindManyP::at() will return a vector of
-	    // pointers to recob::Hit that corresponds to the
-	    // "cluster_index"-th cluster.
-	    auto const& hits = findManyHits.at( cluster_index );
-
-	    // We have a vector of pointers to the hits associated
-	    // with the cluster, but for this example I'm not going to
-	    // do anything fancy with them. I'll just print out how
-	    // many there are.
-	    mf::LogInfo("AnalysisExample")  
-	      << "Cluster ID=" << clusterHandle->at( cluster_index ).ID()
-	      << " has " << hits.size() << " hits";
-	  }
-      } // findManyHits valid
-    else
+    if ( ! findManyHits.isValid() )
       {
 	mf::LogError("AnalysisExample")  
 	  << "findManyHits recob::Hit for recob::Cluster failed;"
 	  << " cluster label='" << fClusterProducerLabel << "'";
+      }
+
+    // Now we'll loop over the clusters to see the hits associated
+    // with each one. Note that we're not using a range-based for
+    // loop. That's because FindManyP::at() expects a number as an
+    // argument, so we might as well go through the cluster objects
+    // via numerical index instead.
+    for ( size_t cluster_index = 0; cluster_index != clusterHandle->size(); cluster_index++ )
+      {
+	// In this case, FindManyP::at() will return a vector of
+	// pointers to recob::Hit that corresponds to the
+	// "cluster_index"-th cluster.
+	auto const& hits = findManyHits.at( cluster_index );
+	
+	// We have a vector of pointers to the hits associated
+	// with the cluster, but for this example I'm not going to
+	// do anything fancy with them. I'll just print out how
+	// many there are.
+	mf::LogInfo("AnalysisExample")  
+	  << "Cluster ID=" << clusterHandle->at( cluster_index ).ID()
+	  << " has " << hits.size() << " hits";
       }
 
   } // AnalysisExample::analyze()
@@ -1148,6 +1150,7 @@ namespace example {
 } // namespace lar
 
 
+// Back to our local namespace.
 namespace {
 
   // Define a local function to calculate the detector diagonal.

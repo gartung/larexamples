@@ -101,9 +101,9 @@ physics:
       module_type:     "AnalysisExample"
 
       # The input parameters for our AnalysisExample module. Compare
-      # the names you see here with the reconfigure method in
-      # AnalysisExample.cxx. You will want to add/remove/rename the
-      # example parameters below to suit your task.
+      # the names you see here with the "struct Config" in
+      # AnalysisExample_module.cxx. You will want to add/remove/rename
+      # the example parameters below to suit your task.
 
       # If you are reading any objects created by the standard
       # simulation scripts, then don't change the value of this
