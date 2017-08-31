@@ -60,8 +60,8 @@ contact the example's author (contact information is at the top of this file).
 And, if you want to have a bit more printer friendly format, know this text file
 is written in markdown format and you can convert it to something else with:
     
-    pandoc -s -S --toc -o README.html README
-    pandoc -s -S --toc -o README.pdf README
+    pandoc -s -S --toc -o README.html README.md
+    pandoc -s -S --toc -o README.pdf README.md
     
 et cetera.
 
@@ -977,3 +977,6 @@ configuration of the service itself in the FHiCL configuration file.
 If you have any question about the example, please contact its author.
 This section will be populated with questions and their answers.
 
+
+Version 1.11: August 15, 2017 (seligman@nevis.columbia.edu)
+  Teeny	change:	filename README -> README.md since this is a Markdown file.

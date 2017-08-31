@@ -59,8 +59,8 @@ contact the example's author (contact information is at the top of this file).
 And, if you want to have a bit more printer friendly format, know this text file
 is written in markdown format and you can convert it to something else with:
     
-    pandoc -s -S --toc -o README.html README
-    pandoc -s -S --toc -o README.pdf README
+    pandoc -s -S --toc -o README.html README.md
+    pandoc -s -S --toc -o README.pdf README.md
     
 et cetera.
 
@@ -84,7 +84,7 @@ The example is split between two directories:
 
 ~~~~
 larexamples/Algoritmhs/RemoveIsolatedSpacePoints/    ## contains example code ##
-|-- README                                                          # this file
+|-- README.md                                                       # this file
 |-- PointIsolationAlg.h                           # generic isolation algorithm
 |-- SpacePartition.h            # container used by PointIsolationAlg algorithm
 |-- SpacePointIsolationAlg.h    # header for the space point specific algorithm
@@ -899,6 +899,9 @@ Version 1.0: May 26, 2016 (petrillo@fnal.gov)
 Version 1.1: June 30, 2016 (petrillo@fnal.gov)
   changed the algorithm implementation from a brute-force, try-every-combination
   approach to one that spends memory to reduce the number of comparisons
+
+Version 1.11: August 15, 2017 (seligman@nevis.columbia.edu)
+  Teeny change: filename README -> README.md since this is a Markdown file.
 
 
 [LArSoft wiki]:
