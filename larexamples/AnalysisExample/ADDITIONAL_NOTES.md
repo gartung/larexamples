@@ -73,14 +73,15 @@ it by now). Believe it or not, it's to teach you something useful.
     either forwards or backwards.
 
 9.  The code in the .cc file fetches simb::MCParticle and
-    sim::SimChannel objects directly. Since that code was written, a
-    service was created that reads those objects for you, along with
-    simb::MCTruth objects. This service is cheat::BackTracker.
+    sim::SimChannel objects directly. Since that code was written, two 
+    services have been created that reads those objects for you, along with
+    simb::MCTruth objects. These are cheat::BackTrackerService, and 
+    cheat::ParticleInventoryService.
 
-    To use this service, get a handle to cheat::BackTracker in the
+    To use this service, get a handle to cheat::BackTrackerService in the
     same way you get a handle to art::TFileService in the .cc file,
     then use that handle to invoke any of the methods in
-    ${LARSIM_INC}/larsim/MCCheater/BackTracker.h.
+    ${LARSIM_INC}/larsim/MCCheater/BackTrackerService.h.
 
     So why not use that service in AnalysisExample? Because for the
     work you'll be doing, you'll probably won't be just reading in the
