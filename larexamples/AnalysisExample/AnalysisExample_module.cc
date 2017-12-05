@@ -384,6 +384,18 @@ namespace example {
     // Access to detector properties.
     const detinfo::DetectorProperties* detprop = lar::providerFrom<detinfo::DetectorPropertiesService>();
     fTriggerOffset = detprop->TriggerOffset();
+    
+    // Since art 2.8, you can and should tell beforehand, here in the constructor,
+    // all the data the module is going to read ("consumes") or might read
+    // ("may_consume"). Diligence here will in the future help the framework
+    // execute modules in parallel, making sure the order is correct.
+    consumes<std::vector<simb::MCParticle>>(fSimulationProducerLabel);
+    consumes<std::vector<sim::SimChannel>>(fSimulationProducerLabel);
+    consumes<art::Assns<simb::MCTruth, simb::MCParticle>>(fSimulationProducerLabel);
+    consumes<std::vector<recob::Hit>>(fHitProducerLabel);
+    consumes<std::vector<recob::Cluster>>(fClusterProducerLabel);
+    consumes<art::Assns<recob::Cluster, recob::Hit>>(fHitProducerLabel);
+    
   }
 
   

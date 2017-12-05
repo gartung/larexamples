@@ -117,6 +117,7 @@ lar::example::RemoveIsolatedSpacePoints::RemoveIsolatedSpacePoints
   : spacePointsLabel(config().spacePoints())
   , isolAlg(config().isolation())
 {
+  consumes<std::vector<recob::SpacePoint>>(spacePointsLabel);
   produces<std::vector<recob::SpacePoint>>();
 } // lar::example::RemoveIsolatedSpacePoints::RemoveIsolatedSpacePoints()
 

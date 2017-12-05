@@ -86,6 +86,7 @@ namespace lar {
         {
           doCheckExpectedSize = config().expectedSize(expectedSize);
           doCheckSameSize = config().sameSizeAs(sameSizeAs);
+          consumes<std::vector<Data_t>>(inputLabel);
         }
       
       virtual void analyze(art::Event const& event) override;

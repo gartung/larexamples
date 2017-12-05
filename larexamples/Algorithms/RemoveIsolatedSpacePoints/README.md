@@ -546,7 +546,12 @@ A lot is going on to configure the algorithm, but it is well contained in a
 seemingly normal initialisation.
 
 The only other task of a producer constructor is to declare what it is going to
-produce. In this case, it's a collection (`vector`) of `recob::SpacePoint`.
+use as input, and what it is going to produce. In this case, the produce is a
+collection (`vector`) of `recob::SpacePoint`, and the input is also a collection
+of `recob::SpacePoint`. In the case of the input, we need to specify exactly
+which data product (that is, which input label) is going to be used. This will
+in the future allow the farmework to understand the dependencies between modules
+and schedule them in parallel.
 Producers don't even have to call the base class constructor, so we are done.
 
 
