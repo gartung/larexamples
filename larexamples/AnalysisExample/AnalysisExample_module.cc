@@ -1033,7 +1033,7 @@ namespace example {
     //   particles produced in the detector simulation).
 
     // Let's try it. The following statement will find the
-    // sim::MCTruth objects associated with the simb::MCParticle
+    // simb::MCTruth objects associated with the simb::MCParticle
     // objects in the event (referenced by particleHandle):
 
     const art::FindManyP<simb::MCTruth> findManyTruth(particleHandle, event, fSimulationProducerLabel);
