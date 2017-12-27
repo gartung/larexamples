@@ -1,0 +1,63 @@
+#
+# File:    totallycheattracking.fcl
+# Brief:   Runs the reconstruction of trajectories from simulated particles.
+# Author:  Gianluca Petrillo (petrillo@fnal.gov)
+# Date:    20171226
+# Version: 1.0
+# 
+# Description:
+# The module TotallyCheatTracker is used to "reconstruct" the simulated
+# particles from the input.
+# 
+# Input:
+# - collection of simb::MCParticle
+#
+# Output:
+# - collection of recob::Trajectory and associations with simb::MCParticle
+#
+#
+# Changes:
+# 20171226 (petrillo@fnal.gov) [v1.0]
+#   original version
+#
+#
+
+#-------------------------------------------------------------------------------
+process_name: CheatTrk
+
+#-------------------------------------------------------------------------------
+# no source specified; use -s option from command line
+
+#-------------------------------------------------------------------------------
+physics: {
+  
+  producers: {
+  
+    cheattrk: {
+      
+      particles: "particlemaker"
+      
+      minLength: 5.0 # cm
+      
+    } # cheattrk
+    
+  } # producers
+  
+  reco: [ cheattrk ]
+  
+  trigger_paths: [ reco ]
+  
+} # physics
+
+
+#-------------------------------------------------------------------------------
+outputs: {
+  output: {
+    module_type: RootOutput
+    
+    fileName: "%ifb_%tc_%p.root"
+    
+  } # output
+} # outputs
+
+#-------------------------------------------------------------------------------

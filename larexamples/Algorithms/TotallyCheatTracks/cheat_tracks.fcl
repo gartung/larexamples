@@ -1,0 +1,30 @@
+#
+# File:    cheat_tracks.fcl
+# Brief:   Precooked configurations for TotallyCheatTrackingAlg algorithm.
+# Author:  Gianluca Petrillo (petrillo@fnal.gov)
+# Date:    20171226
+# Version: 1.0
+# 
+# Description:
+# Predefined configurations are provided for
+# `lar::example::TotallyCheatTrackingAlg` algorithm:
+# - standard_chat_tracks: default configuration
+#     (more than enough, since there is nothing to configure...)
+# 
+#
+#
+# Changes:
+# 20171226 (petrillo@fnal.gov) [v1.0]
+#   original version
+#
+#
+
+################################################################################
+standard_chat_tracks: {
+  
+  # nothing required so far
+  
+} # standard_chat_tracks
+
+
+################################################################################
