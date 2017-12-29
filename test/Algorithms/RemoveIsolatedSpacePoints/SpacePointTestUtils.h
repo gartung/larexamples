@@ -41,7 +41,7 @@ namespace lar {
       
       /**
        * @brief Creates space points distributed in a grid
-       * @param spacepoints the container to be filled
+       * @param spacePoints the container to be filled
        * @param box the extend of volume to be filled
        * @param stepSize the spacing between points
        * @return the number of space points added

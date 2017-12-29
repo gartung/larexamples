@@ -1,6 +1,10 @@
+| Example name:   | AnalysisExample                             |
+| --------------- | ------------------------------------------- |
+| Type:           | LArSoft module                              |
+| Author:         | Bill Seligman (seligman@nevis.columbia.edu) |
+| Created on:     | August 7, 2017                              |
+
 # ADDITIONAL_NOTES.md
-<mailto://seligman@nevis.columbia.edu>  
-07-Aug-2017
 
 This is a detailed supplement to the brief notes in README.md. These
 notes explain why things are done in a certain way in

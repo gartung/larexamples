@@ -1,6 +1,10 @@
-# README.md  
-<mailto://seligman@nevis.columbia.edu>  
-07-Aug-2017
+| Example name:   | AnalysisExample                             |
+| --------------- | ------------------------------------------- |
+| Type:           | LArSoft module                              |
+| Author:         | Bill Seligman (seligman@nevis.columbia.edu) |
+| Created on:     | August 7, 2017                              |
+
+# README.md
 
 This directory is intended to be part of a soup-to-nuts example of how
 to run a LArSoft program to perform an analysis task.
