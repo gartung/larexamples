@@ -4,6 +4,7 @@
  * @author Gianluca Petrillo (petrillo@fnal.gov)
  * @date   May 27, 2016
  * @see    PointIsolationAlg.h
+ * @ingroup RemoveIsolatedSpacePoints
  * 
  * This test sets up point distributions with known isolation features,
  * runs the algorithm with various isolation radius settings and verifies that
@@ -35,6 +36,9 @@
 #include <numeric> // std::iota()
 
 
+// BEGIN RemoveIsolatedSpacePoints group ---------------------------------------
+/// @ingroup RemoveIsolatedSpacePoints
+/// @{
 //------------------------------------------------------------------------------
 //--- Test code
 //---
@@ -264,4 +268,7 @@ BOOST_AUTO_TEST_CASE(PointIsolationAlgVerificationTest) {
   PointIsolationTest2(5);
 } // PointIsolationAlgVerificationTest()
 
+
+/// @}
+// END RemoveIsolatedSpacePoints group -----------------------------------------
 

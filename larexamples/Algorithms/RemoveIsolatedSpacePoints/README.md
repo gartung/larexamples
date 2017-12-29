@@ -1,14 +1,11 @@
+# A simple algorithm example: `RemoveIsolatedSpacePoints` {#RemoveIsolatedSpacePoints_README}
+
 | Example name:   | RemoveIsolatedSpacePoints             |
 | --------------- | ------------------------------------- |
 | Type:           | LArSoft algorithm with module         |
 | Author:         | Gianluca Petrillo (petrillo@fnal.gov) |
 | Created on:     | June 30, 2016                         |
 | Version:        | 1.1                                   |
-
-
-
-#  A simple algorithm example: `RemoveIsolatedSpacePoints`  ####################
-
 
 
 This example shows an algorithm filtering a collection of input objects,

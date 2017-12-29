@@ -4,6 +4,7 @@
  * @author Gianluca Petrillo (petrillo@fnal.gov)
  * @date   April 28, 2016
  * @see    ShowerCalibrationGaloreScale.h
+ * @ingroup ShowerCalibrationGalore
  */
 
 
@@ -29,6 +30,8 @@ namespace lar {
      
     /**
      * @brief A shower calibration art service returning a single factor
+     * @ingroup ShowerCalibrationGalore
+     * @see @ref ShowerCalibrationGalore "ShowerCalibrationGalore example overview"
      * 
      * See the ShowerCalibrationGaloreScale provider documentation for
      * configuration instructions and implementation details.

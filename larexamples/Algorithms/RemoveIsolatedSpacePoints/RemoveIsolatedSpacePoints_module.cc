@@ -3,6 +3,7 @@
  * @brief  Module running `lar::example::SpacePointIsolationAlg` algorithm
  * @author Gianluca Petrillo (petrillo@fnal.gov)
  * @date   June 3, 2016
+ * @ingroup RemoveIsolatedSpacePoints
  * 
  * Provides:
  * 
@@ -32,9 +33,11 @@
 
 namespace lar {
   namespace example {
-  
+    
     /**
-     * @brief Removes isolated space points
+     * @brief _art_ module: removes isolated space points.
+     * @see @ref RemoveIsolatedSpacePoints "RemoveIsolatedSpacePoints example overview"
+     * @ingroup RemoveIsolatedSpacePoints
      * 
      * A new collection of space points is added to the event, that contains
      * only the space points that are not isolated.
@@ -103,6 +106,7 @@ namespace lar {
       SpacePointIsolationAlg isolAlg; ///< instance of the algorithm
       
     }; // class RemoveIsolatedSpacePoints
+    
     
   } // namespace example
 } // namespace lar

@@ -1,0 +1,9 @@
+/**
+
+@defgroup AtomicNumber AtomicNumber
+@brief A simple configuration-driven service.
+@ingroup larexamples_Services
+
+@copydoc AtomicNumber_README
+
+ */

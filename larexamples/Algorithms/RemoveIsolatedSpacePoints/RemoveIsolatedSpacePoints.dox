@@ -1,0 +1,10 @@
+/**
+
+@defgroup RemoveIsolatedSpacePoints RemoveIsolatedSpacePoints
+@ingroup larexamples_Algorithms
+@brief Filters a collection of input objects.
+
+@copydoc RemoveIsolatedSpacePoints_README
+
+ */
+

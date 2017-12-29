@@ -3,6 +3,7 @@
  * @brief  Interface for a shower calibration service provider
  * @author Gianluca Petrillo (petrillo@fnal.gov)
  * @date   April 27, 2016
+ * @ingroup ShowerCalibrationGalore
  * 
  * 
  */
@@ -24,7 +25,9 @@ namespace lar {
    namespace example {
       
       /**
-       * @brief Interface for a shower calibration service provider
+       * @brief Interface for a shower calibration service provider.
+       * @ingroup ShowerCalibrationGalore
+       * @see @ref ShowerCalibrationGalore "ShowerCalibrationGalore example overview"
        * 
        * The service provider computes a calibration factor for a reconstructed
        * shower.

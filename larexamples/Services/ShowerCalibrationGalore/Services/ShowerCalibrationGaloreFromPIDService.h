@@ -4,6 +4,7 @@
  * @author Gianluca Petrillo (petrillo@fnal.gov)
  * @date   April 28, 2016
  * @see    ShowerCalibrationGaloreFromPID.h
+ * @ingroup ShowerCalibrationGalore
  */
 
 
@@ -21,6 +22,8 @@ namespace lar {
     
     /**
      * @brief Service for shower energy calibration according to particle type
+     * @ingroup ShowerCalibrationGalore
+     * @see @ref ShowerCalibrationGalore "ShowerCalibrationGalore example overview"
      * 
      * See the ShowerCalibrationGaloreFromPID provider documentation for
      * configuration instructions and implementation details.

@@ -1,0 +1,35 @@
+<!--
+  Brief:  Dictionary selection for TotallyCheatTracks example
+  Author: Gianluca Petrillo (petrillo@fnal.gov)
+  Date:   December 26, 2017
+  
+  See the example's README.md for explanations.
+  -->
+
+
+<lcgdict>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+  <!-- lar::example::CheatTrack -->
+  
+    <!--   class -->
+  <class name="lar::example::CheatTrack" ClassVersion="10" >
+   <version ClassVersion="10" checksum="790383593"/>
+  </class>
+  
+    <!-- art pointers and wrappers -->
+      <!-- data product collection (lar::example::CheatTrack) -->
+  <class name="art::Ptr<lar::example::CheatTrack>" />
+  <class name="std::vector<lar::example::CheatTrack>" />
+  <class name="art::Wrapper<std::vector<lar::example::CheatTrack>>" />
+      
+    <!-- associations and wrappers (lar::example::CheatTrack <==> simb::MCParticle) -->
+  <class name="art::Assns<lar::example::CheatTrack, simb::MCParticle, void>" />
+  <class name="art::Assns<simb::MCParticle, lar::example::CheatTrack, void>" />
+  <class name="std::pair<art::Ptr<lar::example::CheatTrack>, art::Ptr<simb::MCParticle>>" />
+  <class name="art::Wrapper<art::Assns<lar::example::CheatTrack, simb::MCParticle, void>>" />
+  <class name="std::pair<art::Ptr<simb::MCParticle>, art::Ptr<lar::example::CheatTrack>>" />
+  <class name="art::Wrapper<art::Assns<simb::MCParticle, lar::example::CheatTrack, void>>" />
+  
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+  
+</lcgdict>

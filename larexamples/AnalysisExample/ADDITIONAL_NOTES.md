@@ -1,10 +1,15 @@
-# ADDITIONAL_NOTES.md
-<mailto://seligman@nevis.columbia.edu>  
-07-Aug-2017
+# Analysis module example: additional notes  {#AnalysisExample_ADDITIONAL_NOTES}
 
-This is a detailed supplement to the brief notes in README.md. These
+| Example name:   | AnalysisExample                             |
+| --------------- | ------------------------------------------- |
+| Type:           | LArSoft module                              |
+| Author:         | Bill Seligman (seligman@nevis.columbia.edu) |
+| Created on:     | August 7, 2017                              |
+
+
+This is a detailed supplement to the brief notes in `README.md`. These
 notes explain why things are done in a certain way in
-AnalysisExample_module.cc (if you followed directions, you've renamed
+`AnalysisExample_module.cc` (if you followed directions, you've renamed
 it by now). Believe it or not, it's to teach you something useful.
 
 1.  "Gosh, there's so much to read!" There are a number of guides (see

@@ -93,5 +93,7 @@ simple_plugin(AnalysisExample "module"
 
 install_headers()
 install_fhicl()
-install_source( EXTRAS ADDITIONAL_NOTES.md README.md )
 install_scripts()
+install_source()
+larsoft_install_sourcedoc() # fix after resolution of issue #18637
+

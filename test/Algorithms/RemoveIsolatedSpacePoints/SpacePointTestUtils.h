@@ -4,6 +4,7 @@
  * @author Gianluca Petrillo (petrillo@fnal.gov)
  * @date   June 3, 2016
  * @see    SpacePointTestUtils.cxx
+ * @ingroup RemoveIsolatedSpacePoints
  * 
  * This file offers:
  * 
@@ -27,6 +28,9 @@ namespace lar {
   namespace example {
     namespace tests {
       
+      // BEGIN RemoveIsolatedSpacePoints group ---------------------------------
+      /// @ingroup RemoveIsolatedSpacePoints
+      /// @{
       /**
        * @brief Creates and returns a new space point
        * @param ID space point identifier
@@ -41,7 +45,7 @@ namespace lar {
       
       /**
        * @brief Creates space points distributed in a grid
-       * @param spacepoints the container to be filled
+       * @param spacePoints the container to be filled
        * @param box the extend of volume to be filled
        * @param stepSize the spacing between points
        * @return the number of space points added
@@ -61,6 +65,9 @@ namespace lar {
         double stepSize
         );
   
+      /// @}
+      // END RemoveIsolatedSpacePoints group -----------------------------------
+      
     } // namespace tests
   } // namespace example
 } // namespace lar

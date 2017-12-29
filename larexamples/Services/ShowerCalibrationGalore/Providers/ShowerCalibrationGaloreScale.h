@@ -4,6 +4,7 @@
  * @author Gianluca Petrillo (petrillo@fnal.gov)
  * @date   April 28, 2016
  * @see    ShowerCalibrationGalore.h
+ * @ingroup ShowerCalibrationGalore
  * 
  * 
  */
@@ -29,6 +30,8 @@ namespace lar {
       
       /**
        * @brief A shower calibration service provider applying a uniform scale.
+       * @ingroup ShowerCalibrationGalore
+       * @see @ref ShowerCalibrationGalore "ShowerCalibrationGalore example overview"
        * 
        * The service provider computes a calibration factor for a reconstructed
        * shower. The calibration factor is a single number for the whole

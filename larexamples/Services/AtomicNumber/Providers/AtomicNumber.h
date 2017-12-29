@@ -4,6 +4,7 @@
  * @author  Gianluca Petrillo (petrillo@fnal.gov)
  * @date    April 13, 2016
  * @see     AtomicNumber.cxx AtomicNumberService.h
+ * @ingroup AtomicNumber
  * 
  */
 
@@ -22,7 +23,9 @@ namespace lar {
    namespace example {
       
       /** **********************************************************************
-       * @brief Provides information about the active material in the TPC
+       * @brief Provides information about the active material in the TPC.
+       * @see @ref AtomicNumber "AtomicNumber example overview"
+       * @ingroup AtomicNumber
        * 
        * Configuration parameters
        * =========================

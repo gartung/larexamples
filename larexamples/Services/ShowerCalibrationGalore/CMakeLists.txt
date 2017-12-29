@@ -1,4 +1,5 @@
 add_subdirectory(Providers)
 add_subdirectory(Services)
 
-install_source(EXTRAS README.md CMakeLists.txt)
+install_source()
+larsoft_install_sourcedoc() # fix after resolution of issue #18637

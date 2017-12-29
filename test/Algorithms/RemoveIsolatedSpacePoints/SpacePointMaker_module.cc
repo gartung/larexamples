@@ -3,6 +3,7 @@
  * @brief  Module creating space points for a test
  * @author Gianluca Petrillo (petrillo@fnal.gov)
  * @date   June 3, 2016
+ * @ingroup RemoveIsolatedSpacePoints
  * 
  */
 
@@ -28,6 +29,9 @@ namespace lar {
   namespace example {
     namespace tests {
       
+      // BEGIN RemoveIsolatedSpacePoints group ---------------------------------
+      /// @ingroup RemoveIsolatedSpacePoints
+      /// @{
       /**
        * @brief  Creates a collection of space points
        * 
@@ -73,6 +77,9 @@ namespace lar {
         double spacing; ///< step size [cm]
         
       }; // class SpacePointMaker
+      
+      /// @}
+      // END RemoveIsolatedSpacePoints group -----------------------------------
       
       
     } // namespace tests

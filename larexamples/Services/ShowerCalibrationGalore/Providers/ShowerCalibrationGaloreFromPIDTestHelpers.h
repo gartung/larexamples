@@ -4,6 +4,7 @@
  * @author Gianluca Petrillo (petrillo@fnal.gov)
  * @date   May 11, 2016
  * @see    ShowerCalibrationGaloreFromPID.h
+ * @ingroup ShowerCalibrationGalore
  * 
  * This is a header-only library that does not require additional linking.
  * 
@@ -22,6 +23,10 @@
 
 
 namespace testing {
+  
+  // BEGIN ShowerCalibrationGalore ---------------------------------------------
+  /// @ingroup ShowerCalibrationGalore
+  /// @{
   
   // instantiation of the standard ProviderSetupClass for this provider
   template
@@ -67,6 +72,9 @@ namespace testing {
           (env, "ShowerCalibrationGaloreService"); // configuration key
       }
   }; // SimpleEnvironmentSetupClass<ShowerCalibrationGaloreFromPID>
+  
+  /// @}
+  // END ShowerCalibrationGalore -----------------------------------------------
   
 } // namespace testing
 

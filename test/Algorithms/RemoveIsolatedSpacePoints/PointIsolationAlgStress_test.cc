@@ -4,6 +4,7 @@
  * @author Gianluca Petrillo (petrillo@fnal.gov)
  * @date   May 27, 2016
  * @see    PointIsolationAlg.h
+ * @ingroup RemoveIsolatedSpacePoints
  * 
  * Usage
  * ======
@@ -42,6 +43,9 @@
 #include <iostream>
 
 
+// BEGIN RemoveIsolatedSpacePoints group ---------------------------------------
+/// @ingroup RemoveIsolatedSpacePoints
+/// @{
 //------------------------------------------------------------------------------
 //--- Test code
 //---
@@ -235,3 +239,7 @@ int main(int argc, char** argv) {
   
   return 0;
 } // main()
+
+/// @}
+// END RemoveIsolatedSpacePoints group -----------------------------------------
+

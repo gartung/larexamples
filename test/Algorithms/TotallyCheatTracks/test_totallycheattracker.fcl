@@ -1,0 +1,99 @@
+#
+# File:    test_totallycheattracker.fcl
+# Brief:   Runs a "test" on TotallyCheatTracker module.
+# Author:  Gianluca Petrillo (petrillo@fnal.gov)
+# Date:    20171227
+# Version: 1.0
+# 
+# Description:
+# The test creates some particles (`simb::MCParticle` collection), processes
+# them into cheat tracks and prints the resulting tracks.
+# The only check is on the number of produced tracks.
+# 
+# Input:
+# - nothing
+#
+# Output:
+# - `simb::MCParticle`, `lar::example::CheatTrack` and associations into
+#   `CheatTrkTest.root` file.
+#
+#
+# Changes:
+# 20171227 (petrillo@fnal.gov) [v1.0]
+#   original version
+#
+#
+
+#-------------------------------------------------------------------------------
+process_name: CheatTrkTest
+
+#-------------------------------------------------------------------------------
+source: {
+  module_type: EmptyEvent
+  maxEvents:   1
+}
+
+#-------------------------------------------------------------------------------
+physics: {
+  
+  producers: {
+    
+    particler: {
+      module_type: ParticleMaker
+      
+      particles: [
+        { length: 1.0  energy: 3.0  type:   11 },
+        { length: 2.0  energy: 2.0  type:   13 },
+        { length: 3.0  energy: 1.0  type:  -11 },
+        { length: 4.0  energy: 2.0  type:  -13 },
+        { length: 5.0  energy: 3.0  type:  211 },
+        { length: 6.0  energy: 4.0  type:  111 },
+        { length: 7.0  energy: 3.0  type: -211 },
+        { length: 8.0  energy: 2.0  type: 2112 },
+        { length: 9.0  energy: 1.0  type: 2212 }
+        ] # particles
+      
+    } # particler
+    
+    cheattrk: {
+      module_type: TotallyCheatTracker
+      
+      particles: "particler"
+      
+      minLength: 3.5 # cm
+      minEnergy: 1.5 # GeV
+      
+    } # cheattrk
+    
+  } # producers
+  
+  analyzers: {
+    dumper: {
+      module_type: DumpCheatTracks
+      
+      tracks: cheattrk
+      
+      expectedCount: 5
+      
+    } # dumper
+  } # analyzers
+  
+  reco: [ particler, cheattrk ]
+  dump: [ dumper ]
+  stream: [ output]
+  
+  trigger_paths: [ reco ]
+  end_paths: [ dump, stream ]
+  
+} # physics
+
+
+#-------------------------------------------------------------------------------
+outputs: {
+  output: {
+    module_type: RootOutput
+    fileName:   "CheatTrkTest.root"
+  }
+} # outputs
+
+#-------------------------------------------------------------------------------

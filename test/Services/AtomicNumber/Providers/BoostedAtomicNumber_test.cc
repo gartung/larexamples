@@ -4,6 +4,8 @@
  * @author Gianluca Petrillo (petrillo@fnal.gov)
  * @date   April 14, 2016
  * @see    AtomicNumber.h
+ * @ingroup AtomicNumber
+ * 
  * 
  * This test takes a configuration file as first command line argument.
  * The content of the configuration file is expected to include:
@@ -23,6 +25,10 @@
 // C/C++ standard libraries
 #include <memory> // std::make_unique()
 
+
+// BEGIN AtomicNumber ----------------------------------------------------------
+/// @ingroup AtomicNumber
+/// @{
 
 //------------------------------------------------------------------------------
 //--- Testing environment
@@ -64,3 +70,6 @@ BOOST_AUTO_TEST_CASE(AllTests) {
 } // BOOST_AUTO_TEST_CASE(AllTests)
 
 BOOST_AUTO_TEST_SUITE_END()
+
+/// @}
+// END AtomicNumber ------------------------------------------------------------

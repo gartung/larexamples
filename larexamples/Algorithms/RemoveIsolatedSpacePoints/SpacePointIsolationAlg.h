@@ -3,6 +3,7 @@
  * @brief  Algorithm(s) dealing with space point isolation in space
  * @author Gianluca Petrillo (petrillo@fnal.gov)
  * @date   May 26, 2016
+ * @ingroup RemoveIsolatedSpacePoints
  * 
  */
 
@@ -36,8 +37,12 @@ namespace geo { class GeometryCore; }
 namespace lar {
   namespace example {
     
+    // BEGIN RemoveIsolatedSpacePoints group -----------------------------------
+    /// @ingroup RemoveIsolatedSpacePoints
+    /// @{
     /**
-     * @brief Algorithm to detect isolated space points
+     * @brief Algorithm to detect isolated space points.
+     * @see @ref RemoveIsolatedSpacePoints "RemoveIsolatedSpacePoints example overview"
      * 
      * This algorithm applies the isolation algorithm implemented in
      * `PointIsolationAlg` to a collection of `recob::SpacePoint` objects.
@@ -240,6 +245,9 @@ namespace lar {
       static double z(recob::SpacePoint const& p) { return p.XYZ()[2]; }
       
     }; // PositionExtractor<recob::SpacePoint>
+    
+    /// @}
+    // END RemoveIsolatedSpacePoints group -------------------------------------
     
   } // namespace example
 } // namespace lar

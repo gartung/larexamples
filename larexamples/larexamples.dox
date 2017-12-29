@@ -1,0 +1,25 @@
+/**
+
+@defgroup larexamples Examples
+@brief Suite of LArSoft code examples
+
+
+LArSoft examples
+=================
+
+We provide some examples that follow the current recommended practices and are
+blessed places to copy from.
+
+
+@page larexamples_mainpage Examples
+
+Please refer to the full documentation in @ref larexamples "example module".
+
+Contents
+---------
+
+@subpage larexamples_Algorithms_mainpage
+@subpage larexamples_Services_mainpage
+@subpage larexamples_AnalysisExample_mainpage
+
+ */

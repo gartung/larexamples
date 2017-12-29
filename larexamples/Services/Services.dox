@@ -1,0 +1,34 @@
+/**
+
+@defgroup larexamples_Services Services
+@ingroup larexamples
+@brief Examples of LArSoft service providers and their _art_ service interfaces.
+
+LArSoft service examples
+=========================
+
+LArSoft endorses a coding model which separates the functional part of the
+service from the interfaces which allow that service to be used inside a
+framework. This is often called _factorization model_; we call the functional
+part the _service provider_ and the interface the _art service_ (sometimes just
+_service_).
+
+These examples show the use of the recommended patterns. For more documentation
+on the factorisation of services, see
+[the LArSoft wiki](https://cdcvs.fnal.gov/redmine/projects/larsoft/wiki/Writing_LArSoft_service):
+https://cdcvs.fnal.gov/redmine/projects/larsoft/wiki/Writing_LArSoft_service.
+
+
+@page larexamples_Services_mainpage Services
+
+Please refer to the full documentation in @ref larexamples_Services "service example module".
+
+Contents
+---------
+
+@subpage AtomicNumber_README
+@subpage ShowerCalibrationGalore_README
+
+
+ */
+

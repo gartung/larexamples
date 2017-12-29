@@ -4,6 +4,7 @@
  * @author Gianluca Petrillo (petrillo@fnal.gov)
  * @date   May 26, 2016
  * @see    SpacePointIsolationAlg.h
+ * @ingroup RemoveIsolatedSpacePoints
  * 
  */
 
