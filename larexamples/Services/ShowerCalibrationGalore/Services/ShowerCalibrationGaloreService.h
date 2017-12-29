@@ -4,6 +4,7 @@
  * @author Gianluca Petrillo (petrillo@fnal.gov)
  * @date   April 27, 2016
  * @see    ShowerCalibrationGalore.h
+ * @ingroup ShowerCalibrationGalore
  */
 
 
@@ -24,6 +25,8 @@ namespace lar {
       
       /**
        * @brief Interface for a shower calibration art service
+       * @ingroup ShowerCalibrationGalore
+       * @see @ref ShowerCalibrationGalore "ShowerCalibrationGalore example overview"
        * 
        * Services derived from this interface just return a provider
        * implementing the ShowerCalibrationGalore service provider interface.

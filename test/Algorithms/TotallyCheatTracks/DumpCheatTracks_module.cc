@@ -3,6 +3,7 @@
  * @brief  Dumps a `lar::example::CheatTrack` collection and associations.
  * @author Gianluca Petrillo (petrillo@fnal.gov)
  * @date   December 27, 2017
+ * @ingroup TotallyCheatTracks
  * 
  */
 
@@ -33,7 +34,11 @@
 namespace lar {
   namespace example {
     namespace tests {
-  
+      
+      // BEGIN TotallyCheatTracks group ----------------------------------------
+      /// @ingroup TotallyCheatTracks
+      /// @{
+      
       /**
        * @brief Dumps `lar::example::CheatTrack` data product and associations.
        * 
@@ -95,6 +100,8 @@ namespace lar {
       }; // class DumpCheatTracks
       
       
+      /// @}
+      // END TotallyCheatTracks group ------------------------------------------
       
       
     } // namespace tests

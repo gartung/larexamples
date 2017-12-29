@@ -4,6 +4,7 @@
  * @author Gianluca Petrillo (petrillo@fnal.gov)
  * @date   April 18, 2016
  * @see    AtomicNumber.h
+ * @ingroup AtomicNumber
  * 
  * This test expects a single configuration file to be specified as first
  * argument.
@@ -23,6 +24,10 @@
 #include <string>
 #include <stdexcept> // std::runtime_error
 
+
+// BEGIN AtomicNumber ----------------------------------------------------------
+/// @ingroup AtomicNumber
+/// @{
 
 //------------------------------------------------------------------------------
 int main(int argc, char** argv) {
@@ -66,3 +71,6 @@ int main(int argc, char** argv) {
    //
    return 0;
 } // main()
+
+/// @}
+// END AtomicNumber ------------------------------------------------------------

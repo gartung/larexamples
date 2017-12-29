@@ -3,6 +3,7 @@
  * @brief  Module running `lar::example::TotallyCheatTrackingAlg` algorithm.
  * @author Gianluca Petrillo (petrillo@fnal.gov)
  * @date   December 26, 2017
+ * @ingroup TotallyCheatTracks
  * 
  * Provides:
  * 
@@ -38,7 +39,9 @@ namespace lar {
   namespace example {
   
     /**
-     * @brief Creates tracks from simulated particles.
+     * @brief Module: creates tracks from simulated particles.
+     * @ingroup TotallyCheatTracks
+     * @see @ref TotallyCheatTracks "TotallyCheatTracks example overview"
      * 
      * This module creates one LArSoft reconstructed track
      * (`lar::example::CheatTrack`) for each input simulated particle

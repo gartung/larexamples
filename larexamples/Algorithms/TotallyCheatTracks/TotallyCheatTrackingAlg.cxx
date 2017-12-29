@@ -4,6 +4,7 @@
  * @author Gianluca Petrillo (petrillo@fnal.gov)
  * @date   December 26, 2017
  * @see    larexamples/Algorithms/TotallyCheatTracks/TotallyCheatTrackingAlg.h
+ * @ingroup TotallyCheatTracks
  * 
  */
 

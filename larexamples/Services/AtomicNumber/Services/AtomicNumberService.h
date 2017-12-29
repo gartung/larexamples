@@ -4,6 +4,7 @@
  * @author  Gianluca Petrillo (petrillo@fnal.gov)
  * @date    April 13, 2016
  * @see     AtomicNumberService_service.cc
+ * @ingroup AtomicNumber
  * 
  */
 
@@ -23,8 +24,9 @@ namespace lar {
    namespace example {
       
       /**
-       * @brief Service giving access to AtomicNumber service provider
-       * @see AtomicNumber
+       * @brief Service giving access to AtomicNumber service provider.
+       * @see AtomicNumber, @ref AtomicNumber "AtomicNumber example overview"
+       * @ingroup AtomicNumber
        * 
        * Access the provider with the standard LArSoft access pattern:
        *     
@@ -32,7 +34,6 @@ namespace lar {
        *       = lar::providerFrom<lar::example::AtomicNumberService>();
        *     
        * 
-       * @ingroup AtomicNumberExample
        */
       using AtomicNumberService
          = lar::SimpleServiceProviderWrapper<AtomicNumber>;

@@ -3,6 +3,7 @@
  * @brief  Class to organise data into a 3D grid
  * @author Gianluca Petrillo (petrillo@fnal.gov)
  * @date   May 27, 2016
+ * @ingroup RemoveIsolatedSpacePoints
  * 
  * This library provides:
  * 
@@ -32,6 +33,9 @@
 namespace lar {
   namespace example {
     
+    // BEGIN RemoveIsolatedSpacePoints group -----------------------------------
+    /// @ingroup RemoveIsolatedSpacePoints
+    /// @{
     /**
      * @brief  Helper extractor for point coordinates
      * @tparam Point type of point structure
@@ -332,6 +336,9 @@ namespace lar {
       public details::PositionExtractorFromArray<std::vector<T>, T>
     {};
     
+    
+    /// @}
+    // END RemoveIsolatedSpacePoints group -------------------------------------
     
   } // namespace example
 } // namespace lar

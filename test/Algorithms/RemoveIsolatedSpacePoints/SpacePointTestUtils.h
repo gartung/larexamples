@@ -4,6 +4,7 @@
  * @author Gianluca Petrillo (petrillo@fnal.gov)
  * @date   June 3, 2016
  * @see    SpacePointTestUtils.cxx
+ * @ingroup RemoveIsolatedSpacePoints
  * 
  * This file offers:
  * 
@@ -27,6 +28,9 @@ namespace lar {
   namespace example {
     namespace tests {
       
+      // BEGIN RemoveIsolatedSpacePoints group ---------------------------------
+      /// @ingroup RemoveIsolatedSpacePoints
+      /// @{
       /**
        * @brief Creates and returns a new space point
        * @param ID space point identifier
@@ -61,6 +65,9 @@ namespace lar {
         double stepSize
         );
   
+      /// @}
+      // END RemoveIsolatedSpacePoints group -----------------------------------
+      
     } // namespace tests
   } // namespace example
 } // namespace lar

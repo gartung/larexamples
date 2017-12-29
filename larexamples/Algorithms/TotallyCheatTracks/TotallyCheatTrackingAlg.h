@@ -4,6 +4,7 @@
  * @author Gianluca Petrillo (petrillo@fnal.gov)
  * @date   December 26, 2017
  * @see    larexamples/Algorithms/TotallyCheatTracks/TotallyCheatTrackingAlg.cxx
+ * @ingroup TotallyCheatTracks
  * 
  */
 
@@ -28,6 +29,8 @@ namespace lar {
     
     /**
      * @brief Reconstructs tracks from simulated particles.
+     * @ingroup TotallyCheatTracks
+     * @see @ref TotallyCheatTracks "TotallyCheatTracks example overview"
      * 
      * This totally cheating tracking algorithm will return one
      * `lar::example::CheatTrack` object for each `simb::MCParticle` inserted.

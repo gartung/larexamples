@@ -1,0 +1,9 @@
+/**
+
+@defgroup ShowerCalibrationGalore ShowerCalibrationGalore
+@brief A service with multiple implementations.
+@ingroup larexamples_Services
+
+@copydoc ShowerCalibrationGalore_README
+
+ */

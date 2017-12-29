@@ -1,0 +1,23 @@
+/**
+
+@defgroup AnalysisExample Analysis module example
+@ingroup larexamples
+@brief Analysis module accessing LArSoft reconstruction and simulation.
+
+Analysis module example
+========================
+
+@copydoc AnalysisExample_ADDITIONAL_NOTES
+
+@page larexamples_AnalysisExample_mainpage Analysis module example
+
+Please refer to the full documentation in
+@ref AnalysisExample "analysis example module".
+
+Contents
+---------
+
+@subpage AnalysisExample_README
+@subpage AnalysisExample_ADDITIONAL_NOTES
+
+ */

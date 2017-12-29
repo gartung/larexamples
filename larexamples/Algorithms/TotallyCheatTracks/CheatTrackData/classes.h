@@ -1,6 +1,7 @@
 /**
  * @file larexamples/Algorithms/TotallyCheatTracks/CheatTrackData/classes.h
  * @brief Dictionary selection for `TotallyCheatTracks` example data products.
+ * @ingroup TotallyCheatTracks
  * 
  */
 

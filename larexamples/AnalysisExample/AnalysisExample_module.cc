@@ -2,6 +2,7 @@
  * @file   AnalysisExample_module.cc
  * @brief  A basic "skeleton" to read in art::Event records from a file,
  *         access their information, and do something with them. 
+ * @ingroup AnalysisExample
  * @author William Seligman (seligman@nevis.columbia.edu)
  * 
  * See <https://cdcvs.fnal.gov/redmine/projects/larsoft/wiki/Using_art_in_LArSoft>
@@ -108,10 +109,12 @@ namespace {
   // that the module can freely use them.
 
   /// Utility function to get the diagonal of the detector
+  /// @ingroup AnalysisExample
   double DetectorDiagonal(geo::GeometryCore const& geom);
 
   /// Comparison routine for using std::lower/upper_bound to search
   /// TDCIDE vectors.
+  /// @ingroup AnalysisExample
   bool TDCIDETimeCompare( const sim::TDCIDE&, const sim::TDCIDE& );
 
 } // local namespace
@@ -128,12 +131,17 @@ namespace {
 
 namespace lar {
 namespace example {
-
+  
+  
+  // BEGIN AnalysisExample group -----------------------------------------------
+  /// @ingroup AnalysisExample
+  /// @{
   //-----------------------------------------------------------------------
   //-----------------------------------------------------------------------
   // class definition
   /**
-   * @brief Example analyzer
+   * @brief Example analyzer module.
+   * @see @ref AnalysisExample "analysis module example overview"
    * 
    * This class extracts information from the generated and reconstructed
    * particles.
@@ -356,7 +364,10 @@ namespace example {
     
   }; // class AnalysisExample
 
-
+  /// @}
+  // END AnalysisExample group -------------------------------------------------
+  
+  
   //-----------------------------------------------------------------------
   //-----------------------------------------------------------------------
   // class implementation

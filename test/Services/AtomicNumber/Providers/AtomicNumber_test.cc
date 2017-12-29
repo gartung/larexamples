@@ -4,6 +4,7 @@
  * @author Gianluca Petrillo (petrillo@fnal.gov)
  * @date   April 13, 2016
  * @see    AtomicNumber.h
+ * @ingroup AtomicNumber
  * 
  * The exit code of the test is the number of triggered errors.
  * This text is expected to pass with 0 errors.
@@ -23,6 +24,10 @@
 // C/C++ standard libraries
 #include <string>
 
+
+// BEGIN AtomicNumber ----------------------------------------------------------
+/// @ingroup AtomicNumber
+/// @{
 
 /// Structure to hold enough information to computed the expected results
 struct Results_t {
@@ -115,4 +120,7 @@ int main(int argc, char** argv) {
    
    return nErrors;
 } // main()
+
+/// @}
+// END AtomicNumber ------------------------------------------------------------
 

@@ -4,6 +4,7 @@
  * @author Gianluca Petrillo (petrillo@fnal.gov)
  * @date   December 26, 2017
  * @version 10
+ * @ingroup TotallyCheatTracks
  * 
  * This is a header-only library (no implementation file).
  * 
@@ -27,7 +28,9 @@
 namespace lar {
   
   namespace example {
-    
+    // BEGIN TotallyCheatTracks group ------------------------------------------
+    /// @ingroup TotallyCheatTracks
+    /// @{
     
     /**
      * @brief Pseudo-track object for TotallyCheatTracks example.
@@ -148,6 +151,9 @@ namespace lar {
     template <typename Stream>
     Stream& operator<< (Stream&& out, lar::example::CheatTrack const& track)
       { track.dump(std::forward<Stream>(out)); return out; }
+    
+    /// @}
+    // END TotallyCheatTracks group ------------------------------------------
     
   } // namespace example
   

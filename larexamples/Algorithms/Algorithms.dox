@@ -1,0 +1,32 @@
+/**
+
+@defgroup larexamples_Algorithms Algorithms
+@ingroup larexamples
+@brief Examples of LArSoft algorithms and _art_ modules.
+
+LArSoft algorithm examples
+==========================
+
+LArSoft endorses a coding model which separates the functional part of the
+algorithms from the interfaces which allow that algorithms to be used inside a
+framework. This is often called _factorization model_.
+
+These examples show the use of the recommended patterns. For more documentation
+on the factorisation of algorithms, see
+[the LArSoft wiki](https://cdcvs.fnal.gov/redmine/projects/larsoft/wiki/Writing_LArSoft_algorithms):
+https://cdcvs.fnal.gov/redmine/projects/larsoft/wiki/Writing_LArSoft_algorithms.
+
+
+@page larexamples_Algorithms_mainpage Algorithms
+
+Please refer to the full documentation in @ref larexamples_Algorithms "algorithm example module".
+
+Contents
+---------
+
+@subpage TotallyCheatTracks_README
+@subpage RemoveIsolatedSpacePoints_README
+
+
+ */
+

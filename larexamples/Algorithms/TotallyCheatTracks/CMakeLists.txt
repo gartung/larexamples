@@ -29,7 +29,8 @@ file(GLOB TESTFHICLFILES
      LIST_DIRECTORIES false
      *.fcl
      )
-install_source(EXTRAS README.md CMakeLists.txt ${TESTFHICLFILES})
+install_source(EXTRAS ${TESTFHICLFILES})
 unset(TESTFHICLFILES)
 
+larsoft_install_sourcedoc() # fix after resolution of issue #18637
 

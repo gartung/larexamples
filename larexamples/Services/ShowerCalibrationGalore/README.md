@@ -1,12 +1,10 @@
+#  A service with multiple implementations: `ShowerCalibrationGaloreService`  {#ShowerCalibrationGalore_README}
+
 | Example name:   | ShowerCalibrationGalore               |
 | --------------- | ------------------------------------- |
 | Type:           | LArSoft service and provider          |
 | Author:         | Gianluca Petrillo (petrillo@fnal.gov) |
 | Created on:     | April 26, 2016                        |
-
-
-
-#  A service with multiple implementations: `ShowerCalibrationGaloreService`  ##
 
 
 This example shows a complete service with a small abstract interface and

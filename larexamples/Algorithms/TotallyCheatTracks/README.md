@@ -1,13 +1,11 @@
+#  An algorithm producing a new data product: `TotallyCheatTrackingAlg`  {#TotallyCheatTracks_README}
+
 | Example name:   | TotallyCheatTracks                    |
 | --------------- | ------------------------------------- |
 | Type:           | LArSoft algorithm with module         |
 | Author:         | Gianluca Petrillo (petrillo@fnal.gov) |
 | Created on:     | December 26, 2017                     |
 | Version:        | 1.0                                   |
-
-
-#  An algorithm producing a new data product: `TotallyCheatTrackingAlg`  #######
-
 
 
 This example shows an algorithm whose output is stored in a new data product.

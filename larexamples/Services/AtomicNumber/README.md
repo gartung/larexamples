@@ -1,13 +1,10 @@
+#  A simple service example: `AtomicNumberService`  {#AtomicNumber_README}
+
 | Example name:   | AtomicNumber                          |
 | --------------- | ------------------------------------- |
 | Type:           | LArSoft service and provider          |
 | Author:         | Gianluca Petrillo (petrillo@fnal.gov) |
 | Created on:     | April 13, 2016                        |
-
-
-
-#  A simple service example: `AtomicNumberService`  ############################
-
 
 
 This example shows a complete service with a minimal interface.

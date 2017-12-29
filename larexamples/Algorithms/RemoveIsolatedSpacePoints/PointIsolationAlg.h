@@ -3,6 +3,7 @@
  * @brief  Algorithm(s) dealing with point isolation in space
  * @author Gianluca Petrillo (petrillo@fnal.gov)
  * @date   May 27, 2016
+ * @ingroup RemoveIsolatedSpacePoints
  * 
  * This library contains only template classes and it is header only.
  * 
@@ -31,9 +32,13 @@
 namespace lar {
   namespace example {
     
+    // BEGIN RemoveIsolatedSpacePoints group -----------------------------------
+    /// @ingroup RemoveIsolatedSpacePoints
+    /// @{
     /**
      * @brief Algorithm to detect isolated space points
      * @tparam Coord type of the coordinate
+     * @see @ref RemoveIsolatedSpacePoints "RemoveIsolatedSpacePoints example overview"
      * 
      * This algorithm returns a selection of the input points which are not
      * isolated. Point @f$ i @f$ is defined as isolated if:
@@ -290,6 +295,8 @@ namespace lar {
     
     
     //--------------------------------------------------------------------------
+    /// @}
+    // END RemoveIsolatedSpacePoints group -------------------------------------
     
   } // namespace example
 } // namespace lar

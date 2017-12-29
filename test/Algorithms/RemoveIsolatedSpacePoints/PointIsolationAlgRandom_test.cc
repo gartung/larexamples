@@ -4,6 +4,7 @@
  * @author Gianluca Petrillo (petrillo@fnal.gov)
  * @date   June 30, 2016
  * @see    PointIsolationAlg.h
+ * @ingroup RemoveIsolatedSpacePoints
  * 
  * This test populate datasets with random data and tests the isolation
  * algorithm with them.
@@ -38,6 +39,9 @@
 #include <algorithm> // std::sort()
 
 
+// BEGIN RemoveIsolatedSpacePoints group ---------------------------------------
+/// @ingroup RemoveIsolatedSpacePoints
+/// @{
 //------------------------------------------------------------------------------
 //--- Test code
 //---
@@ -178,4 +182,7 @@ BOOST_FIXTURE_TEST_CASE(PointIsolationTestCase, ArgsFixture) {
   
 } // PointIsolationTestCase()
 
+
+/// @}
+// END RemoveIsolatedSpacePoints group -----------------------------------------
 

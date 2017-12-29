@@ -1,9 +1,10 @@
 /**
  * @file   ShowerCalibrationGaloreFromPIDService_service.cc
- * @brief  Shower energy calibration according to particle type      
+ * @brief  Shower energy calibration according to particle type.
  * @author Gianluca Petrillo (petrillo@fnal.gov)
  * @date   April 28, 2016
  * @see    ShowerCalibrationGaloreFromPID.h
+ * @ingroup ShowerCalibrationGalore
  * 
  * 
  */

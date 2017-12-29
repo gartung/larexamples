@@ -4,6 +4,7 @@
  * @author  Gianluca Petrillo (petrillo@fnal.gov)
  * @date    April 13, 2016
  * @see     AtomicNumberService.h
+ * @ingroup AtomicNumber
  * 
  * Implementation file.
  */

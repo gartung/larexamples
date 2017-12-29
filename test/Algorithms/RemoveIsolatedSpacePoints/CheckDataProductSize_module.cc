@@ -3,6 +3,7 @@
  * @brief  Checks the size of a collection
  * @author Gianluca Petrillo (petrillo@fnal.gov)
  * @date   June 3, 2016
+ * @ingroup RemoveIsolatedSpacePoints
  * 
  */
 
@@ -27,7 +28,11 @@
 namespace lar {
   namespace example {
     namespace tests {
-  
+    
+    
+    // BEGIN RemoveIsolatedSpacePoints group -----------------------------------
+    /// @ingroup RemoveIsolatedSpacePoints
+    /// @{
     /**
      * @brief Checks the size of the specified collection
      * 
@@ -103,9 +108,11 @@ namespace lar {
       
     }; // class CheckDataProductSize
     
-      
-      
-      
+    
+    /// @}
+    // END RemoveIsolatedSpacePoints group -------------------------------------
+    
+    
     } // namespace tests
   } // namespace example
 } // namespace lar

@@ -3,6 +3,7 @@
  * @brief  Module creating simulated particles for a test.
  * @author Gianluca Petrillo (petrillo@fnal.gov)
  * @date   December 27, 2017
+ * @ingroup TotallyCheatTracks
  * 
  */
 
@@ -33,6 +34,10 @@
 namespace lar {
   namespace example {
     namespace tests {
+      
+      // BEGIN TotallyCheatTracks group ----------------------------------------
+      /// @ingroup TotallyCheatTracks
+      /// @{
       
       /**
        * @brief  Creates a collection of simulated particles.
@@ -117,6 +122,9 @@ namespace lar {
         
         
       }; // class ParticleMaker
+      
+      /// @}
+      // END TotallyCheatTracks group ------------------------------------------
       
       
     } // namespace tests

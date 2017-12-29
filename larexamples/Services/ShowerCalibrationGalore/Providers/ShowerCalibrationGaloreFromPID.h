@@ -4,6 +4,7 @@
  * @author Gianluca Petrillo (petrillo@fnal.gov)
  * @date   April 28, 2016
  * @see    ShowerCalibrationGalore.h
+ * @ingroup ShowerCalibrationGalore
  * 
  * 
  */
@@ -42,6 +43,10 @@ class TGraph; // from ROOT
 
 namespace lar {
    namespace example {
+      
+      // BEGIN ShowerCalibrationGalore -----------------------------------------
+      /// @ingroup ShowerCalibrationGalore
+      /// @{
       
       namespace details {
          
@@ -261,6 +266,9 @@ namespace lar {
          createInterpolator(unsigned int N, double const* x, double const* y);
       
       }; // class ShowerCalibrationGaloreFromPID
+      
+      /// @}
+      // END ShowerCalibrationGalore -----------------------------------------------
       
       
    } // namespace example
