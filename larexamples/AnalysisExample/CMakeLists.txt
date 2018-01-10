@@ -95,5 +95,4 @@ install_headers()
 install_fhicl()
 install_scripts()
 install_source()
-larsoft_install_sourcedoc() # fix after resolution of issue #18637
 

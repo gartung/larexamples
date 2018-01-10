@@ -30,5 +30,5 @@ file(GLOB TESTFHICLFILES
 install_source(EXTRAS ${TESTFHICLFILES})
 unset(TESTFHICLFILES)
 
-larsoft_install_sourcedoc() # fix after resolution of issue #18637
+install_source()
 

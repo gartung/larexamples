@@ -56,15 +56,6 @@ include(ArtDictionary)
 include(ArtMake)
 include(BuildPlugins)
 
-# macro to install the documentation (TODO: waiting for resolution of issue #18637)
-macro(larsoft_install_sourcedoc)
-  file(GLOB DocList
-    LIST_DIRECTORIES false
-    *.txt *.tex *.md *.markdown *.dox README*
-    )
-  install_source(EXTRAS ${DocList})
-endmacro(larsoft_install_sourcedoc)
-
 # source
 add_subdirectory(larexamples)
 add_subdirectory(test)
