@@ -1,0 +1,23 @@
+process_name: Example
+
+services: {}
+
+source:
+{
+  module_type: RootInput
+  firstEvent : 1
+  maxEvents:  -1
+}
+
+physics: {
+  analyzers: {
+    proxyexample: {
+      module_type: RecoProxyUsageExample
+      trackInputTag:  "pandoraNuKalmanTrack"
+      vertexInputTag: "vertexfit"
+      mcsInputTag:    "pandoraNuMCSMu"
+    }
+  }
+  ana:  [ proxyexample ]
+  end_paths: [ ana ]
+}
