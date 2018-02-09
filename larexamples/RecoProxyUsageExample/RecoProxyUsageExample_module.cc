@@ -96,14 +96,14 @@ void RecoProxyUsageExample::analyze(art::Event const & e)
   //
   // Loop over vertex proxies (get recob::Vertex with '->')
   for (const auto& v : vertices) {
-    std::cout << "vertex pos=" << v->position() << " chi2=" << v->chi2() << std::endl;
+    mf::LogVerbatim("ProxyExample") << "vertex pos=" << v->position() << " chi2=" << v->chi2();
     //
     // Get tracks(+meta) associated to vertex, and loop over them
     const auto& assocTracks = v.get<recob::Track>();
     for (const auto& trackAssn : assocTracks) {
       //
       // Note that here we access the methods of recob::Track using '->' and that we get the recob::VertexAssnMeta with '.data()'
-      std::cout << "track with key=" << trackAssn.key() << " and length=" << trackAssn->Length() << " has propDist from vertex=" << trackAssn.data().propDist() << std::endl;
+      mf::LogVerbatim("ProxyExample") << "track with key=" << trackAssn.key() << " and length=" << trackAssn->Length() << " has propDist from vertex=" << trackAssn.data().propDist();
       //
       // Now get the track proxy from the key, and use it to access the parallel MCSFitResult; note that the track proxy has already access to the associated hits
       const auto& track = tracks[trackAssn.key()];
@@ -111,12 +111,12 @@ void RecoProxyUsageExample::analyze(art::Event const & e)
       //
       // Print some information; here we access the methods of recob::Track using '->' and proxy::Track with '.'
       // Note: if the original trajectories were associated to the proxy, you could get the original/unfitted legth with 'track(proxy::Tracks::Unfitted)->Length()'
-      std::cout << "\tCountValidPoints=" << track->CountValidPoints() << " and nHits=" << track.nHits() << " and MCSMom=" << assocMCS.bestMomentum() << std::endl;
+      mf::LogVerbatim("ProxyExample") << "\tCountValidPoints=" << track->CountValidPoints() << " and nHits=" << track.nHits() << " and MCSMom=" << assocMCS.bestMomentum();
       //
       // Now loop over the associated hits from the track proxy
       if (track.hits().size()<50) {
         for (const art::Ptr<recob::Hit>& h : track.hits()) {
-          std::cout << "\t\thit wire=" << h->WireID() << " peak time=" << h->PeakTime() << std::endl;
+          mf::LogVerbatim("ProxyExample") << "\t\thit wire=" << h->WireID() << " peak time=" << h->PeakTime();
         }
       }
     }
@@ -139,7 +139,7 @@ void RecoProxyUsageExample::analyze(art::Event const & e)
   // Loop over the vertex collection, get the art::Ptr and access the recob::Vertex with '->'
   for (size_t iv=0; iv<vertexHandle->size(); ++iv) {
     art::Ptr<recob::Vertex> v(vertexHandle,iv);
-    std::cout << "vertex pos=" << v->position() << " chi2=" << v->chi2() << std::endl;
+    mf::LogVerbatim("ProxyExample") << "vertex pos=" << v->position() << " chi2=" << v->chi2();
     //
     // Get tracks(+meta) associated to vertex, and loop over them
     auto& assocTks = assocTracksWithMeta->at(v.key());
@@ -149,19 +149,19 @@ void RecoProxyUsageExample::analyze(art::Event const & e)
       // Get the recob::Track and VertexAssnMeta instance
       const art::Ptr<recob::Track> trackAssn = assocTks[itk];
       const recob::VertexAssnMeta* trackMeta = assocTksMeta[itk];
-      std::cout << "track with key=" << trackAssn.key() << " and length=" << trackAssn->Length() << " has propDist from vertex=" << trackMeta->propDist() << std::endl;
+      mf::LogVerbatim("ProxyExample") << "track with key=" << trackAssn.key() << " and length=" << trackAssn->Length() << " has propDist from vertex=" << trackMeta->propDist();
       //
       // Get the associated recob::Hit and the MCSFitResult
       const art::Ptr<recob::MCSFitResult> assocMCS(mcsHandle,trackAssn.key());
       std::vector<art::Ptr<recob::Hit> > hits = assocHits->at(trackAssn.key());
       //
       // Print some information
-      std::cout << "\tCountValidPoints=" << trackAssn->CountValidPoints() << " and nHits=" << hits.size() << " and MCSMom=" << assocMCS->bestMomentum() << std::endl;
+      mf::LogVerbatim("ProxyExample") << "\tCountValidPoints=" << trackAssn->CountValidPoints() << " and nHits=" << hits.size() << " and MCSMom=" << assocMCS->bestMomentum();
       //
       // Now loop over the associated hits
       if (hits.size()<50) {
         for (const art::Ptr<recob::Hit>& h : hits) {
-          std::cout << "\t\thit wire=" << h->WireID() << " peak time=" << h->PeakTime() << std::endl;
+          mf::LogVerbatim("ProxyExample") << "\t\thit wire=" << h->WireID() << " peak time=" << h->PeakTime();
         }
       }
     }
