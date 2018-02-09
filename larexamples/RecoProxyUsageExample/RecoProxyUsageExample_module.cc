@@ -6,7 +6,7 @@
 #include "art/Framework/Principal/SubRun.h"
 #include "canvas/Utilities/InputTag.h"
 #include "fhiclcpp/types/Atom.h"
-#include "messagefacility/MessageLogger/MessageLogger.h"
+#include "messagefacility/MessageLogger/MessageLogger.h" // mf::LogVerbatim
 
 #include "lardata/RecoBaseProxy/ProxyBase.h"
 #include "lardata/RecoBaseProxy/Track.h"
@@ -110,7 +110,7 @@ void RecoProxyUsageExample::analyze(art::Event const & e)
       const recob::MCSFitResult& assocMCS = track.get<recob::MCSFitResult>();
       //
       // Print some information; here we access the methods of recob::Track using '->' and proxy::Track with '.'
-      // Note: if the original trajectories were associated to the proxy, you could get the original/unfitted legth with 'track(proxy::Tracks::Unfitted)->Length()'
+      // Note: if the original trajectories were associated to the proxy, you could get the original/unfitted length with 'track(proxy::Tracks::Unfitted)->Length()'
       mf::LogVerbatim("ProxyExample") << "\tCountValidPoints=" << track->CountValidPoints() << " and nHits=" << track.nHits() << " and MCSMom=" << assocMCS.bestMomentum();
       //
       // Now loop over the associated hits from the track proxy
@@ -119,8 +119,8 @@ void RecoProxyUsageExample::analyze(art::Event const & e)
           mf::LogVerbatim("ProxyExample") << "\t\thit wire=" << h->WireID() << " peak time=" << h->PeakTime();
         }
       }
-    }
-  }
+    } // for associated tracks
+  } // for vertices
 
   //
   // Same example without using proxies. 
@@ -164,9 +164,9 @@ void RecoProxyUsageExample::analyze(art::Event const & e)
           mf::LogVerbatim("ProxyExample") << "\t\thit wire=" << h->WireID() << " peak time=" << h->PeakTime();
         }
       }
-    }
-  }
+    } // for track
+  } // for vertex
 
-}
+} // RecoProxyUsageExample::analyze()
 
 DEFINE_ART_MODULE(RecoProxyUsageExample)
