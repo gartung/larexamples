@@ -115,9 +115,9 @@ void RecoProxyUsageExample::analyze(art::Event const & e)
       //
       // Now loop over the associated hits from the track proxy
       if (track.hits().size()<50) {
-	for (const art::Ptr<recob::Hit>& h : track.hits()) {
-	  std::cout << "\t\thit wire=" << h->WireID() << " peak time=" << h->PeakTime() << std::endl;
-	}
+        for (const art::Ptr<recob::Hit>& h : track.hits()) {
+          std::cout << "\t\thit wire=" << h->WireID() << " peak time=" << h->PeakTime() << std::endl;
+        }
       }
     }
   }
@@ -160,9 +160,9 @@ void RecoProxyUsageExample::analyze(art::Event const & e)
       //
       // Now loop over the associated hits
       if (hits.size()<50) {
-	for (const art::Ptr<recob::Hit>& h : hits) {
-	  std::cout << "\t\thit wire=" << h->WireID() << " peak time=" << h->PeakTime() << std::endl;
-	}
+        for (const art::Ptr<recob::Hit>& h : hits) {
+          std::cout << "\t\thit wire=" << h->WireID() << " peak time=" << h->PeakTime() << std::endl;
+        }
       }
     }
   }
