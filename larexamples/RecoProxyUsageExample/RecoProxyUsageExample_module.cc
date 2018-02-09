@@ -2,19 +2,21 @@
 #include "art/Framework/Core/ModuleMacros.h"
 #include "art/Framework/Principal/Event.h"
 #include "art/Framework/Principal/Handle.h"
-#include "art/Framework/Principal/Run.h"
-#include "art/Framework/Principal/SubRun.h"
 #include "canvas/Utilities/InputTag.h"
 #include "fhiclcpp/types/Atom.h"
 #include "messagefacility/MessageLogger/MessageLogger.h" // mf::LogVerbatim
 
-#include "lardata/RecoBaseProxy/ProxyBase.h"
-#include "lardata/RecoBaseProxy/Track.h"
+#include "lardataobj/RecoBase/Track.h"
 #include "lardataobj/RecoBase/Vertex.h"
 #include "lardataobj/RecoBase/VertexAssnMeta.h"
 #include "lardataobj/RecoBase/MCSFitResult.h"
 
+#include "lardata/RecoBaseProxy/Track.h" //needed only if you do use the proxies
+
 #include "canvas/Persistency/Common/FindManyP.h" //needed only if you do not use the proxies
+#include "canvas/Persistency/Common/FindMany.h" //needed only if you do not use the proxies
+
+#include <vector>
 
 //
   /**
@@ -88,11 +90,11 @@ void RecoProxyUsageExample::analyze(art::Event const & e)
   
   //
   // Get vertex collection proxy and associated tracks, with meta data
-  auto vertices = proxy::getCollection<std::vector<recob::Vertex> >(e,vtxTag,proxy::withAssociatedMeta<recob::Track, recob::VertexAssnMeta>());
+  auto const& vertices = proxy::getCollection<std::vector<recob::Vertex> >(e,vtxTag,proxy::withAssociatedMeta<recob::Track, recob::VertexAssnMeta>());
   //
   // Get track collection proxy and parallel mcs fit data (associated hits loaded by default)
   // Note: if tracks were produced from a TrackTrajectory collection you could access the original trajectories adding ',proxy::withOriginalTrajectory()' to the list of arguments
-  auto tracks   = proxy::getCollection<proxy::Tracks>(e,trkTag,proxy::withParallelData<recob::MCSFitResult>(mcsTag));
+  auto const& tracks   = proxy::getCollection<proxy::Tracks>(e,trkTag,proxy::withParallelData<recob::MCSFitResult>(mcsTag));
   //
   // Loop over vertex proxies (get recob::Vertex with '->')
   for (const auto& v : vertices) {
@@ -114,7 +116,7 @@ void RecoProxyUsageExample::analyze(art::Event const & e)
       mf::LogVerbatim("ProxyExample") << "\tCountValidPoints=" << track->CountValidPoints() << " and nHits=" << track.nHits() << " and MCSMom=" << assocMCS.bestMomentum();
       //
       // Now loop over the associated hits from the track proxy
-      if (track.hits().size()<50) {
+      if (track.nHits()<50) {
         for (const art::Ptr<recob::Hit>& h : track.hits()) {
           mf::LogVerbatim("ProxyExample") << "\t\thit wire=" << h->WireID() << " peak time=" << h->PeakTime();
         }
@@ -128,39 +130,40 @@ void RecoProxyUsageExample::analyze(art::Event const & e)
 
   //
   // Get vertex collection handle and get associated tracks with meta data using FindManyP
-  auto vertexHandle = e.getValidHandle<std::vector<recob::Vertex> >(vtxTag);
-  auto assocTracksWithMeta = std::unique_ptr<art::FindManyP<recob::Track, recob::VertexAssnMeta> >(new art::FindManyP<recob::Track, recob::VertexAssnMeta>(vertexHandle, e, vtxTag));
+  auto const& vertexHandle = e.getValidHandle<std::vector<recob::Vertex> >(vtxTag);
+  auto const& vertexColl = *vertexHandle;
+  art::FindManyP<recob::Track, recob::VertexAssnMeta> assocTracksWithMeta(vertexHandle, e, vtxTag);
   //
   // Get track collection handle, get associated hits using FindManyP, and get mcs collection (parallel to track collection)
-  auto trackHandle  = e.getValidHandle<std::vector<recob::Track> >(trkTag);
-  auto assocHits = std::unique_ptr<art::FindManyP<recob::Hit> >(new art::FindManyP<recob::Hit>(trackHandle, e, trkTag));
-  auto mcsHandle  = e.getValidHandle<std::vector<recob::MCSFitResult> >(mcsTag);
+  auto const& trackHandle  = e.getValidHandle<std::vector<recob::Track> >(trkTag);
+  art::FindMany<recob::Hit> assocHits(trackHandle, e, trkTag);
+  auto const& mcsColl = *(e.getValidHandle<std::vector<recob::MCSFitResult> >(mcsTag));
   //
   // Loop over the vertex collection, get the art::Ptr and access the recob::Vertex with '->'
-  for (size_t iv=0; iv<vertexHandle->size(); ++iv) {
-    art::Ptr<recob::Vertex> v(vertexHandle,iv);
-    mf::LogVerbatim("ProxyExample") << "vertex pos=" << v->position() << " chi2=" << v->chi2();
+  for (size_t iv=0; iv<vertexColl.size(); ++iv) {
+    const recob::Vertex& v = vertexColl[iv];
+    mf::LogVerbatim("ProxyExample") << "vertex pos=" << v.position() << " chi2=" << v.chi2();
     //
     // Get tracks(+meta) associated to vertex, and loop over them
-    auto& assocTks = assocTracksWithMeta->at(v.key());
-    auto& assocTksMeta = assocTracksWithMeta->data(v.key());
+    auto const& assocTks = assocTracksWithMeta.at(iv);
+    auto const& assocTksMeta = assocTracksWithMeta.data(iv);
     for (size_t itk=0;itk<assocTks.size();++itk) {
       //
       // Get the recob::Track and VertexAssnMeta instance
-      const art::Ptr<recob::Track> trackAssn = assocTks[itk];
+      const art::Ptr<recob::Track>& trackAssn = assocTks[itk];
       const recob::VertexAssnMeta* trackMeta = assocTksMeta[itk];
       mf::LogVerbatim("ProxyExample") << "track with key=" << trackAssn.key() << " and length=" << trackAssn->Length() << " has propDist from vertex=" << trackMeta->propDist();
       //
       // Get the associated recob::Hit and the MCSFitResult
-      const art::Ptr<recob::MCSFitResult> assocMCS(mcsHandle,trackAssn.key());
-      std::vector<art::Ptr<recob::Hit> > hits = assocHits->at(trackAssn.key());
+      const recob::MCSFitResult& assocMCS = mcsColl[trackAssn.key()];
+      const std::vector<recob::Hit const*>& hits = assocHits.at(trackAssn.key());
       //
       // Print some information
-      mf::LogVerbatim("ProxyExample") << "\tCountValidPoints=" << trackAssn->CountValidPoints() << " and nHits=" << hits.size() << " and MCSMom=" << assocMCS->bestMomentum();
+      mf::LogVerbatim("ProxyExample") << "\tCountValidPoints=" << trackAssn->CountValidPoints() << " and nHits=" << hits.size() << " and MCSMom=" << assocMCS.bestMomentum();
       //
       // Now loop over the associated hits
       if (hits.size()<50) {
-        for (const art::Ptr<recob::Hit>& h : hits) {
+        for (const recob::Hit* h : hits) {
           mf::LogVerbatim("ProxyExample") << "\t\thit wire=" << h->WireID() << " peak time=" << h->PeakTime();
         }
       }
