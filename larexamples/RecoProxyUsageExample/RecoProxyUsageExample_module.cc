@@ -5,7 +5,7 @@
 #include "art/Framework/Principal/Run.h"
 #include "art/Framework/Principal/SubRun.h"
 #include "canvas/Utilities/InputTag.h"
-#include "fhiclcpp/ParameterSet.h"
+#include "fhiclcpp/types/Atom.h"
 #include "messagefacility/MessageLogger/MessageLogger.h"
 
 #include "lardata/RecoBaseProxy/ProxyBase.h"
@@ -34,7 +34,25 @@
 
 class RecoProxyUsageExample : public art::EDAnalyzer {
 public:
-  explicit RecoProxyUsageExample(fhicl::ParameterSet const & p);
+  
+  struct Config {
+    fhicl::Atom<art::InputTag> trackInputTag{
+      fhicl::Name("trackInputTag"),
+      fhicl::Comment("data product tag for tracks")
+      };
+    fhicl::Atom<art::InputTag> vertexInputTag{
+      fhicl::Name("vertexInputTag"),
+      fhicl::Comment("data product tag for vertices")
+      };
+    fhicl::Atom<art::InputTag> mcsInputTag{
+      fhicl::Name("mcsInputTag"),
+      fhicl::Comment("data product tag for track momentum reconstruction")
+      };
+  }; // Config
+  
+  using Parameters = art::EDAnalyzer::Table<Config>;
+  
+  explicit RecoProxyUsageExample(Parameters const & p);
   // The compiler-generated destructor is fine for non-base
   // classes without bare pointers or other resource use.
 
@@ -54,11 +72,11 @@ private:
 };
 
 
-RecoProxyUsageExample::RecoProxyUsageExample(fhicl::ParameterSet const & p)
-  : EDAnalyzer(p)
-  , trkTag(p.get<art::InputTag>("trackInputTag"))
-  , vtxTag(p.get<art::InputTag>("vertexInputTag"))
-  , mcsTag(p.get<art::InputTag>("mcsInputTag"))
+RecoProxyUsageExample::RecoProxyUsageExample(Parameters const & config)
+  : EDAnalyzer(config)
+  , trkTag(config().trackInputTag())
+  , vtxTag(config().vertexInputTag())
+  , mcsTag(config().mcsInputTag())
 {}
 
 void RecoProxyUsageExample::analyze(art::Event const & e)
