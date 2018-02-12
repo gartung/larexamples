@@ -12,6 +12,7 @@
 #include "lardataobj/RecoBase/MCSFitResult.h"
 
 #include "lardata/RecoBaseProxy/Track.h" //needed only if you do use the proxies
+//#include "lardata/RecoBaseProxy/ProxyBase.h" //needed if you use proxies (already included above if using the Track proxy)
 
 #include "canvas/Persistency/Common/FindManyP.h" //needed only if you do not use the proxies
 #include "canvas/Persistency/Common/FindMany.h" //needed only if you do not use the proxies
@@ -134,12 +135,12 @@ void RecoProxyUsageExample::analyze(art::Event const & e)
   auto const& vertexColl = *vertexHandle;
   art::FindManyP<recob::Track, recob::VertexAssnMeta> assocTracksWithMeta(vertexHandle, e, vtxTag);
   //
-  // Get track collection handle, get associated hits using FindManyP, and get mcs collection (parallel to track collection)
+  // Get track collection handle, get associated hits using FindMany, and get mcs collection (parallel to track collection)
   auto const& trackHandle  = e.getValidHandle<std::vector<recob::Track> >(trkTag);
   art::FindMany<recob::Hit> assocHits(trackHandle, e, trkTag);
   auto const& mcsColl = *(e.getValidHandle<std::vector<recob::MCSFitResult> >(mcsTag));
   //
-  // Loop over the vertex collection, get the art::Ptr and access the recob::Vertex with '->'
+  // Loop over the vertex collection
   for (size_t iv=0; iv<vertexColl.size(); ++iv) {
     const recob::Vertex& v = vertexColl[iv];
     mf::LogVerbatim("ProxyExample") << "vertex pos=" << v.position() << " chi2=" << v.chi2();
