@@ -37,6 +37,7 @@ struct Results_t {
 
 //------------------------------------------------------------------------------
 /**
+ * @fn TestConfiguration
  * @brief Runs a test with a specific configuration
  * @param testName name of this test for output purposes
  * @param configuration provider configuration as a string in FHiCL format

@@ -27,24 +27,42 @@ understand it before adapting it into their own.
 
 The examples are organized by type:
 
- - @ref ExampleServices "services"
+ - @subpage ExampleServices "services"
  - @subpage ExampleAlgorithms "algorithms (and their modules)"
  - @subpage ExampleAnalyzers "analyzers"
+ - @subpage ExampleDebugging "debugging"
+
+
+@page ExampleServices Service providers
+
+
+The service providers currently offered are:
+
+ - `lar::example::RemoveIsolatedSpacePoints`
 
 
 @page ExampleAlgorithms Algorithms and modules
 
 
-The only algorithm currently offered is:
+The algorithms currently offered are:
 
  - `lar::example::RemoveIsolatedSpacePoints`
+ - `lar::example::TotallyCheatTrackingAlg`
 
 
 @page ExampleAnalyzers Analyzer modules
 
 The only analyzer currently offered is:
 
- - `lar::example::AnalysisExample`
+ - `lar::example::AtomicNumber`
+ - `lar::example::ShowerCalibrationGalore`
+
+
+@page ExampleDebugging Debugging
+
+One tutorial is currently provided:
+
+ - @ref CatchException_README "catching exceptions with a debugger"
 
 
 

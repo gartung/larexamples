@@ -46,6 +46,7 @@
 //--- Test code
 //---
 /**
+ * @fn PointIsolationTest
  * @brief Tests various isolation radii on a random-distributed set of points
  * @param generator engine used to create the random input sample
  * @param nPoints points in the input sample
