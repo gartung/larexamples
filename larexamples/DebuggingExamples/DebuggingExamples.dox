@@ -1,0 +1,25 @@
+/**
+
+@defgroup larexamples_DebuggingExamples Debugging examples
+@ingroup larexamples
+@brief Examples to debug.
+
+Debugging examples
+==================
+
+We collect here examples of code with some bug, and tutorials on how to debug
+them.
+
+
+@page larexamples_DebuggingExamples_mainpage Debugging examples
+
+Please refer to the full documentation in @ref larexamples_DebuggingExamples "debugging example module".
+
+Contents
+---------
+
+@subpage CatchException_README
+
+
+ */
+

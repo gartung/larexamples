@@ -1,0 +1,38 @@
+# 
+# File:    exploder_badalloc.fcl
+# Purpose: Run a module throwing a std::bad_alloc exception
+# Author:  Gianluca Petrillo (petrillo@fnal.gov)
+# Date:    March 21, 2018
+#
+
+process_name: LengthError
+
+source: {
+  module_type: EmptyEvent
+  maxEvents:   1
+} # source
+
+
+physics: {
+  
+  analyzers: {
+    
+    exploder: {
+    
+      module_type: "larexamples/DebuggingExamples/CatchException/Exploder"
+      
+      # don't catch any exception
+      ManageBadAlloc:     false
+      ManageOutOfRange:   false
+      ManageArtException: false
+      
+    } # exploder
+    
+  } # analyzers
+  
+  then:  [ "exploder" ]
+  
+  trigger_paths: [ ]
+  end_paths:     [ then ]
+  
+} # physics

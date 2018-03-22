@@ -1,0 +1,54 @@
+# 
+# File:    exploder_disturbed_outofrange.fcl
+# Purpose: Run a module eventually throwing a std::out_of_range exception
+# Author:  Gianluca Petrillo (petrillo@fnal.gov)
+# Date:    March 21, 2018
+# 
+# Before the std::out_of_range exception is thrown, many more are also thrown
+# and caught.
+#
+
+process_name: DOOR
+
+source: {
+  module_type: EmptyEvent
+  maxEvents:   1
+} # source
+
+
+physics: {
+  producers: {
+    
+    disturber: {
+      
+      module_type: "larexamples/DebuggingExamples/CatchException/Disturbance"
+      
+      NArtExceptions: 500
+      
+    } # disturber
+    
+  } # producers
+  
+  analyzers: {
+    
+    exploder: {
+    
+      module_type: "larexamples/DebuggingExamples/CatchException/Exploder"
+      
+      # catch everything until the std::out_of_range exception
+      ManageBadAlloc:     true
+      ManageOutOfRange:   false
+      ManageArtException: false
+      
+    } # exploder
+    
+  } # analyzers
+  
+  first: [ "disturber" ]
+  then: [ "exploder" ]
+  
+  trigger_paths: [ first ]
+  end_paths:     [ then ]
+  
+} # physics
+

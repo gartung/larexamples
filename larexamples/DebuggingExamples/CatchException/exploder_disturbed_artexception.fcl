@@ -1,0 +1,54 @@
+# 
+# File:    exploder_disturbed_artexception.fcl
+# Purpose: Run a module eventually throwing a art::Exception
+# Author:  Gianluca Petrillo (petrillo@fnal.gov)
+# Date:    March 21, 2018
+# 
+# Before the art::Exception exception is thrown, many more are also thrown
+# and caught.
+#
+
+process_name: DAE
+
+source: {
+  module_type: EmptyEvent
+  maxEvents:   1
+} # source
+
+
+physics: {
+  producers: {
+    
+    disturber: {
+      
+      module_type: "larexamples/DebuggingExamples/CatchException/Disturbance"
+      
+      NArtExceptions: 500
+      
+    } # disturber
+    
+  } # producers
+  
+  analyzers: {
+    
+    exploder: {
+    
+      module_type: "larexamples/DebuggingExamples/CatchException/Exploder"
+      
+      # catch everything until the art exception
+      ManageBadAlloc:     true
+      ManageOutOfRange:   true
+      ManageArtException: false
+      
+    } # exploder
+    
+  } # analyzers
+  
+  first: [ "disturber" ]
+  then: [ "exploder" ]
+  
+  trigger_paths: [ first ]
+  end_paths:     [ then ]
+  
+} # physics
+

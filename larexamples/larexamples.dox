@@ -21,5 +21,6 @@ Contents
 @subpage larexamples_Algorithms_mainpage
 @subpage larexamples_Services_mainpage
 @subpage larexamples_AnalysisExample_mainpage
+@subpage larexamples_DebuggingExamples_mainpage
 
  */

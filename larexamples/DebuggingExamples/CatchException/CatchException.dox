@@ -1,0 +1,9 @@
+/**
+
+@defgroup CatchException How to catch exceptions
+@brief A module throwing some exceptions.
+@ingroup larexamples_DebuggingExamples
+
+@copydoc CatchException_README
+
+ */

@@ -1,0 +1,38 @@
+# 
+# File:    exploder_outofrange.fcl
+# Purpose: Run a module throwing a std::out_of_range exception
+# Author:  Gianluca Petrillo (petrillo@fnal.gov)
+# Date:    March 21, 2018
+#
+
+process_name: OutOfRange
+
+source: {
+  module_type: EmptyEvent
+  maxEvents:   1
+} # source
+
+
+physics: {
+  
+  analyzers: {
+    
+    exploder: {
+    
+      module_type: "larexamples/DebuggingExamples/CatchException/Exploder"
+      
+      # catch everything until the std::out_of_range exception
+      ManageBadAlloc:     true
+      ManageOutOfRange:   false
+      ManageArtException: false
+      
+    } # exploder
+    
+  } # analyzers
+  
+  then:  [ "exploder" ]
+  
+  trigger_paths: [ ]
+  end_paths:     [ then ]
+  
+} # physics
