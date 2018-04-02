@@ -316,7 +316,7 @@ std::vector<size_t> lar::example::PointIsolationAlg<Coord>::removeIsolatedPoints
   
   Coord_t const R = std::sqrt(config.radius2);
   
-  using Point_t = decltype(*begin);
+  //using Point_t = decltype(*begin);
 
   //
   // determine space partition settings: cell size
@@ -500,7 +500,7 @@ lar::example::PointIsolationAlg<Coord>::buildNeighborhood
   
   CellDimIndex_t const ext = neighExtent; // convert into the right signedness
   
-  CellID_t center{ 0, 0, 0 }, cellID;
+  CellID_t center{{ 0, 0, 0 }}, cellID;
   for (CellDimIndex_t ixOfs = -ext; ixOfs <= ext; ++ixOfs) {
     cellID[0] = ixOfs;
     for (CellDimIndex_t iyOfs = -ext; iyOfs <= ext; ++iyOfs) {

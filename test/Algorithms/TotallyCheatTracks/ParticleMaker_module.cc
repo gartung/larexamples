@@ -162,14 +162,14 @@ void lar::example::tests::ParticleMaker::produce(art::Event& event) {
   //
   // creation of the particles
   //
-  static std::array<TVector3, 6U> const Dirs = {
+  static std::array<TVector3, 6U> const Dirs = {{
     geo::vect::rounded01( geo::Xaxis<TVector3>(), 1e-8),
     geo::vect::rounded01( geo::Yaxis<TVector3>(), 1e-8),
     geo::vect::rounded01( geo::Zaxis<TVector3>(), 1e-8),
     geo::vect::rounded01(-geo::Xaxis<TVector3>(), 1e-8),
     geo::vect::rounded01(-geo::Yaxis<TVector3>(), 1e-8),
     geo::vect::rounded01(-geo::Zaxis<TVector3>(), 1e-8)
-  }; // Dirs
+  }}; // Dirs
   
   int trackID = 0;
   TLorentzVector pos;

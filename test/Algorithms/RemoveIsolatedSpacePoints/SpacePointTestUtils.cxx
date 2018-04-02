@@ -54,7 +54,7 @@ unsigned int lar::example::tests::FillSpacePointGrid(
   // fill the grid;
   // we don't use an increment (point[0] += stepping) to avoid rounding errors
   std::array<double, 3> const center
-    { box.CenterX(), box.CenterY(), box.CenterZ() };
+    {{ box.CenterX(), box.CenterY(), box.CenterZ() }};
   std::array<double, 3> point;
   for (int ix = indicesX.first; ix <= indicesX.second; ++ix) {
     point[0] = center[0] + ix * stepSize;

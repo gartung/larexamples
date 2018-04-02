@@ -42,7 +42,7 @@ struct AtomicNumberTestFixture: private BoostBasicFixture {
    
    // Constructor (to give a name to the test)
    AtomicNumberTestFixture()
-      : BoostBasicFixture({ "BoostedAtomicNumber_test" })
+      : BoostBasicFixture( "BoostedAtomicNumber_test" )
       , Zprov(ServiceParameters("AtomicNumberService"))
       , pset_expected(TesterParameters("expected"))
       {}
