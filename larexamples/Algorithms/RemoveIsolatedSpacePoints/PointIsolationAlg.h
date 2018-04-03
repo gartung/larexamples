@@ -316,8 +316,6 @@ std::vector<size_t> lar::example::PointIsolationAlg<Coord>::removeIsolatedPoints
   
   Coord_t const R = std::sqrt(config.radius2);
   
-  //using Point_t = decltype(*begin);
-
   //
   // determine space partition settings: cell size
   // 
