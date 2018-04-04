@@ -72,7 +72,7 @@ void PointIsolationTest(
   
   points.reserve(nPoints);
   for (unsigned int i = 0; i < nPoints; ++i)
-    points.push_back({ randomCoord(), randomCoord(), randomCoord() });
+    points.push_back({{ randomCoord(), randomCoord(), randomCoord() }});
   std::cout
     << "\n" << std::string(75, '=')
     << "\nTest with " << nPoints << " points"
