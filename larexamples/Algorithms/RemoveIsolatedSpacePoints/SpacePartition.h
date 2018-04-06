@@ -359,11 +359,11 @@ namespace lar {
         CoordRangeCells<Coord> const& rangeZ
         )
         {
-          return {
+          return {{
             size_t(std::ceil(rangeX.size() / rangeX.cellSize)),
             size_t(std::ceil(rangeY.size() / rangeY.cellSize)),
             size_t(std::ceil(rangeZ.size() / rangeZ.cellSize))
-            };
+            }};
         } // diceVolume()
       
     } // namespace details
@@ -491,7 +491,7 @@ lar::example::SpacePartition<PointIter>::pointIndex(Point_t const& point) const
   }
   
   // return its index
-  return data.index(CellID_t{ xc, yc, zc });
+  return data.index(CellID_t{{ xc, yc, zc }});
   
 } // lar::example::SpacePartition<>::pointIndex()
 

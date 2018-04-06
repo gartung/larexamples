@@ -71,7 +71,7 @@ void PointIsolationTest1() {
   PointIsolationAlg_t algo(config);
   
   // first test: a single point
-  points.push_back({ +1., +1., +1. });
+  points.push_back({{ +1., +1., +1. }});
   expected.clear();
  
   result = algo.removeIsolatedPoints(points);
@@ -81,7 +81,7 @@ void PointIsolationTest1() {
   
   
   // second test: two far points
-  points.push_back({ -1., -1., -1. });
+  points.push_back({{ -1., -1., -1. }});
   expected.clear();
  
   result = algo.removeIsolatedPoints(points);
@@ -91,7 +91,7 @@ void PointIsolationTest1() {
   
   
   // third test: two close points, another isolated
-  points.push_back({ +0.5, +1.0, +1.0 });
+  points.push_back({{ +0.5, +1.0, +1.0 }});
   expected.insert(expected.end(), { 0U, 2U });
   std::sort(expected.begin(), expected.end());
  
@@ -102,7 +102,7 @@ void PointIsolationTest1() {
   
   
   // fourth test: two close points, another two also close
-  points.push_back({ -0.5, -1.0, -1.0 });
+  points.push_back({{ -0.5, -1.0, -1.0 }});
   expected.insert(expected.end(), { 1U, 3U });
   std::sort(expected.begin(), expected.end());
  
@@ -150,17 +150,17 @@ auto CreateStarOfPoints(unsigned int nShells, T distance = T(1))
   
   // fill shell by shell
   while (nShells-- > 0) {
-    points.push_back({  distance,        0.,        0. });
-    points.push_back({ -distance,        0.,        0. });
-    points.push_back({        0.,  distance,        0. });
-    points.push_back({        0., -distance,        0. });
-    points.push_back({        0.,        0.,  distance });
-    points.push_back({        0.,        0., -distance });
+    points.push_back({{  distance,        0.,        0. }});
+    points.push_back({{ -distance,        0.,        0. }});
+    points.push_back({{        0.,  distance,        0. }});
+    points.push_back({{        0., -distance,        0. }});
+    points.push_back({{        0.,        0.,  distance }});
+    points.push_back({{        0.,        0., -distance }});
     distance /= 2;
   } // while
   
   // add the origin
-  points.push_back({ 0., 0., 0. });
+  points.push_back({{ 0., 0., 0. }});
   
   return points;
 } // CreateStarOfPoints()

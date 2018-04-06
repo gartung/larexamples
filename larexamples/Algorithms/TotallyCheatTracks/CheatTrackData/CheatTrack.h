@@ -21,6 +21,7 @@
 #include "TDatabasePDG.h"
 
 // C/C++ standard libraries
+#include <ostream>
 #include <string>
 #include <utility> // std::move(), std::forward()
 
@@ -148,9 +149,9 @@ namespace lar {
     /// Prints the content of the track into a text stream.
     /// @related lar::example::CheatTrack
     /// @ingroup TotallyCheatTracks
-    template <typename Stream>
-    Stream& operator<< (Stream&& out, lar::example::CheatTrack const& track)
-      { track.dump(std::forward<Stream>(out)); return out; }
+    inline std::ostream& operator<<
+      (std::ostream& out, lar::example::CheatTrack const& track)
+      { track.dump(out); return out; }
     
     /// @}
     // END TotallyCheatTracks group ------------------------------------------
