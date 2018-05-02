@@ -13,7 +13,7 @@ cet_test(ShowerCalibrationGaloreFromPID_test
     larexamples_Services_ShowerCalibrationGalore_Providers
     larcorealg_TestUtils
     MF_MessageLogger
-    MF_Utilities
+    
     fhiclcpp
     cetlib cetlib_except
     ${ROOT_BASIC_LIB_LIST}
@@ -26,7 +26,7 @@ cet_test(ShowerCalibrationGaloreScale_test
     larexamples_Services_ShowerCalibrationGalore_Providers
     larcorealg_TestUtils
     MF_MessageLogger
-    MF_Utilities
+    
     fhiclcpp
     cetlib cetlib_except
     ${ROOT_BASIC_LIB_LIST}
