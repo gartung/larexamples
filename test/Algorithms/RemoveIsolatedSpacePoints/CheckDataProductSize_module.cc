@@ -19,7 +19,7 @@
 #include "messagefacility/MessageLogger/MessageLogger.h"
 #include "fhiclcpp/types/Atom.h"
 #include "fhiclcpp/types/OptionalAtom.h"
-#include "cetlib/exception.h"
+#include "cetlib_except/exception.h"
 
 // C/C++ standard libraries
 #include <vector>

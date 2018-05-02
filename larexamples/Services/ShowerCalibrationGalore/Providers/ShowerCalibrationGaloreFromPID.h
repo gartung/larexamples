@@ -20,7 +20,7 @@
 /// framework and utility libraries
 #include "fhiclcpp/types/Atom.h"
 #include "fhiclcpp/types/Table.h"
-#include "cetlib/exception.h"
+#include "cetlib_except/exception.h"
 
 // ROOT libraries
 #include "Math/Interpolator.h"
