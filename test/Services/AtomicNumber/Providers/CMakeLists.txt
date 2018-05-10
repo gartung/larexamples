@@ -3,7 +3,7 @@ cet_test(AtomicNumber_test
    LIBRARIES
       larexamples_Services_AtomicNumber_Providers
       ${MF_MESSAGELOGGER}
-      ${MF_UTILITIES}
+      
       ${FHICLCPP}
       cetlib cetlib_except
 )
@@ -15,7 +15,7 @@ cet_test(BoostedAtomicNumber_test
    LIBRARIES
       larexamples_Services_AtomicNumber_Providers
       ${MF_MESSAGELOGGER}
-      ${MF_UTILITIES}
+      
       ${FHICLCPP}
       cetlib cetlib_except
    USE_BOOST_UNIT
@@ -26,7 +26,7 @@ cet_test(ValidateAtomicNumberConfiguration_test
    LIBRARIES
       larexamples_Services_AtomicNumber_Providers
       ${MF_MESSAGELOGGER}
-      ${MF_UTILITIES}
+      
       ${FHICLCPP}
       cetlib cetlib_except
    DATAFILES ./test_krypton_atomic_number.fcl

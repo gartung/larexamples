@@ -13,7 +13,7 @@
 #include "larcorealg/Geometry/GeometryCore.h"
 
 // infrastructure and utilities
-#include "cetlib/exception.h"
+#include "cetlib_except/exception.h"
 
 // C/C++ standard libraries
 #include <stdexcept> // std::runtime_error()

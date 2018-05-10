@@ -4,7 +4,7 @@ simple_plugin(ParticleMaker "module"
     art_Framework_Principal
     canvas
     ${MF_MESSAGELOGGER}
-    ${MF_UTILITIES}
+    
     ${FHICLCPP}
     ${ROOT_PHYSICS}
   NO_INSTALL
@@ -17,7 +17,7 @@ simple_plugin(DumpCheatTracks "module"
     art_Framework_Principal
     canvas
     ${MF_MESSAGELOGGER}
-    ${MF_UTILITIES}
+    
     ${FHICLCPP}
     ${ROOT_EG}
   USE_BOOST_UNIT
