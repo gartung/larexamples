@@ -15,7 +15,7 @@
 
 
 /// framework and utility libraries
-#include "cetlib/exception.h"
+#include "cetlib_except/exception.h"
 #include "cetlib/search_path.h"
 
 // ROOT libraries

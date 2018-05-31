@@ -22,7 +22,7 @@
 #include "canvas/Utilities/InputTag.h"
 #include "messagefacility/MessageLogger/MessageLogger.h"
 #include "fhiclcpp/types/Atom.h"
-#include "cetlib/exception.h"
+#include "cetlib_except/exception.h"
 
 // Boost
 #include <boost/test/test_tools.hpp> // BOOST_CHECK_EQUAL()

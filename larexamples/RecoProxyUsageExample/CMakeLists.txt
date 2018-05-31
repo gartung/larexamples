@@ -11,7 +11,7 @@ simple_plugin(RecoProxyUsageExample "module"
 			art_Utilities
                         canvas
 			${MF_MESSAGELOGGER}
-			${MF_UTILITIES}
+			
 			cetlib cetlib_except
 			${ROOT_BASIC_LIB_LIST}
 			${ROOT_GENVECTOR}

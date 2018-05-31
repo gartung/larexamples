@@ -17,7 +17,6 @@ art_make(
     art_Framework_Principal
     canvas
     ${MF_MESSAGELOGGER}
-    ${MF_UTILITY}
     ${FHICLCPP}
   )
 

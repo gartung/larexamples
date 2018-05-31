@@ -4,7 +4,6 @@ simple_plugin(ShowerCalibrationGaloreTest "module"
   art_Framework_Services_Registry
   art_Utilities canvas
   mf_MessageLogger
-  mf_Utilities
   fhiclcpp
   cetlib cetlib_except 
   ${ROOT_BASIC_LIB_LIST}

@@ -873,7 +873,6 @@ single_plugin(CheckDataProductSize "module"
     art_Framework_Principal
     art_Utilities
     ${MF_MESSAGELOGGER}
-    ${MF_UTILITIES}
     ${FHICLCPP}
   )
 ~~~~
