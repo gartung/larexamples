@@ -176,7 +176,7 @@ void lar::example::TotallyCheatTracker::produce(art::Event& event) {
     std::make_unique<art::Assns<lar::example::CheatTrack, simb::MCParticle>>();
   
   art::PtrMaker<simb::MCParticle> makePartPtr(event, particleHandle.id());
-  art::PtrMaker<lar::example::CheatTrack> makeTrackPtr(event, *this);
+  art::PtrMaker<lar::example::CheatTrack> makeTrackPtr(event);
   
   
   //

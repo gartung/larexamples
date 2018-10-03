@@ -2,9 +2,9 @@ simple_plugin(ParticleMaker "module"
     nusimdata_SimulationBase
     art_Framework_Core
     art_Framework_Principal
+    art_Persistency_Provenance
     canvas
     ${MF_MESSAGELOGGER}
-    
     ${FHICLCPP}
     ${ROOT_PHYSICS}
   NO_INSTALL
@@ -15,9 +15,9 @@ simple_plugin(DumpCheatTracks "module"
     nusimdata_SimulationBase
     art_Framework_Core
     art_Framework_Principal
+    art_Persistency_Provenance
     canvas
     ${MF_MESSAGELOGGER}
-    
     ${FHICLCPP}
     ${ROOT_EG}
   USE_BOOST_UNIT
