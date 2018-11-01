@@ -14,6 +14,7 @@ art_make(
     art_Framework_Services_Registry
     art_Framework_Principal
     art_Utilities canvas
+    art_Persistency_Provenance
     ${MF_MESSAGELOGGER}
     ${FHICLCPP}
   )
