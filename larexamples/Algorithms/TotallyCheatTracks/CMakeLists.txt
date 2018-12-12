@@ -15,6 +15,7 @@ art_make(
     nusimdata_SimulationBase
     art_Framework_Core
     art_Framework_Principal
+    art_Persistency_Provenance
     canvas
     ${MF_MESSAGELOGGER}
     ${FHICLCPP}
@@ -32,4 +33,3 @@ install_source(EXTRAS ${TESTFHICLFILES})
 unset(TESTFHICLFILES)
 
 install_source()
-
