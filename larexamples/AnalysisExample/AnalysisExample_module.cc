@@ -633,16 +633,16 @@ namespace example {
 	const double trackLength = ( positionEnd - positionStart ).Rho();
 
 	// Let's print some debug information in the job output to see
-	// that everything is fine. LOG_DEBUG() is a messagefacility
+	// that everything is fine. MF_LOG_DEBUG() is a messagefacility
 	// macro that prints stuff when the message level is set to
 	// standard_debug in the .fcl file.
-	LOG_DEBUG("AnalysisExample")
+	MF_LOG_DEBUG("AnalysisExample")
 	  << "Track length: " << trackLength << " cm";
 	    
 	// Fill a histogram of the track length.
 	fTrackLengthHist->Fill( trackLength ); 
 
-	LOG_DEBUG("AnalysisExample")
+	MF_LOG_DEBUG("AnalysisExample")
 	  << "track ID=" << fSimTrackID 
 	  << " (PDG ID: " << fSimPDG << ") "
 	  << trackLength << " cm long, momentum " 
@@ -783,7 +783,7 @@ namespace example {
 	if ( fGeometryService->SignalType( hitChannelNumber ) != geo::kCollection )
 	  continue;
 
-	LOG_DEBUG("AnalysisExample")
+	MF_LOG_DEBUG("AnalysisExample")
 	  << "Hit in collection plane"
 	  << std::endl;
 
@@ -819,7 +819,7 @@ namespace example {
 	    auto simChannelNumber = channel.Channel();
 	    if ( simChannelNumber != hitChannelNumber ) continue;
 
-	    LOG_DEBUG("AnalysisExample")
+	    MF_LOG_DEBUG("AnalysisExample")
 	      << "SimChannel number = " << simChannelNumber
 	      << std::endl;
 
@@ -859,7 +859,7 @@ namespace example {
 
 	    // Did we find anything? If not, skip. 
 	    if ( startPointer == timeSlices.end() || startPointer == endPointer ) continue;
-	    LOG_DEBUG("AnalysisExample")
+	    MF_LOG_DEBUG("AnalysisExample")
 	      << "Time slice start = " << (*startPointer).first
 	      << std::endl;
 
@@ -876,12 +876,12 @@ namespace example {
 		// that was compiled somewhere else (e.g., you're accessing
 		// LArSoft libraries via CVMFS). 
 		
-		// The LOG_DEBUG statements below are left over from when I
+		// The MF_LOG_DEBUG statements below are left over from when I
 		// was trying to solve a problem about hit timing. I could
 		// have deleted them, but decided to leave them to demonsrate
 		// what a typical debugging process looks like.
 
-		LOG_DEBUG("AnalysisExample")
+		MF_LOG_DEBUG("AnalysisExample")
 		  << "Hit index = " << hit.LocalIndex()
 		  << " channel number = " << hitChannelNumber
 		  << " start TDC tick = " << hit.StartTick()
