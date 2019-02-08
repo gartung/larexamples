@@ -92,7 +92,8 @@ namespace lar {
 //--- 
 
 lar::example::tests::SpacePointMaker::SpacePointMaker(Parameters const& config)
-  : spacing(config().spacing())
+  : EDProducer{config}
+  , spacing(config().spacing())
 {
   produces<std::vector<recob::SpacePoint>>();
 } // lar::example::tests::SpacePointMaker::SpacePointMaker()
@@ -138,5 +139,3 @@ void lar::example::tests::SpacePointMaker::produce(art::Event& event) {
 DEFINE_ART_MODULE(lar::example::tests::SpacePointMaker)
 
 //------------------------------------------------------------------------------
-      
-

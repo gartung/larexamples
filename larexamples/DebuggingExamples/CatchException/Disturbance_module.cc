@@ -67,7 +67,8 @@ namespace lar {
 
 //------------------------------------------------------------------------------
 lar::example::Disturbance::Disturbance(Parameters const& config)
-  : fNArtExceptions(config().NArtExceptions())
+  : EDProducer{config}
+  , fNArtExceptions(config().NArtExceptions())
   {}
 
 

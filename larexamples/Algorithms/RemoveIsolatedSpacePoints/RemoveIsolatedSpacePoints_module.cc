@@ -118,7 +118,8 @@ namespace lar {
 //--- 
 lar::example::RemoveIsolatedSpacePoints::RemoveIsolatedSpacePoints
   (Parameters const& config)
-  : spacePointsLabel(config().spacePoints())
+  : EDProducer{config}
+  , spacePointsLabel(config().spacePoints())
   , isolAlg(config().isolation())
 {
   consumes<std::vector<recob::SpacePoint>>(spacePointsLabel);

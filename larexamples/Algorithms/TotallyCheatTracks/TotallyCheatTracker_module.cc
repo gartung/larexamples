@@ -144,7 +144,8 @@ namespace lar {
 //--- 
 lar::example::TotallyCheatTracker::TotallyCheatTracker
   (Parameters const& config)
-  : particleTag(config().particles())
+  : EDProducer{config}
+  , particleTag(config().particles())
   , minLength(config().minLength())
   , minEnergy(config().minEnergy())
   , trackMaker(config().algoConfig())

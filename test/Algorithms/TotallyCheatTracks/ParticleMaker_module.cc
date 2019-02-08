@@ -136,7 +136,9 @@ namespace lar {
 //--- module implementation
 //--- 
 
-lar::example::tests::ParticleMaker::ParticleMaker(Parameters const& config) {
+lar::example::tests::ParticleMaker::ParticleMaker(Parameters const& config)
+  : EDProducer{config}
+{
   
   auto const& particleSpecs = config().particles();
   fParticleSpecs.assign(particleSpecs.begin(), particleSpecs.end());
