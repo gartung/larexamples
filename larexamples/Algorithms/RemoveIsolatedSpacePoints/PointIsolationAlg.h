@@ -239,7 +239,7 @@ namespace lar {
       
         private:
       /// type managing cell indices
-      using Indexer_t = util::GridContainer3DIndices; // same in GridContainer
+      using Indexer_t = ::util::GridContainer3DIndices; // same in GridContainer
       
       /// type of neighbourhood cell offsets
       using NeighAddresses_t = std::vector<Indexer_t::CellIndexOffset_t>;

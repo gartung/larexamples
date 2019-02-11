@@ -221,7 +221,7 @@ namespace lar {
     template <typename PointIter>
     class SpacePartition {
       using Point_t = decltype(*(PointIter())); ///< type of the point
-      using Grid_t = util::GridContainer3D<PointIter>; ///< data container
+      using Grid_t = ::util::GridContainer3D<PointIter>; ///< data container
       
         public:
       /// type of point coordinate
