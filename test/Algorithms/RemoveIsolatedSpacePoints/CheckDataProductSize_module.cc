@@ -16,7 +16,6 @@
 #include "art/Framework/Principal/Event.h"
 #include "art/Framework/Principal/Handle.h" // art::ValidHandle
 #include "canvas/Utilities/InputTag.h"
-#include "messagefacility/MessageLogger/MessageLogger.h"
 #include "fhiclcpp/types/Atom.h"
 #include "fhiclcpp/types/OptionalAtom.h"
 #include "cetlib_except/exception.h"
