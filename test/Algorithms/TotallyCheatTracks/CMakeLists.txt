@@ -6,6 +6,7 @@ simple_plugin(ParticleMaker "module"
     canvas
     ${MF_MESSAGELOGGER}
     ${FHICLCPP}
+    ${ROOT_CORE}
     ${ROOT_PHYSICS}
   NO_INSTALL
   )
