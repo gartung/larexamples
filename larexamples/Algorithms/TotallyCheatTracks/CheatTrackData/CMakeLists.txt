@@ -2,7 +2,7 @@
 art_make(
   LIB_LIBRARIES
     lardataobj_RecoBase
-    ${ROOT_EG} # TDatabasePDG
+    ${ROOT_EG_LIBRARY} # TDatabasePDG
   DICT_LIBRARIES
     nusimdata_SimulationBase
   )

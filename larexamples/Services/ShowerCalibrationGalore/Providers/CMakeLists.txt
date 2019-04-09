@@ -3,10 +3,10 @@ art_make(
     lardataobj_RecoBase
     ${FHICLCPP}
     cetlib cetlib_except
-    ${ROOT_HIST}
-    ${ROOT_MATHMORE}
-    ${ROOT_RIO}
-    ${ROOT_CORE}
+    ${ROOT_Hist_LIBRARY}
+    ${ROOT_MathMore_LIBRARY}
+    ${ROOT_RIO_LIBRARY}
+    ${ROOT_Core_LIBRARY}
   )
 
 install_fhicl()

@@ -7,8 +7,8 @@ art_make(
     cetlib_except
     ${MESSAGE_FACILITY}
     ${FHICLCPP}
-    ${ROOT_PHYSICS}
-    ${ROOT_CORE}
+    ${ROOT_Physics_LIBRARY}
+    ${ROOT_Core_LIBRARY}
   MODULE_LIBRARIES
     larexamples_Algorithms_TotallyCheatTracks
     lardataobj_RecoBase

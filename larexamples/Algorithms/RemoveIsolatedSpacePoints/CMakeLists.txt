@@ -5,7 +5,7 @@ art_make(
     cetlib cetlib_except
     ${MESSAGE_FACILITY}
     ${FHICLCPP}
-    ${ROOT_CORE}
+    ${ROOT_Core_LIBRARY}
   MODULE_LIBRARIES
     larexamples_Algorithms_RemoveIsolatedSpacePoints
     lardataobj_RecoBase
