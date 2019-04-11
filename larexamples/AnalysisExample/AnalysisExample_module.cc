@@ -89,7 +89,6 @@
 
 // C++ includes
 #include <map>
-#include <vector>
 #include <string>
 #include <cmath>
 
@@ -419,7 +418,7 @@ namespace example {
 
     // Access ART's TFileService, which will handle creating and writing
     // histograms and n-tuples for us. 
-    art::ServiceHandle<art::TFileService> tfs;
+    art::ServiceHandle<art::TFileService const> tfs;
   
     // For TFileService, the arguments to 'make<whatever>' are the
     // same as those passed to the 'whatever' constructor, provided
@@ -481,7 +480,7 @@ namespace example {
     // source of this conversion factor is
     // ${LARCOREOBJ_INC}/larcoreobj/SimpleTypesAndConstants/PhysicalConstants.h.
     // But sim::LArG4Parameters might in principle ask a database for it.
-    art::ServiceHandle<sim::LArG4Parameters> larParameters;
+    art::ServiceHandle<sim::LArG4Parameters const> larParameters;
     fElectronsToGeV = 1./larParameters->GeVToElectrons();
   }
 

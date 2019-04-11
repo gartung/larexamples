@@ -31,7 +31,6 @@
 
 // C/C++ standard libraries
 #include <array>
-#include <vector>
 #include <random>
 #include <chrono>
 #include <ratio> // std::milli

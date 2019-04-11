@@ -27,7 +27,6 @@
 #include "fhiclcpp/types/Table.h"
 
 // C/C++ standard libraries
-#include <vector>
 #include <memory> // std::make_unique()
 
 

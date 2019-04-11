@@ -26,7 +26,6 @@
 #include "TLorentzVector.h"
 
 // C/C++ standard libraries
-#include <vector>
 #include <array>
 #include <memory> // std::make_unique()
 

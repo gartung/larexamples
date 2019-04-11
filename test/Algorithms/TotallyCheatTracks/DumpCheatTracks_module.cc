@@ -28,7 +28,6 @@
 #include <boost/test/test_tools.hpp> // BOOST_CHECK_EQUAL()
 
 // C/C++ standard libraries
-#include <vector>
 
 
 namespace lar {

@@ -15,7 +15,6 @@
 #include "fhiclcpp/types/Atom.h"
 
 // C/C++ standard libraries
-#include <vector>
 #include <array>
 #include <stdexcept> // std::out_of_range, std::length_error
 #include <new> // std::bad_alloc

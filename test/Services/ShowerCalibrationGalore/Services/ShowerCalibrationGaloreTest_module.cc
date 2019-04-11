@@ -21,7 +21,6 @@
 #include "fhiclcpp/types/Sequence.h"
 
 // C++ standard libraries
-#include <vector>
 
 
 namespace lar {

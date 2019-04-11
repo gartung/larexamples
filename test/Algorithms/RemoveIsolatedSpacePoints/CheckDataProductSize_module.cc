@@ -21,7 +21,6 @@
 #include "cetlib_except/exception.h"
 
 // C/C++ standard libraries
-#include <vector>
 
 
 namespace lar {

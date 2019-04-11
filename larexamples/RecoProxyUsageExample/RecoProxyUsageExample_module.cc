@@ -17,7 +17,6 @@
 #include "canvas/Persistency/Common/FindManyP.h" //needed only if you do not use the proxies
 #include "canvas/Persistency/Common/FindMany.h" //needed only if you do not use the proxies
 
-#include <vector>
 
 //
   /**

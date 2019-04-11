@@ -20,7 +20,6 @@
 #include "fhiclcpp/types/Atom.h"
 
 // C/C++ standard libraries
-#include <vector>
 #include <memory> // std::make_unique()
 
 

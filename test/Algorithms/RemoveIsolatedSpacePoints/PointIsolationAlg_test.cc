@@ -31,7 +31,6 @@
 
 // C/C++ standard libraries
 #include <array>
-#include <vector>
 #include <algorithm> // std::sort()
 #include <numeric> // std::iota()
 
