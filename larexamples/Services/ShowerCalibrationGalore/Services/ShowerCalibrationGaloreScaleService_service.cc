@@ -5,8 +5,8 @@
  * @date   April 28, 2016
  * @see    ShowerCalibrationGaloreScale.h
  * @ingroup ShowerCalibrationGalore
- * 
- * 
+ *
+ *
  */
 
 // our header

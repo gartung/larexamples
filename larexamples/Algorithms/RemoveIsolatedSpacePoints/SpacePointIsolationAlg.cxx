@@ -5,7 +5,7 @@
  * @date   May 26, 2016
  * @see    SpacePointIsolationAlg.h
  * @ingroup RemoveIsolatedSpacePoints
- * 
+ *
  */
 
 // LArSoft libraries
@@ -22,16 +22,16 @@
 
 //------------------------------------------------------------------------------
 //--- lar::example::SpacePointIsolationAlg
-//--- 
+//---
 
 
 void lar::example::SpacePointIsolationAlg::initialize() {
-  
+
   PointIsolationAlg_t::Configuration_t config;
-  
+
   config.radius2 = radius2; // square of isolation radius [cm^2]
   fillAlgConfigFromGeometry(config);
-  
+
   // proceed to validate the configuration we are going to use
   try {
     PointIsolationAlg_t::validateConfiguration(config);
@@ -40,10 +40,10 @@ void lar::example::SpacePointIsolationAlg::initialize() {
     throw cet::exception("SpacePointIsolationAlg")
       << "Error in PointIsolationAlg configuration: " << e.what() << "\n";
   }
-  
+
   if (isolationAlg) isolationAlg->reconfigure(config);
   else isolationAlg = std::make_unique<PointIsolationAlg_t>(config);
-  
+
 } // lar::example::SpacePointIsolationAlg::initialize()
 
 
@@ -52,16 +52,16 @@ void lar::example::SpacePointIsolationAlg::fillAlgConfigFromGeometry
 {
   // merge the volumes from all TPCs
   auto iTPC = geom->begin_TPC(), tpcend = geom->end_TPC();
-  
+
   // a TPC is (also) a bounded box:
   geo::BoxBoundedGeo box = (geo::BoxBoundedGeo) *iTPC;
-  
+
   while (++iTPC != tpcend) box.ExtendToInclude(*iTPC);
-  
+
   // convert the box into the configuration structure
   config.rangeX = { box.MinX(), box.MaxX() };
   config.rangeY = { box.MinY(), box.MaxY() };
   config.rangeZ = { box.MinZ(), box.MaxZ() };
-  
+
 } // lar::example::SpacePointIsolationAlg::fillAlgConfigFromGeometry()
 

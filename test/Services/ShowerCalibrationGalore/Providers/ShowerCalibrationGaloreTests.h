@@ -3,11 +3,11 @@
  * @brief  Test functions for ShowerCalibrationGalore service providers
  * @author Gianluca Petrillo (petrillo@fnal.gov)
  * @date   May 4th, 2016
- * 
+ *
  * This is a template only header.
  * It provides:
  * - ShowerCalibrationTableTest(): prints correction table for different showers
- * 
+ *
  * It requires linking with:
  *  - lardata_RecoBase
  */
@@ -41,7 +41,7 @@ inline std::string centerString
 } // centerString()
 
 
-//------------------------------------------------------------------------------   
+//------------------------------------------------------------------------------
 
 
 inline recob::Shower MakeShower(float E, int bestPlane = 2, int ID = 1) {
@@ -60,7 +60,7 @@ inline recob::Shower MakeShower(float E, int bestPlane = 2, int ID = 1) {
      );
 } // MakeShower()
 
-//------------------------------------------------------------------------------   
+//------------------------------------------------------------------------------
 /**
  * @brief Synthetic test: prints corrections for showers in a energy range
  * @tparam Stream type of output stream
@@ -71,7 +71,7 @@ inline recob::Shower MakeShower(float E, int bestPlane = 2, int ID = 1) {
  * @param Estep energy step size for the printout [GeV] (default: have 10 steps)
  * @param pids use these PIDs (default: { 11, 13, 111, 2212, 22 })
  * @return number of detected errors (currently always 0)
- * 
+ *
  * The corrections are printed in a table like:
  * ~~~~
  * E [GeV]      particle1        particle2      ...
@@ -87,14 +87,14 @@ unsigned int ShowerCalibrationTableTest(
    std::vector<lar::example::ShowerCalibrationGalore::PDGID_t> const& pids
      = { 11, 13, 111, 2212, 22 }
 ) {
-   
+
    // a shower with 2 GeV of energy
    recob::Shower shower = MakeShower(2.);
-   
+
    using PIDInfo_t
      = std::pair<lar::example::ShowerCalibrationGalore::PDGID_t, std::string>;
-   std::vector<PIDInfo_t> const KnownPIDs = { 
-      {   11, "e-" }, 
+   std::vector<PIDInfo_t> const KnownPIDs = {
+      {   11, "e-" },
       {   13, "mu-" },
       {  -11, "e+" },
       {  -13, "mu+" },
@@ -106,20 +106,20 @@ unsigned int ShowerCalibrationTableTest(
       {    0, "default" }
    };
    PIDInfo_t const UnknownPID = { 0, "<unnamed>" };
-   
+
    // compute a default Estep to have 10 steps
    if (Estep == 0.) Estep = std::abs(Emax - Emin) / 10;
    if (Emax < Emin) Estep = -std::abs(Estep);
    const unsigned int nSteps
      = (Emax == Emin)? 1U: (unsigned int)((Emax - Emin)/Estep);
-   
+
    constexpr unsigned int widthE      = 7;
    constexpr unsigned int widthF      = 5;
    constexpr unsigned int widthFtoErr = 5;
    constexpr unsigned int widthFerr   = 5;
    constexpr unsigned int widthCorr   = widthF + widthFtoErr + widthFerr;
    const std::string sep = "  ";
-   
+
    // table header
    out << centerString("E [GeV]", widthE);
    for (auto pid: pids) {
@@ -136,31 +136,31 @@ unsigned int ShowerCalibrationTableTest(
          out << centerString(std::get<1>(*iKnown), widthCorr);
       }
    } // for
-   
+
    // print a line of corrections for each energy
    for (unsigned int i = 0; i <= nSteps; ++i) {
-      
+
       float const E = Emin + i * Estep;
-      
+
       // set the same energy from every of the three planes
       shower.set_total_energy({ E, E, E });
-      
+
       out << "\n"
         << std::fixed << std::setw(widthE) << std::setprecision(3) << E;
-      
+
       for (auto pid: pids) {
          auto corr = calibration->correction(shower, pid);
-         
+
          out << sep
            << std::fixed << std::setw(widthF) << corr.factor
            << std::setw(widthFtoErr) << " +/- "
            << std::fixed << std::setw(widthFerr) << corr.error;
-         
+
       } // for (pid)
-      
+
    } // for (i)
    out << "\n";
-   
+
    return 0; // no real error detection here, sorry
 } // ShowerCalibrationTest()
 

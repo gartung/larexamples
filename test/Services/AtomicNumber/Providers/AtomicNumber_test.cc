@@ -5,12 +5,12 @@
  * @date   April 13, 2016
  * @see    AtomicNumber.h
  * @ingroup AtomicNumber
- * 
+ *
  * The exit code of the test is the number of triggered errors.
  * This text is expected to pass with 0 errors.
- * 
+ *
  * This test does not exercise the configuration via file.
- * 
+ *
  */
 
 
@@ -47,27 +47,27 @@ struct Results_t {
 unsigned int TestConfiguration
    (std::string testName, std::string configuration, Results_t const& expected)
 {
-   
+
    //
    // configuration of the test
-   // 
+   //
 
    // provide a test name and a push a configuration for "AtomicNumberService"
    testing::BasicEnvironmentConfiguration config(testName);
    config.AddDefaultServiceConfiguration("AtomicNumberService", configuration);
-   
+
    // set up a basic testing environment with that configuration
    auto TesterEnv = testing::CreateTesterEnvironment(config);
-   
+
    //
    // computation of expected values
    //
    unsigned int nErrors = 0; // error count
-   
+
    // create a new service provider with configuration from the environment
    lar::example::AtomicNumber Zprov
      (TesterEnv.ServiceParameters("AtomicNumberService"));
-   
+
    //
    // here goes the test...
    //
@@ -78,7 +78,7 @@ unsigned int TestConfiguration
          << " (expected: " << expected.Z << ")";
       ++nErrors;
    }
-   
+
    //
    // done!
    //
@@ -90,18 +90,18 @@ unsigned int TestConfiguration
 unsigned int TestDefaultConfiguration() {
    Results_t expected;
    expected.Z = 18;
-   
+
    return TestConfiguration("TestDefaultConfiguration", "", expected);
-   
+
 } // TestDefaultConfiguration()
 
 
 //------------------------------------------------------------------------------
 unsigned int TestXenonConfiguration() {
-   
+
    Results_t expected;
    expected.Z = 54;
-   
+
    return TestConfiguration(
       "TestXenonConfiguration", // test name
       R"(
@@ -114,11 +114,11 @@ unsigned int TestXenonConfiguration() {
 
 //------------------------------------------------------------------------------
 int main(int argc, char** argv) {
-   
+
    unsigned int nErrors = 0;
    nErrors += TestDefaultConfiguration();
    nErrors += TestXenonConfiguration();
-   
+
    return nErrors;
 } // main()
 

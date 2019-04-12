@@ -36,7 +36,7 @@
 
 class RecoProxyUsageExample : public art::EDAnalyzer {
 public:
-  
+
   struct Config {
     fhicl::Atom<art::InputTag> trackInputTag{
       fhicl::Name("trackInputTag"),
@@ -51,9 +51,9 @@ public:
       fhicl::Comment("data product tag for track momentum reconstruction")
       };
   }; // Config
-  
+
   using Parameters = art::EDAnalyzer::Table<Config>;
-  
+
   explicit RecoProxyUsageExample(Parameters const & p);
   // The compiler-generated destructor is fine for non-base
   // classes without bare pointers or other resource use.
@@ -87,7 +87,7 @@ void RecoProxyUsageExample::analyze(art::Event const & e)
   //
   // Example using proxies.
   //
-  
+
   //
   // Get vertex collection proxy and associated tracks, with meta data
   auto const& vertices = proxy::getCollection<std::vector<recob::Vertex> >(e,vtxTag,proxy::withAssociatedMeta<recob::Track, recob::VertexAssnMeta>());
@@ -125,7 +125,7 @@ void RecoProxyUsageExample::analyze(art::Event const & e)
   } // for vertices
 
   //
-  // Same example without using proxies. 
+  // Same example without using proxies.
   //
 
   //

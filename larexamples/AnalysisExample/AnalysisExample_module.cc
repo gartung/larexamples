@@ -1,10 +1,10 @@
 /**
  * @file   AnalysisExample_module.cc
  * @brief  A basic "skeleton" to read in art::Event records from a file,
- *         access their information, and do something with them. 
+ *         access their information, and do something with them.
  * @ingroup AnalysisExample
  * @author William Seligman (seligman@nevis.columbia.edu)
- * 
+ *
  * See <https://cdcvs.fnal.gov/redmine/projects/larsoft/wiki/Using_art_in_LArSoft>
  * for a description of the ART classes used here.
  *
@@ -34,7 +34,7 @@
  *
  * In general, comments that start with "///" or in C++ comment blocks
  * (like this one) will appear in the web pages created by Doxygen.
- * 
+ *
  * A comment starting with "///" will be associated wth the next code
  * line that follows it, while one starting with "///<" will be
  * associated with the one above it.
@@ -93,7 +93,7 @@
 
 
 namespace {
-  
+
   // This is a local namespace (as opposed to the one below, which has
   // the nested name lar::example::).
   //
@@ -102,7 +102,7 @@ namespace {
   // unit", which is everything that gets included in the .cc file from
   // now on). In this way, any functions you define in this namespace
   // won't affect the environment of other modules.
-  
+
   // We will define functions at the end, but we declare them here so
   // that the module can freely use them.
 
@@ -129,8 +129,8 @@ namespace {
 
 namespace lar {
 namespace example {
-  
-  
+
+
   // BEGIN AnalysisExample group -----------------------------------------------
   /// @ingroup AnalysisExample
   /// @{
@@ -140,7 +140,7 @@ namespace example {
   /**
    * @brief Example analyzer module.
    * @see @ref AnalysisExample "analysis module example overview"
-   * 
+   *
    * This class extracts information from the generated and reconstructed
    * particles.
    *
@@ -148,18 +148,18 @@ namespace example {
    * - PDG ID (flavor) of all particles
    * - momentum of the primary particles selected to have a specific PDG ID
    * - length of the selected particle trajectory
-   * 
+   *
    * It also produces two ROOT trees.
    *
    * The first ROOT tree contains information on the simulated
    * particles, including "dEdx", a binned histogram of collected
    * charge as function of track range.
-   * 
+   *
    * The second ROOT tree contains information on the reconstructed hits.
-   * 
+   *
    * Configuration parameters
    * =========================
-   * 
+   *
    * - *SimulationLabel* (string, default: "largeant"): tag of the input data
    *   product with the detector simulation information (typically an instance
    *   of the LArG4 module)
@@ -175,12 +175,12 @@ namespace example {
    *
    * - *BinSize* (real, mandatory): @f$ dx @f$ [cm] used for the @f$ dE/dx @f$
    *   calculation
-   * 
+   *
    */
   class AnalysisExample : public art::EDAnalyzer
   {
   public:
-    
+
     // This structure describes the configuration parameters of the
     // module.  Any missing or unknown parameters will generate a
     // configuration error.
@@ -194,56 +194,56 @@ namespace example {
     // the data member name in the Config struct (that is, the name
     // you access that parameter in your C++ code) match. This is not
     // required, but it makes it easier to remember them.
-    // 
+    //
     // More details at:
     // https://cdcvs.fnal.gov/redmine/projects/fhicl-cpp/wiki/Configuration_validation_and_fhiclcpp_types
     //
     struct Config {
-      
+
       // Save some typing:
       using Name = fhicl::Name;
       using Comment = fhicl::Comment;
-      
+
       // One Atom for each parameter
       fhicl::Atom<art::InputTag> SimulationLabel {
         Name("SimulationLabel"),
         Comment("tag of the input data product with the detector simulation information")
         };
-      
+
       fhicl::Atom<art::InputTag> HitLabel {
         Name("HitLabel"),
         Comment("tag of the input data product with reconstructed hits")
         };
-      
+
       fhicl::Atom<art::InputTag> ClusterLabel {
         Name("ClusterLabel"),
         Comment("tag of the input data product with reconstructed clusters")
         };
-      
+
       fhicl::Atom<int> PDGcode {
         Name("PDGcode"),
         Comment("particle type (PDG ID) of the primary particle to be selected")
         };
-      
+
       fhicl::Atom<double> BinSize {
         Name("BinSize"),
         Comment("dx [cm] used for the dE/dx calculation")
         };
-      
+
     }; // Config
-    
+
     // If we define "Parameters" in this way, art will know to use the
     // "Comment" items above for the module description. See what
     // this command does:
-    // 
+    //
     // lar --print-description AnalysisExample
-    // 
+    //
     // The details of the art side of this trick are at:
     //
     // https://cdcvs.fnal.gov/redmine/projects/art/wiki/Configuration_validation_and_description
     //
     using Parameters = art::EDAnalyzer::Table<Config>;
-    
+
     // -------------------------------------------------------------------
     // -------------------------------------------------------------------
     // Standard constructor for an ART module with configuration validation;
@@ -278,10 +278,10 @@ namespace example {
     //   the compiler will immediately complain with us that this
     //   method is overriding nothing, hinting to some mistake (the
     //   spurious "const" in this case).
-    
+
     // This method is called once, at the start of the job. In this
     // example, it will define the histograms and n-tuples we'll
-    // write. 
+    // write.
     virtual void beginJob() override;
 
     // This method is called once, at the start of each run. It's a
@@ -289,7 +289,7 @@ namespace example {
     // run-dependent information.
     virtual void beginRun(const art::Run& run) override;
 
-    // The analysis routine, called once per event. 
+    // The analysis routine, called once per event.
     virtual void analyze (const art::Event& event) override;
 
   private:
@@ -302,9 +302,9 @@ namespace example {
     art::InputTag fHitProducerLabel;        ///< The name of the producer that created hits
     art::InputTag fClusterProducerLabel;    ///< The name of the producer that created clusters
     int fSelectedPDG;                       ///< PDG code of particle we'll focus on
-    double fBinSize;                        ///< For dE/dx work: the value of dx. 
+    double fBinSize;                        ///< For dE/dx work: the value of dx.
 
-    // Pointers to the histograms we'll create. 
+    // Pointers to the histograms we'll create.
     TH1D* fPDGCodeHist;     ///< PDG code of all particles
     TH1D* fMomentumHist;    ///< momentum [GeV] of all selected particles
     TH1D* fTrackLengthHist; ///< true length [cm] of all selected particles
@@ -313,7 +313,7 @@ namespace example {
     TTree* fSimulationNtuple;     ///< tuple with simulated data
     TTree* fReconstructionNtuple; ///< tuple with reconstructed data
 
-    // The comment lines with the @ symbols define groups in doxygen. 
+    // The comment lines with the @ symbols define groups in doxygen.
     /// @name The variables that will go into both n-tuples.
     /// @{
     int fEvent;        ///< number of the event being processed
@@ -325,33 +325,33 @@ namespace example {
     /// @{
     int fSimPDG;       ///< PDG ID of the particle being processed
     int fSimTrackID;   ///< GEANT ID of the particle being processed
-    
+
     // Arrays for 4-vectors: (x,y,z,t) and (Px,Py,Pz,E).
     // Note: old-style C++ arrays are considered obsolete. However,
-    // to create simple n-tuples, we still need to use them. 
+    // to create simple n-tuples, we still need to use them.
     double fStartXYZT[4]; ///< (x,y,z,t) of the true start of the particle
     double fEndXYZT[4];   ///< (x,y,z,t) of the true end of the particle
     double fStartPE[4];   ///< (Px,Py,Pz,E) at the true start of the particle
     double fEndPE[4];     ///< (Px,Py,Pz,E) at the true end of the particle
-    
+
     /// Number of dE/dx bins in a given track.
     int fSimNdEdxBins;
-    
+
     /// The vector that will be used to accumulate dE/dx values as a function of range.
     std::vector<double> fSimdEdxBins;
     /// @}
-    
+
     /// @name Variables used in the reconstruction n-tuple
     /// @{
     int fRecoPDG;       ///< PDG ID of the particle being processed
     int fRecoTrackID;   ///< GEANT ID of the particle being processed
-    
+
     /// Number of dE/dx bins in a given track.
     int fRecoNdEdxBins;
-    
+
     /// The vector that will be used to accumulate dE/dx values as a function of range.
     std::vector<double> fRecodEdxBins;
-    
+
     /// @}
 
     // Other variables that will be shared between different methods.
@@ -359,25 +359,25 @@ namespace example {
     detinfo::DetectorClocks const* fTimeService; ///< pointer to detector clock time service provider
     double                   fElectronsToGeV;    ///< conversion factor
     int                      fTriggerOffset;     ///< (units of ticks) time of expected neutrino event
-    
+
   }; // class AnalysisExample
 
   /// @}
   // END AnalysisExample group -------------------------------------------------
-  
-  
+
+
   //-----------------------------------------------------------------------
   //-----------------------------------------------------------------------
   // class implementation
 
   //-----------------------------------------------------------------------
   // Constructor
-  // 
+  //
   // Note that config is a Table<Config>, and to access the Config
   // value we need to use an operator: "config()". In the same way,
   // each element in Config is an Atom<Type>, so to access the type we
   // again use the call operator, e.g. "SimulationLabel()".
-  // 
+  //
   AnalysisExample::AnalysisExample(Parameters const& config)
     : EDAnalyzer(config)
     , fSimulationProducerLabel(config().SimulationLabel())
@@ -393,7 +393,7 @@ namespace example {
     // Access to detector properties.
     const detinfo::DetectorProperties* detprop = lar::providerFrom<detinfo::DetectorPropertiesService>();
     fTriggerOffset = detprop->TriggerOffset();
-    
+
     // Since art 2.8, you can and should tell beforehand, here in the constructor,
     // all the data the module is going to read ("consumes") or might read
     // ("may_consume"). Diligence here will in the future help the framework
@@ -404,10 +404,10 @@ namespace example {
     consumes<std::vector<recob::Hit>>(fHitProducerLabel);
     consumes<std::vector<recob::Cluster>>(fClusterProducerLabel);
     consumes<art::Assns<recob::Cluster, recob::Hit>>(fHitProducerLabel);
-    
+
   }
 
-  
+
   //-----------------------------------------------------------------------
   void AnalysisExample::beginJob()
   {
@@ -416,9 +416,9 @@ namespace example {
     const double detectorLength = DetectorDiagonal(*fGeometryService);
 
     // Access ART's TFileService, which will handle creating and writing
-    // histograms and n-tuples for us. 
+    // histograms and n-tuples for us.
     art::ServiceHandle<art::TFileService const> tfs;
-  
+
     // For TFileService, the arguments to 'make<whatever>' are the
     // same as those passed to the 'whatever' constructor, provided
     // 'whatever' is a ROOT class that TFileService recognizes.
@@ -464,7 +464,7 @@ namespace example {
     fReconstructionNtuple->Branch("NdEdx",   &fRecoNdEdxBins,  "NdEdx/I");
     fReconstructionNtuple->Branch("dEdx",    &fRecodEdxBins);
   }
-   
+
   //-----------------------------------------------------------------------
   // art expects this function to have a art::Run argument; C++
   // expects us to use all the arguments we are given, or it will
@@ -484,17 +484,17 @@ namespace example {
   }
 
   //-----------------------------------------------------------------------
-  void AnalysisExample::analyze(const art::Event& event) 
+  void AnalysisExample::analyze(const art::Event& event)
   {
     // Start by fetching some basic event information for our n-tuple.
-    fEvent  = event.id().event(); 
+    fEvent  = event.id().event();
     fRun    = event.run();
     fSubRun = event.subRun();
 
     // This is the standard method of reading multiple objects
     // associated with the same event; see
     // <https://cdcvs.fnal.gov/redmine/projects/larsoft/wiki/Using_art_in_LArSoft>
-    // for more information. 
+    // for more information.
     //
     // Define a "handle" to point to a vector of the objects.
     art::Handle< std::vector<simb::MCParticle> > particleHandle;
@@ -508,7 +508,7 @@ namespace example {
     // exception message and, depending on art settings, it may skip
     // all processing for the rest of this event (including any
     // subsequent analysis steps) or stop the execution.
-    if (!event.getByLabel(fSimulationProducerLabel, particleHandle)) 
+    if (!event.getByLabel(fSimulationProducerLabel, particleHandle))
       {
 	// If we have no MCParticles at all in an event, then we're in
 	// big trouble. Throw an exception to force this module to
@@ -519,7 +519,7 @@ namespace example {
 	//
 	// __LINE__ and __FILE__ are values computed by the compiler.
 
-	throw cet::exception("AnalysisExample") 
+	throw cet::exception("AnalysisExample")
 	  << " No simb::MCParticle objects in this event - "
 	  << " Line " << __LINE__ << " in file " << __FILE__ << std::endl;
       }
@@ -591,7 +591,7 @@ namespace example {
 
 	// Add the address of the MCParticle to the map, with the
 	// track ID as the key.
-	particleMap[fSimTrackID] = &particle; 
+	particleMap[fSimTrackID] = &particle;
 
 	// Histogram the PDG code of every particle in the event.
 	fSimPDG = particle.PdgCode();
@@ -636,17 +636,17 @@ namespace example {
 	// standard_debug in the .fcl file.
 	MF_LOG_DEBUG("AnalysisExample")
 	  << "Track length: " << trackLength << " cm";
-	    
+
 	// Fill a histogram of the track length.
-	fTrackLengthHist->Fill( trackLength ); 
+	fTrackLengthHist->Fill( trackLength );
 
 	MF_LOG_DEBUG("AnalysisExample")
-	  << "track ID=" << fSimTrackID 
+	  << "track ID=" << fSimTrackID
 	  << " (PDG ID: " << fSimPDG << ") "
-	  << trackLength << " cm long, momentum " 
-	  << momentumStart.P() << " GeV/c, has " 
+	  << trackLength << " cm long, momentum "
+	  << momentumStart.P() << " GeV/c, has "
 	  << numberTrajectoryPoints << " trajectory points";
-	    
+
 	// Determine the number of dE/dx bins for the n-tuple.
 	fSimNdEdxBins = int( trackLength / fBinSize ) + 1;
 	// Initialize the vector of dE/dx bins to be empty.
@@ -661,7 +661,7 @@ namespace example {
 	    // requires a special data type. Let's use "auto" so we
 	    // don't have to remember "raw::ChannelID_t".
 	    auto const channelNumber = channel.Channel();
-		
+
 	    // A little care: There is more than one plane that reacts
 	    // to charge in the TPC. We only want to include the
 	    // energy from the collection plane. Note:
@@ -669,14 +669,14 @@ namespace example {
 	    // ${LARCOREOBJ_INC}/larcoreobj/SimpleTypesAndConstants/geo_types.h
 	    if ( fGeometryService->SignalType( channelNumber ) != geo::kCollection )
 	      continue;
-		
+
 	    // Each channel has a map inside it that connects a time
 	    // slice to energy deposits in the detector. We'll use
 	    // "auto", but it's worth noting that the full type of
 	    // this map is
 	    // std::map<unsigned short, std::vector<sim::IDE>>
 	    auto const& timeSlices = channel.TDCIDEMap();
-	    
+
 	    // For every time slice in this channel:
 	    for ( auto const& timeSlice : timeSlices )
 	      {
@@ -684,7 +684,7 @@ namespace example {
 		// the timeSlices map, the 'first' is a time slice
 		// number. The 'second' is a vector of IDE objects.
 		auto const& energyDeposits = timeSlice.second;
-		    
+
 		// Loop over the energy deposits. An "energy deposit"
 		// object is something that knows how much
 		// charge/energy was deposited in a small volume, by
@@ -701,13 +701,13 @@ namespace example {
 		    TVector3 location( energyDeposit.x,
 				       energyDeposit.y,
 				       energyDeposit.z );
-		
+
 		    // Distance from the start of the track.
 		    const double distance = ( location - positionStart.Vect() ).Mag();
-			
+
 		    // Into which bin of the dE/dx array do we add the energy?
 		    const unsigned int bin = (unsigned int)( distance / fBinSize );
-		
+
 		    // Is the dE/dx array big enough to include this bin?
 		    if ( fSimdEdxBins.size() < bin+1 )
 		      {
@@ -725,22 +725,22 @@ namespace example {
 		  } // For each energy deposit
 	      } // For each time slice
 	  } // For each SimChannel
-	
+
 	// At this point we've filled in the values of all the
 	// variables and arrays we want to write to the n-tuple
 	// for this particle. The following command actually
 	// writes those values.
 	fSimulationNtuple->Fill();
-	
-      } // loop over all particles in the event. 
+
+      } // loop over all particles in the event.
 
     //
     // Reconstruction n-tuple
     //
-    
+
     // All of the above is based on objects entirely produced by the
     // simulation. Let's try to do something based on reconstructed
-    // objects. A Hit (see ${LARDATAOBJ_INC}/lardataobj/RecoBase/Hit.h) 
+    // objects. A Hit (see ${LARDATAOBJ_INC}/lardataobj/RecoBase/Hit.h)
     // is a 2D object in a plane.
 
     // This code duplicates much of the code in the previous big
@@ -759,7 +759,7 @@ namespace example {
     // because there might be no hits in the input; e.g., we ran the
     // simulation but did not run the reconstruction steps yet. If
     // there are no hits we may as well skip the rest of this module.
-    
+
     art::Handle< std::vector<recob::Hit> > hitHandle;
     if (!event.getByLabel(fHitProducerLabel, hitHandle)) return;
 
@@ -811,7 +811,7 @@ namespace example {
 	// channels with a matching track ID. Now we search in reverse:
 	// search the SimChannels for matching channel number, then look
 	// at the tracks inside the channel.
-    
+
 	for ( auto const& channel : (*simChannelHandle) )
 	  {
 	    auto simChannelNumber = channel.Channel();
@@ -825,7 +825,7 @@ namespace example {
 	    auto const& timeSlices = channel.TDCIDEMap();
 
 	    // We want to look over the range of time slices in this
-	    // channel that correspond to the range of hit times. 
+	    // channel that correspond to the range of hit times.
 
 	    // To do this, we're going to use some fast STL search
 	    // methods; STL algorithms are usually faster than the
@@ -845,17 +845,17 @@ namespace example {
 	    startTime.first = start_tdc;
 	    endTime.first   = end_tdc;
 
-	    // Here are the fast searches: 
+	    // Here are the fast searches:
 
 	    // Find a pointer to the first channel with time >= start_tdc.
-	    auto const startPointer 
+	    auto const startPointer
 	      = std::lower_bound( timeSlices.begin(), timeSlices.end(), startTime, TDCIDETimeCompare);
 
 	    // From that time slice, find the last channel with time < end_tdc.
-	    auto const endPointer   
+	    auto const endPointer
 	      = std::upper_bound( startPointer,       timeSlices.end(), endTime,   TDCIDETimeCompare);
 
-	    // Did we find anything? If not, skip. 
+	    // Did we find anything? If not, skip.
 	    if ( startPointer == timeSlices.end() || startPointer == endPointer ) continue;
 	    MF_LOG_DEBUG("AnalysisExample")
 	      << "Time slice start = " << (*startPointer).first
@@ -872,8 +872,8 @@ namespace example {
 		// debuggers such as gdb, but they can be tricky to use with
 		// shared libraries and don't work if you're using software
 		// that was compiled somewhere else (e.g., you're accessing
-		// LArSoft libraries via CVMFS). 
-		
+		// LArSoft libraries via CVMFS).
+
 		// The MF_LOG_DEBUG statements below are left over from when I
 		// was trying to solve a problem about hit timing. I could
 		// have deleted them, but decided to leave them to demonsrate
@@ -893,7 +893,7 @@ namespace example {
 		  << " adjusted end_tdc = " << end_tdc
 		  << " time = " << time
 		  << std::endl;
- 
+
 		// Loop over the energy deposits.
 		auto const& energyDeposits = timeSlice.second;
 		for ( auto const& energyDeposit : energyDeposits )
@@ -904,7 +904,7 @@ namespace example {
 		    // with this energy deposit. Since a map is
 		    // automatically sorted, we can use a fast binary
 		    // search method, 'find()'.
-			
+
 		    // By the way, the type of "search" is an iterator
 		    // (to be specific, it's an
 		    // std::map<int,simb::MCParticle*>::const_iterator,
@@ -914,7 +914,7 @@ namespace example {
 		    // iterators eventually; do a web search on "STL
 		    // iterator" to get started.
 		    auto search = particleMap.find( energyDeposit.trackID );
-    
+
 		    // Did we find this track ID in the particle map?
 		    // It's possible for the answer to be "no"; some
 		    // particles are too low in kinetic energy to be
@@ -926,10 +926,10 @@ namespace example {
 		    // "search" points to a pair in the map: <track ID, MCParticle*>
 		    int trackID = (*search).first;
 		    const simb::MCParticle& particle = *((*search).second);
-	    
+
 		    // Is this a primary particle, with a PDG code that
 		    // matches the user input?
-		    if ( particle.Process() != "primary" 
+		    if ( particle.Process() != "primary"
 			 || particle.PdgCode() != fSelectedPDG )
 		      continue;
 
@@ -941,7 +941,7 @@ namespace example {
 		    double distance = ( location - positionStart.Vect() ).Mag();
 		    unsigned int bin = int( distance / fBinSize );
 		    double energy = energyDeposit.numElectrons * fElectronsToGeV;
-		
+
 		    // A feature of maps: if we refer to
 		    // dEdxMap[trackID], and there's no such entry in
 		    // the map yet, it will be automatically created
@@ -963,19 +963,19 @@ namespace example {
 		      {
 			// Increase the vector size, padding it with
 			// zeroes.
-			track_dEdX.resize( bin+1, 0 ); 
+			track_dEdX.resize( bin+1, 0 );
 		      }
-		    
+
 		    // Add the energy to the dE/dx bins for this track.
 		    track_dEdX[bin] += energy;
-		    
+
 		  } // loop over energy deposits
 	      } // loop over time slices
 	  } // for each SimChannel
       } // for each Hit
 
     // We have a map of dE/dx vectors. Write each one of them to the
-    // reconstruction n-tuple. 
+    // reconstruction n-tuple.
     for ( const auto& dEdxEntry : dEdxMap )
       {
 	// Here, the map entries are <first,second>=<track ID, dE/dx vector>
@@ -1014,7 +1014,7 @@ namespace example {
     // for me), so let's try to simplify things:
 
     // - If you're doing an analysis task, you don't have to worry
-    //   about creating art::Assns objects. 
+    //   about creating art::Assns objects.
 
     // - You don't have to read the art:Assns objects on your
     //   own. There are helper classes (FindXXX) which will do that for
@@ -1051,7 +1051,7 @@ namespace example {
     // that created the association. Also note that we did not have to
     // explicitly read in the simb::MCTruth objects from the
     // art::Event object 'event'; FindManyP did that for us.
-    
+
     // Also note that at this point art::FindManyP has already found
     // all the simb::MCTruth associated with each of the particles in
     // particleHandle. This is a slow process, so in general you want
@@ -1061,9 +1061,9 @@ namespace example {
     // Now we can query the 'findManyTruth' object to access the
     // information. First, check that there wasn't some kind of error:
 
-    if ( ! findManyTruth.isValid() ) 
+    if ( ! findManyTruth.isValid() )
       {
-	mf::LogError("AnalysisExample")  
+	mf::LogError("AnalysisExample")
 	  << "findManyTruth simb::MCTruth for simb::MCParticle failed!";
       }
 
@@ -1073,7 +1073,7 @@ namespace example {
     // single-particle generator in prodsingle.fcl, every particle in
     // the event is going to be associated with just the one primary
     // particle from the event generator.)
-    
+
     size_t particle_index = 0; // look at first particle in
                                // particleHandle's vector.
 
@@ -1088,10 +1088,10 @@ namespace example {
 
     auto const& truth = findManyTruth.at( particle_index );
 
-    // Make sure there's no problem. 
+    // Make sure there's no problem.
     if ( truth.empty() )
       {
-	mf::LogError("AnalysisExample")  
+	mf::LogError("AnalysisExample")
 	  << "Particle ID=" << particleHandle->at( particle_index ).TrackId()
 	  << " has no primary!";
       }
@@ -1103,7 +1103,7 @@ namespace example {
     // ${NUSIMDATA_INC}/nusimdata/SimulationBase/MCTruth.h and
     // ${NUSIMDATA_INC}/nusimdata/SimulationBase/MCParticle.h for the
     // nested calls I'm using.
-    mf::LogInfo("AnalysisExample")  
+    mf::LogInfo("AnalysisExample")
       << "Particle ID=" << particleHandle->at( particle_index ).TrackId()
       << " primary PDG code=" << truth[0]->GetParticle(0).PdgCode();
 
@@ -1133,7 +1133,7 @@ namespace example {
 
     if ( ! findManyHits.isValid() )
       {
-	mf::LogError("AnalysisExample")  
+	mf::LogError("AnalysisExample")
 	  << "findManyHits recob::Hit for recob::Cluster failed;"
 	  << " cluster label='" << fClusterProducerLabel << "'";
       }
@@ -1149,19 +1149,19 @@ namespace example {
 	// pointers to recob::Hit that corresponds to the
 	// "cluster_index"-th cluster.
 	auto const& hits = findManyHits.at( cluster_index );
-	
+
 	// We have a vector of pointers to the hits associated
 	// with the cluster, but for this example I'm not going to
 	// do anything fancy with them. I'll just print out how
 	// many there are.
-	mf::LogInfo("AnalysisExample")  
+	mf::LogInfo("AnalysisExample")
 	  << "Cluster ID=" << clusterHandle->at( cluster_index ).ID()
 	  << " has " << hits.size() << " hits";
       }
 
   } // AnalysisExample::analyze()
-  
-  
+
+
   // This macro has to be defined for this module to be invoked from a
   // .fcl file; see AnalysisExample.fcl for more information.
   DEFINE_ART_MODULE(AnalysisExample)
@@ -1178,7 +1178,7 @@ namespace {
     const double length = geom.DetLength();
     const double width = 2. * geom.DetHalfWidth();
     const double height = 2. * geom.DetHalfHeight();
-    
+
     return std::sqrt(cet::sum_of_squares(length, width, height));
   } // DetectorDiagonal()
 

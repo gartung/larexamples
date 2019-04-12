@@ -5,17 +5,17 @@
  * @date   May 27, 2016
  * @see    PointIsolationAlg.h
  * @ingroup RemoveIsolatedSpacePoints
- * 
+ *
  * Usage
  * ======
- * 
+ *
  * Runs a isolation removal algorithm on a set of points distributed in a cubic
  * grid.
- * 
+ *
  * Usage:
- *     
+ *
  *     PointIsolationAlg_test NumberOfPoints[+|-] IsolationRadius
- *     
+ *
  * where NumberOfPoints is an approximation of the number of points to be
  * generated on a grid and processed.
  * Due to the strict geometric pattern, only perfect cubes are allowed as
@@ -25,10 +25,10 @@
  * The points are places in a simple grid, with a distance of 1 (arbitrary unit)
  * one from the next on each direction.
  * The IsolationRadius parameter is measured in the same unit.
- * 
+ *
  * On configuration failure, the test returns with exit code 1.
  * On test failure, the test returns with exit code 2.
- * 
+ *
  */
 
 // LArSoft libraries
@@ -52,10 +52,10 @@ template <typename T> T cube(T side) { return side * side * side; }
 
 template <typename Point>
 std::vector<Point> createPointsInCube(unsigned int pointsPerSide) {
-  
+
   std::vector<Point> points;
   points.reserve(cube(pointsPerSide));
-  
+
   Point p;
   for (unsigned int i = 0; i < pointsPerSide; ++i) {
     p[0] = i;
@@ -67,7 +67,7 @@ std::vector<Point> createPointsInCube(unsigned int pointsPerSide) {
       } // for k
     } // for j
   } // for i
-  
+
   return points;
 } // createPointsInCube()
 
@@ -94,27 +94,27 @@ void StressTest(
   unsigned int pointsPerSide,
   typename lar::example::PointIsolationAlg<T>::Configuration_t const& config
 ) {
-  
+
   using Coord_t = T;
   using PointIsolationAlg_t = lar::example::PointIsolationAlg<Coord_t>;
-  
+
   using Point_t = std::array<Coord_t, 3U>;
-  
+
   //
   // creation of the input points
   //
   auto start_init_time = std::chrono::high_resolution_clock::now();
-  
+
   // create the points in a cube
   std::vector<Point_t> points = createPointsInCube<Point_t>(pointsPerSide);
 
   auto stop_init_time = std::chrono::high_resolution_clock::now();
   auto elapsed_init = std::chrono::duration_cast<std::chrono::duration<float>>
     (stop_init_time - start_init_time); // seconds
-  
+
   unsigned int const expected = (config.radius2 >= 1.)? points.size(): 0;
   std::cout << "Processing " << points.size() << " points." << std::endl;
-  
+
   //
   // algorithm initialisation and execution
   //
@@ -123,10 +123,10 @@ void StressTest(
   auto start_run_time = std::chrono::high_resolution_clock::now();
   std::vector<size_t> result = algo.removeIsolatedPoints(points);
   auto stop_run_time = std::chrono::high_resolution_clock::now();
-  
+
   auto elapsed_run = std::chrono::duration_cast<std::chrono::duration<float>>
     (stop_run_time - start_run_time); // seconds
-  
+
   //
   // report results on screen
   //
@@ -135,14 +135,14 @@ void StressTest(
     << " non-isolated points in " << (elapsed_run.count()*1000.) << " ms"
     << " (" << (elapsed_init.count()*1000.) << " ms for initialization)"
     << std::endl;
-  
+
   if (result.size() != expected) {
     throw std::logic_error(
       "Expected " + std::to_string(expected) + " non-isolated points, found "
       + std::to_string(points.size()) + "."
       );
   }
-  
+
 } // StressTest()
 
 
@@ -151,7 +151,7 @@ void StressTest(
 //---
 int main(int argc, char** argv) {
   using Coord_t = double;
-  
+
   //
   // argument parsing
   //
@@ -161,11 +161,11 @@ int main(int argc, char** argv) {
       << std::endl;
     return 1;
   }
-  
+
   std::istringstream sstr;
 
   enum RoundMode_t { rmNearest, rmCeil, rmFloor, rmDefault = rmNearest };
-  
+
   unsigned int requestedPoints = 0;
   RoundMode_t roundMode = rmDefault;
   sstr.str(argv[1]);
@@ -188,7 +188,7 @@ int main(int argc, char** argv) {
         return 1;
     } // switch round mode spec
   } // if has round mode spec
-  
+
   Coord_t radius;
   sstr.clear();
   sstr.str(argv[2]);
@@ -198,12 +198,12 @@ int main(int argc, char** argv) {
       << argv[2] << "' instead." << std::endl;
     return 1;
   }
-  
-  
-  // 
+
+
+  //
   // prepare the configuration
   //
-  
+
   // decide on the points per side
   double sideLength = std::pow(double(requestedPoints), 1./3.);
   unsigned int pointsPerSide = (unsigned int) std::floor(sideLength);
@@ -219,7 +219,7 @@ int main(int argc, char** argv) {
     } // case rmNearest
   } // switch roundMode
   if (pointsPerSide < 1) pointsPerSide = 1; // sanity check
-  
+
   // enclosing volume has a 0.5 margin
   constexpr Coord_t margin = 0.5;
   lar::example::PointIsolationAlg<Coord_t>::Configuration_t config;
@@ -227,7 +227,7 @@ int main(int argc, char** argv) {
   config.rangeX = { -margin, pointsPerSide - 1.0 + margin };
   config.rangeY = config.rangeX;
   config.rangeZ = config.rangeX;
-  
+
   try {
     StressTest<Coord_t>(pointsPerSide, config);
   }
@@ -235,7 +235,7 @@ int main(int argc, char** argv) {
     std::cerr << "Test failure!\n" << e.what() << std::endl;
     return 2;
   }
-  
+
   return 0;
 } // main()
 

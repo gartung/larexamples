@@ -22,23 +22,23 @@
 
 namespace lar {
    namespace example {
-      
+
       /**
        * @brief Interface for a shower calibration art service
        * @ingroup ShowerCalibrationGalore
        * @see @ref ShowerCalibrationGalore "ShowerCalibrationGalore example overview"
-       * 
+       *
        * Services derived from this interface just return a provider
        * implementing the ShowerCalibrationGalore service provider interface.
-       * 
+       *
        * Implementations of this service must override
        * `ShowerCalibrationGaloreService::do_provider()`.
-       * 
+       *
        */
-      using ShowerCalibrationGaloreService = 
+      using ShowerCalibrationGaloreService =
          lar::ServiceProviderInterfaceWrapper<ShowerCalibrationGalore>;
-      
-      
+
+
    } // namespace example
 } // namespace lar
 

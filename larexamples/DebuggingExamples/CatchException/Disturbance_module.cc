@@ -16,51 +16,51 @@
 
 namespace lar {
   namespace example {
-    
+
     /**
      * @brief A silly module.
-     * 
+     *
      * This module throws and catches a lot of `art::Exception` exceptions.
      * Kids, don't do this at home!
-     * 
-     * 
+     *
+     *
      * Configuration
      * ==============
-     * 
+     *
      * * *NArtExceptions* (integer, mandatory): number of exceptions to throw
-     * 
+     *
      */
     class Disturbance: public art::EDProducer {
         public:
-      
+
       struct Config {
-        
+
         fhicl::Atom<unsigned int> NArtExceptions {
           fhicl::Name("NArtExceptions"),
           fhicl::Comment("number of exceptions to throw")
           };
-        
+
       }; // struct Config
-      
+
       using Parameters = art::EDProducer::Table<Config>;
-      
+
       /// Constructor.
       Disturbance(Parameters const& config);
-      
+
       /// Executes the iterations.
       virtual void produce(art::Event&) override;
-      
-      
+
+
         private:
-      
+
       unsigned int fNArtExceptions;
-      
+
       /// Throws a `std::out_of_range` exception.
       static void throwArtException();
-      
+
     }; // class Disturbance
-    
-    
+
+
   } // namespace example
 } // namespace lar
 
@@ -73,7 +73,7 @@ lar::example::Disturbance::Disturbance(Parameters const& config)
 
 //------------------------------------------------------------------------------
 void lar::example::Disturbance::produce(art::Event&) {
-  
+
   //
   // art::Exception
   //
@@ -83,16 +83,16 @@ void lar::example::Disturbance::produce(art::Event&) {
     }
     catch (art::Exception const&) {}
   } // for
-  
+
 } // lar::example::Disturbance::produce()
 
 
 //------------------------------------------------------------------------------
 void lar::example::Disturbance::throwArtException() {
-  
+
   throw art::Exception(art::errors::LogicError)
     << "I want to annoy you.\n";
-  
+
 } // lar::example::Disturbance::throwArtException()
 
 

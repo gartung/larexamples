@@ -5,16 +5,16 @@
  * @date   June 30, 2016
  * @see    PointIsolationAlg.h
  * @ingroup RemoveIsolatedSpacePoints
- * 
+ *
  * This test populate datasets with random data and tests the isolation
  * algorithm with them.
- * 
+ *
  * The test accepts one optional argument:
- *     
+ *
  *     PointIsolationAlg_test  [seed]
- *     
+ *
  * to set the random seed to a particular value.
- * 
+ *
  */
 
 // LArSoft libraries
@@ -50,25 +50,25 @@
  * @param generator engine used to create the random input sample
  * @param nPoints points in the input sample
  * @param radii list of isolation radii to test
- * 
- * 
+ *
+ *
  */
 template <typename Engine, typename Coord = float>
 void PointIsolationTest(
   Engine& generator, unsigned int nPoints, std::vector<Coord> const& radii
 ) {
-  
+
   using Coord_t = Coord;
-  
+
   //
   // create the input sample
   //
   std::uniform_real_distribution<Coord_t> uniform(-1., +1.);
   auto randomCoord = std::bind(uniform, generator);
-  
+
   using Point_t = std::array<Coord_t, 3U>;
   std::vector<Point_t> points;
-  
+
   points.reserve(nPoints);
   for (unsigned int i = 0; i < nPoints; ++i)
     points.push_back({{ randomCoord(), randomCoord(), randomCoord() }});
@@ -77,12 +77,12 @@ void PointIsolationTest(
     << "\nTest with " << nPoints << " points"
     << "\n" << std::string(72, '-')
     << std::endl;
-  
+
   //
   // create the algorithm
   //
   using PointIsolationAlg_t = lar::example::PointIsolationAlg<Coord_t>;
-  
+
   typename PointIsolationAlg_t::Configuration_t config;
   config.rangeX = { -2., +2. };
   config.rangeY = { -2., +2. };
@@ -90,23 +90,23 @@ void PointIsolationTest(
   config.radius2 = 1.;
 //  config.maxMemory = 100 * 1048576; // we keep the default memory setting
   PointIsolationAlg_t algo(config);
-  
+
   //
   // for each isolation radius:
   //
-  
+
   // measurement in milliseconds, double precision:
   testing::StopWatch<std::chrono::duration<double, std::milli>> timer;
   for (Coord_t radius: radii) {
-    
+
     //
     // set up the algorithm
     //
     config.radius2 = cet::square(radius);
     algo.reconfigure(config);
-    
+
     std::cout << "Isolation radius: " << radius << std::endl;
-    
+
     //
     // run the algorithm with the brute force approach
     //
@@ -117,7 +117,7 @@ void PointIsolationTest(
     std::sort(expected.begin(), expected.end());
     std::cout << "  brute force: " << elapsed << " ms"
       << std::endl;
-    
+
     //
     // run the algorithm with the default approach
     //
@@ -127,17 +127,17 @@ void PointIsolationTest(
     std::sort(actual.begin(), actual.end());
     std::cout << "  regular:     " << elapsed << " ms"
       << std::endl;
-    
+
     //
     // sort and compare the results
     //
     BOOST_CHECK_EQUAL_COLLECTIONS
       (actual.cbegin(), actual.cend(), expected.cbegin(), expected.cend());
-    
+
   } // for isolation radius
-  
+
   std::cout << std::string(72, '-') << std::endl;
-  
+
 } // PointIsolationTest()
 
 
@@ -155,10 +155,10 @@ struct ArgsFixture {
 
 
 BOOST_FIXTURE_TEST_CASE(PointIsolationTestCase, ArgsFixture) {
-  
+
   // we explicitly set the seed, even if with a default value
   auto seed = std::default_random_engine::default_seed;
-  
+
   if (argc > 1) {
     std::istringstream sstr;
     sstr.str(argv[1]);
@@ -168,18 +168,18 @@ BOOST_FIXTURE_TEST_CASE(PointIsolationTestCase, ArgsFixture) {
         ("Invalid seed specified: " + std::string(argv[1]));
     }
   } // if seed specified
-  
+
   // this engine can be arbitrarily crappy; don't use it for real physics!
   std::default_random_engine generator(seed);
   std::cout << "Random seed: " << seed << std::endl;
-  
+
   // try all these isolation radii
   std::vector<float>        const Radii { 0.05, 0.1, 0.5, 2.0 };
   std::vector<unsigned int> const DataSizes { 100, 10000 };
-  
+
   for (unsigned int nPoints: DataSizes)
     PointIsolationTest(generator, nPoints, Radii);
-  
+
 } // PointIsolationTestCase()
 
 

@@ -19,41 +19,41 @@
 
 namespace lar {
   namespace example {
-    
+
     /**
      * @brief Service for shower energy calibration according to particle type
      * @ingroup ShowerCalibrationGalore
      * @see @ref ShowerCalibrationGalore "ShowerCalibrationGalore example overview"
-     * 
+     *
      * See the ShowerCalibrationGaloreFromPID provider documentation for
      * configuration instructions and implementation details.
-     * 
+     *
      * See the ShowerCalibrationGalore provider class documentation for an
      * explanation of the interface.
-     * 
+     *
      * Use this service and its provider by its interface only:
-     *     
+     *
      *     lar::example::ShowerCalibrationGalore const* calib
      *       = lar::providerFrom<lar::example::ShowerCalibrationGaloreService>();
-     *     
+     *
      * The code does not need to mention, nor to include, nor to link to
      * `ShowerCalibrationGaloreFromPIDService` service.
-     * 
-     * 
+     *
+     *
      * Configuration parameters
      * -------------------------
-     * 
+     *
      * In addition to the service provider:
-     * 
+     *
      * * *service_provider* must be set to
      *   `"ShowerCalibrationGaloreFromPIDService"` in order to tell _art_ to
      *   load this implementation.
-     * 
+     *
      */
     using ShowerCalibrationGaloreFromPIDService
       = lar::ServiceProviderImplementationWrapper
         <ShowerCalibrationGaloreFromPID, ShowerCalibrationGaloreService>;
-       
+
   } // namespace example
 } // namespace lar
 
