@@ -25,7 +25,6 @@
 #include "test/Services/ShowerCalibrationGalore/Providers/ShowerCalibrationGaloreTests.h"
 
 // C/C++ standard libraries
-#include <string>
 #include <iostream>
 
 

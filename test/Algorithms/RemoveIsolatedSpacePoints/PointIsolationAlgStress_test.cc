@@ -38,7 +38,6 @@
 #include <cmath> // std::pow(), std::ceil(), std::floor()
 #include <stdexcept> // std::logic_error
 #include <chrono>
-#include <string>
 #include <sstream>
 #include <iostream>
 
