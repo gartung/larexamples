@@ -20,6 +20,7 @@ simple_plugin(DumpCheatTracks "module"
     canvas
     ${MF_MESSAGELOGGER}
     ${FHICLCPP}
+    ${ROOT_CORE}
     ${ROOT_EG}
   USE_BOOST_UNIT
   NO_INSTALL
