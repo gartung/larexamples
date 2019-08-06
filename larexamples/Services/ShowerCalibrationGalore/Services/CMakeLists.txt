@@ -1,9 +1,6 @@
 art_make(
   SERVICE_LIBRARIES
     larexamples_Services_ShowerCalibrationGalore_Providers
-    lardataobj_RecoBase
-    art_Framework_Services_Registry
-    art_Utilities canvas
   )
 
 install_fhicl()
@@ -16,4 +13,3 @@ file(GLOB TESTFHICLFILES
      )
 install_source(EXTRAS CMakeLists.txt ${TESTFHICLFILES})
 unset(TESTFHICLFILES)
-

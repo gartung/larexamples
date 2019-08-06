@@ -2,23 +2,14 @@ add_subdirectory(CheatTrackData)
 
 art_make(
   LIB_LIBRARIES
-    lardataobj_RecoBase
-    nusimdata_SimulationBase
-    cetlib_except
-    ${MESSAGE_FACILITY}
-    ${FHICLCPP}
-    ${ROOT_PHYSICS}
     ${ROOT_CORE}
-  MODULE_LIBRARIES
-    larexamples_Algorithms_TotallyCheatTracks
+    ${ROOT_PHYSICS}
     lardataobj_RecoBase
-    nusimdata_SimulationBase
-    art_Framework_Core
-    art_Framework_Principal
-    art_Persistency_Provenance
-    canvas
+  MODULE_LIBRARIES
     ${MF_MESSAGELOGGER}
-    ${FHICLCPP}
+    ${ROOT_CORE}
+    larexamples_Algorithms_TotallyCheatTracks
+    nusimdata_SimulationBase
   )
 
 install_headers()

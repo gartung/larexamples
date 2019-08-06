@@ -19,7 +19,7 @@
 #    make a change if you're updating your analysis package to a later
 #    or development version of LArSoft.
 
-# Long version: 
+# Long version:
 
 # This file is used by the utility cmake <https://cmake.org/>, a
 # utility for building and updating software. The cmake program is
@@ -53,23 +53,16 @@
 # libraries/resources needed to compile/execute the module.
 
 simple_plugin(AnalysisExample "module"
-			larcore_Geometry_Geometry_service
-                        larcorealg_Geometry
-                        nusimdata_SimulationBase
-                        ${ART_FRAMEWORK_CORE}
-			${ART_FRAMEWORK_PRINCIPAL}
-			${ART_FRAMEWORK_SERVICES_REGISTRY}
-                        ${ART_ROOT_IO_TFILE_SUPPORT} ${ROOT_CORE}
-                        ${ART_ROOT_IO_TFILESERVICE_SERVICE}
- 			art_Persistency_Common
-			art_Persistency_Provenance
-			art_Utilities
-                        canvas
-			${MF_MESSAGELOGGER}
-			
-			cetlib cetlib_except
-			${ROOT_BASIC_LIB_LIST}
-              
+              ${ART_FRAMEWORK_SERVICES_REGISTRY}
+              ${ART_ROOT_IO_TFILESERVICE_SERVICE}
+              ${ART_ROOT_IO_TFILE_SUPPORT}
+              ${MF_MESSAGELOGGER}
+              ${ROOT_CORE}
+              ${ROOT_HIST}
+              ${ROOT_PHYSICS}
+              ${ROOT_TREE}
+              larcorealg_Geometry
+              nusimdata_SimulationBase
 )
 
 # The above will create libraries in $MRB_INSTALL; these are the ".so"
@@ -95,4 +88,3 @@ install_headers()
 install_fhicl()
 install_scripts()
 install_source()
-

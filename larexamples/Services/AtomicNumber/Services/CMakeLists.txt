@@ -1,9 +1,4 @@
-art_make(
-  SERVICE_LIBRARIES
-    larexamples_Services_AtomicNumber_Providers
-    ${ART_FRAMEWORK_SERVICES_REGISTRY}    
-    cetlib cetlib_except
-  )
+art_make()
 
 install_fhicl()
 install_headers()

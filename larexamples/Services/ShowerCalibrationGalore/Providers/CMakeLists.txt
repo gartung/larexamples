@@ -1,12 +1,12 @@
 art_make(
   LIB_LIBRARIES
-    lardataobj_RecoBase
-    ${FHICLCPP}
-    cetlib cetlib_except
+    ${ROOT_CORE}
     ${ROOT_HIST}
     ${ROOT_MATHMORE}
     ${ROOT_RIO}
-    ${ROOT_CORE}
+    cetlib
+    cetlib_except
+    lardataobj_RecoBase
   )
 
 install_fhicl()
@@ -19,4 +19,3 @@ file(GLOB TESTFHICLFILES
      )
 install_source(EXTRAS CMakeLists.txt ${TESTFHICLFILES})
 unset(TESTFHICLFILES)
-

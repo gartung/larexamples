@@ -1,10 +1,4 @@
-art_make(
-  LIB_LIBRARIES
-    art_Utilities
-    canvas
-    ${FHICLCPP}
-    cetlib cetlib_except
-  )
+art_make()
 
 install_fhicl()
 install_headers()

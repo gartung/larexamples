@@ -1,12 +1,4 @@
-
-art_make(
-  MODULE_LIBRARIES
-    art_Framework_Core
-    art_Framework_Principal
-    canvas
-    ${MF_MESSAGELOGGER}
-    ${FHICLCPP}
-  )
+art_make( MODULE_LIBRARIES ${MF_MESSAGELOGGER})
 
 install_source()
 install_fhicl()
