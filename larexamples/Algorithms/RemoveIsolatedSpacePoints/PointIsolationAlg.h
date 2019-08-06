@@ -24,7 +24,6 @@
 #include <vector>
 #include <array>
 #include <string>
-#include <type_traits> // std::add_const_t<>
 #include <iterator> // std::cbegin(), std::cend(), std::distance()
 #include <stdexcept> // std::runtime_error
 

@@ -14,7 +14,6 @@
 // LArSoft libraries
 #include "larexamples/Algorithms/TotallyCheatTracks/TotallyCheatTrackingAlg.h"
 #include "larexamples/Algorithms/TotallyCheatTracks/CheatTrackData/CheatTrack.h"
-#include "lardataobj/RecoBase/Trajectory.h"
 #include "nusimdata/SimulationBase/MCParticle.h"
 
 // framework libraries

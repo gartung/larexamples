@@ -13,15 +13,9 @@
 
 // LArSoft libraries
 #include "larexamples/Algorithms/TotallyCheatTracks/CheatTrackData/CheatTrack.h"
-#include "lardataobj/RecoBase/Trajectory.h"
 
 // nutools libraries
 #include "nusimdata/SimulationBase/MCParticle.h"
-
-// framework libraries
-#include "fhiclcpp/types/Atom.h"
-#include "fhiclcpp/types/Table.h"
-
 
 namespace lar {
   namespace example {

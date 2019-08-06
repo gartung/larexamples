@@ -49,48 +49,45 @@
 // ending with C++ is standard.
 
 // LArSoft includes
-#include "lardataobj/Simulation/SimChannel.h"
-#include "lardataobj/RecoBase/Hit.h"
-#include "lardataobj/RecoBase/Cluster.h"
-#include "lardata/DetectorInfoServices/DetectorPropertiesService.h"
-#include "lardata/DetectorInfoServices/DetectorClocksService.h"
 #include "larcore/Geometry/Geometry.h"
 #include "larcorealg/Geometry/GeometryCore.h"
 #include "larcoreobj/SimpleTypesAndConstants/geo_types.h"
+#include "lardata/DetectorInfoServices/DetectorClocksService.h"
+#include "lardata/DetectorInfoServices/DetectorPropertiesService.h"
+#include "lardataobj/RecoBase/Cluster.h"
+#include "lardataobj/RecoBase/Hit.h"
+#include "lardataobj/Simulation/SimChannel.h"
+#include "larsim/Simulation/LArG4Parameters.h"
 #include "nusimdata/SimulationBase/MCParticle.h"
 #include "nusimdata/SimulationBase/MCTruth.h"
-#include "larsim/Simulation/LArG4Parameters.h"
 
 // Framework includes
 #include "art/Framework/Core/EDAnalyzer.h"
+#include "art/Framework/Core/ModuleMacros.h"
 #include "art/Framework/Principal/Event.h"
 #include "art/Framework/Principal/Handle.h"
 #include "art/Framework/Services/Registry/ServiceHandle.h"
 #include "art_root_io/TFileService.h"
-#include "art/Framework/Core/ModuleMacros.h"
 #include "canvas/Persistency/Common/FindManyP.h"
 #include "canvas/Utilities/Exception.h"
 
 // Utility libraries
-#include "messagefacility/MessageLogger/MessageLogger.h"
-#include "fhiclcpp/ParameterSet.h"
-#include "fhiclcpp/types/Table.h"
-#include "fhiclcpp/types/Atom.h"
 #include "cetlib/pow.h" // cet::sum_of_squares()
+#include "fhiclcpp/types/Atom.h"
+#include "fhiclcpp/types/Table.h"
+#include "messagefacility/MessageLogger/MessageLogger.h"
 
 // ROOT includes. Note: To look up the properties of the ROOT classes,
 // use the ROOT web site; e.g.,
 // <https://root.cern.ch/doc/master/annotated.html>
 #include "TH1.h"
-#include "TH2.h"
-#include "TTree.h"
 #include "TLorentzVector.h"
+#include "TTree.h"
 #include "TVector3.h"
 
 // C++ includes
-#include <map>
 #include <cmath>
-
+#include <map>
 
 namespace {
 
@@ -1189,4 +1186,3 @@ namespace {
     return lhs.first < rhs.first;
   }
 } // local namespace
-

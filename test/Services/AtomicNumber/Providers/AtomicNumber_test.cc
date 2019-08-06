@@ -19,7 +19,8 @@
 #include "larcorealg/TestUtils/unit_test_base.h" // testing namespace
 
 // support libraries
-#include "fhiclcpp/ParameterSet.h"
+#include "fhiclcpp/fwd.h"
+#include "messagefacility/MessageLogger/MessageLogger.h"
 
 // C/C++ standard libraries
 #include <string>
@@ -124,4 +125,3 @@ int main(int argc, char** argv) {
 
 /// @}
 // END AtomicNumber ------------------------------------------------------------
-

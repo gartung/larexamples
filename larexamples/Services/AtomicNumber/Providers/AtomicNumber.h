@@ -13,8 +13,7 @@
 
 
 // support libraries
-#include "canvas/Utilities/Exception.h"
-#include "fhiclcpp/ParameterSet.h"
+#include "fhiclcpp/fwd.h"
 #include "fhiclcpp/types/Table.h"
 #include "fhiclcpp/types/Atom.h"
 
@@ -98,4 +97,3 @@ namespace lar {
 
 
 #endif // LAREXAMPLES_SERVICES_ATOMICNUMBER_PROVIDER_ATOMICNUMBER_H
-

@@ -35,7 +35,7 @@
 #include "test/Services/ShowerCalibrationGalore/Providers/CreateTestShowerCalibrationFromPID.h"
 
 // ROOT
-#include "Rtypes.h"
+#include "RtypesCore.h"
 #include "TMath.h"
 #include "TSystem.h"
 #include "TClass.h"

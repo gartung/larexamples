@@ -21,7 +21,6 @@
 #include "larexamples/Services/ShowerCalibrationGalore/Providers/ShowerCalibrationGalore.h"
 #include "larexamples/Services/ShowerCalibrationGalore/Providers/ShowerCalibrationGaloreScaleTestHelpers.h"
 #include "larcorealg/TestUtils/unit_test_base.h"
-#include "test/Services/ShowerCalibrationGalore/Providers/CreateTestShowerCalibrationFromPID.h"
 #include "test/Services/ShowerCalibrationGalore/Providers/ShowerCalibrationGaloreTests.h"
 
 // C/C++ standard libraries
