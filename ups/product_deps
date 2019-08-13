@@ -1,17 +1,21 @@
 # The parent line must be the first non-comment line in the file
 # This line defines the product name and version
-parent	larexamples	v08_02_13
+parent	larexamples	v08_02_14
 defaultqual	e17
 #
 fcldir product_dir job
 #
 product         version
-larsim		v08_11_01
+larsim		v08_12_00
 
 cetbuildtools	v7_12_01	-	only_for_build
 end_product_list
 
 qualifier	larsim		notes
+e17:py3:debug	e17:py3:debug
+e17:py3:prof	e17:py3:prof
+c2:py3:debug	c2:py3:debug
+c2:py3:prof	c2:py3:prof
 e17:debug	e17:debug
 e17:prof	e17:prof
 c2:debug	c2:debug
