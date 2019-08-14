@@ -1,5 +1,6 @@
 art_make(
   LIB_LIBRARIES
+    larcorealg_Geometry
     cetlib_except
     ${ROOT_CORE}
   MODULE_LIBRARIES
