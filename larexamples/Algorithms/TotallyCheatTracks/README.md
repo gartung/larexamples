@@ -447,7 +447,7 @@ the macro `art_make()` is used in `CMakeLists.txt`, if the files `classes.h`
 and `classes_def.xml` are present in the same directory. In our example, we
 needed to tell it about two additional libraries needed for linking, since we
 ask for the dictionary of associations to `simb::MCParticle` (from
-`nusimdata_SimulationBase` library in _nutools_). We specify the extra library
+`nusimdata_SimulationBase` library in _nusimdata_). We specify the extra library
 after the `DICT_LIBRARIES` keyword of `art_make()`. It is also possible to
 create only the dictionary by using `art_dictionary()`.
 

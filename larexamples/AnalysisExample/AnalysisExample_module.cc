@@ -45,7 +45,7 @@
  */
 
 // Always include headers defining everything you use. Starting from
-// LArSoft and going up the software layers (nutools, art, etc.)
+// LArSoft and going up the software layers (nusimdata, art, etc.)
 // ending with C++ is standard.
 
 // LArSoft includes
