@@ -1,12 +1,12 @@
 # The parent line must be the first non-comment line in the file
 # This line defines the product name and version
-parent	larexamples	v08_04_01
-defaultqual	e17
+parent	larexamples	v08_05_00
+defaultqual	e19
 #
 fcldir product_dir job
 #
 product         version
-larsim		v08_17_01
+larsim		v08_18_00
 
 cetbuildtools	v7_14_00	-	only_for_build
 end_product_list
@@ -16,18 +16,10 @@ e19:py3:debug	e19:py3:debug
 e19:py3:prof	e19:py3:prof
 e19:debug	e19:debug
 e19:prof	e19:prof
-e17:py3:debug	e17:py3:debug
-e17:py3:prof	e17:py3:prof
-e17:debug	e17:debug
-e17:prof	e17:prof
 c7:py3:debug	c7:py3:debug
 c7:py3:prof	c7:py3:prof
 c7:debug	c7:debug
 c7:prof		c7:prof
-c2:py3:debug	c2:py3:debug
-c2:py3:prof	c2:py3:prof
-c2:debug	c2:debug
-c2:prof		c2:prof
 end_qualifier_list
 
 # Preserve tabs and formatting in emacs and vi / vim:
