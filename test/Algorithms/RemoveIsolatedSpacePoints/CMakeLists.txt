@@ -5,7 +5,7 @@ art_make(
     PointIsolationAlgStress_test.cc
   LIB_LIBRARIES
     lardataobj_RecoBase
-    ${ROOT_CORE}
+    ROOT::Core
   MODULE_LIBRARIES
     lardataobj_RecoBase
     larcorealg_Geometry
@@ -18,7 +18,7 @@ art_make(
     art_Persistency_Provenance
     art_Utilities canvas
     ${MF_MESSAGELOGGER}
-    
+    ${ROOT_LIBRARIES} 
     ${FHICLCPP}
   )
 

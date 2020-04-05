@@ -2,7 +2,7 @@ art_make(
   LIB_LIBRARIES
     larcorealg_Geometry
     cetlib_except
-    ${ROOT_CORE}
+    ROOT::Core
   MODULE_LIBRARIES
     larexamples_Algorithms_RemoveIsolatedSpacePoints
     ${ART_FRAMEWORK_SERVICES_REGISTRY}
@@ -20,4 +20,3 @@ file(GLOB TESTFHICLFILES
 install_source(EXTRAS ${TESTFHICLFILES})
 unset(TESTFHICLFILES)
 
-install_source()

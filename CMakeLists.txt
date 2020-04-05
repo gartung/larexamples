@@ -13,21 +13,13 @@
 # ======================================================================
 
 
-# use cmake 2.8 or later
-cmake_minimum_required (VERSION 2.8)
+# use cmake 3.11 or later
+cmake_minimum_required (VERSION 3.11)
 
-project(larexamples)
+project(larexamples VERSION 08.00.00 LANGUAGES CXX)
 
-# cetbuildtools contains our cmake modules
-SET ( CETBUILDTOOLS_VERSION $ENV{CETBUILDTOOLS_VERSION} )
-IF (NOT CETBUILDTOOLS_VERSION)
-    MESSAGE (FATAL_ERROR "ERROR: setup cetbuildtools to get the cmake modules")
-ENDIF()
-
-set(CMAKE_MODULE_PATH $ENV{CANVAS_ROOT_IO_DIR}/Modules
-		      $ENV{CETBUILDTOOLS_DIR}/Modules
-		      ${CMAKE_MODULE_PATH})
-
+find_package( cetmodules )
+set(fcl_dir job)
 include(CetCMakeEnv)
 cet_cmake_env()
 
@@ -40,18 +32,10 @@ cet_set_compiler_flags(DIAGS CAUTIOUS
 cet_report_compiler_flags()
 
 # these are minimum required versions, not the actual product versions
-find_ups_product( larcoreobj )
-find_ups_product( larcorealg )
-find_ups_product( larcore )
-find_ups_product( lardataobj )
-find_ups_product( lardataalg )
-find_ups_product( lardata )
-find_ups_product( larevt )
-find_ups_product( larsim )
-find_ups_product( nutools )
-find_ups_product( art )
-find_ups_product(art_root_io)
-find_ups_product( cetbuildtools )
+find_package( ROOT REQUIRED COMPONENTS Core Physics Hist MathMore RIO GenVector Geom Minuit Minuit2 XMLIO Gdml TMVA EG)
+set(HAVE_ROOT6 BOOL:True)
+set(ROOTCLING ROOT::rootcling)
+find_package( larsim REQUIRED )
 
 # macros for dictionary and simple_plugin
 include(ArtDictionary)
@@ -61,11 +45,11 @@ include(BuildPlugins)
 # source
 add_subdirectory(larexamples)
 add_subdirectory(test)
-
+add_subdirectory(cmakeConfig)
 # ups - table and config files
-add_subdirectory(ups)
+#add_subdirectory(ups)
 
 # packaging utility
-include(UseCPack)
+#include(UseCPack)
 
 
